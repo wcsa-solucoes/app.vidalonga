@@ -1,6 +1,6 @@
-import "package:app_vida_longa/bloc/app_wrap_bloc.dart";
 import "package:app_vida_longa/domain/enums/app_response_codes_enum.dart";
 import "package:app_vida_longa/domain/models/response_model.dart";
+import "package:app_vida_longa/src/bloc/app_wrap_bloc.dart";
 
 abstract class NotificationController {
   static final AppWrapBloc _appWrapBloc = AppWrapBloc.instance;

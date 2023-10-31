@@ -18,7 +18,7 @@ class AuthService {
 
   static bool _hasInit = false;
 
-  static void init() {
+  static void init() async {
     if (!_hasInit) {
       _hasInit = true;
       instance._init();
@@ -77,7 +77,7 @@ class AuthService {
     if (response.status == ResponseStatusEnum.success) {
       unawaited(_userService.create(user));
     } else {
-      // NotificationController.alert(response: response);
+      NotificationController.alert(response: response);
     }
 
     return response;
@@ -88,6 +88,7 @@ class AuthService {
       await FirebaseAuth.instance
           .signOut()
           .onError((error, stackTrace) => null);
+
       UserService.instance.handleUserLogout();
       // LocalStorageService.instance.insertValueInsideMapKey(
       //     LocalStorageConstants.kKeyUserSettings,

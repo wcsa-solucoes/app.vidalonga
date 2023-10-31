@@ -12,14 +12,13 @@ class _PageOneState extends State<PageOne> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("PageOne")),
-        body: Center(
+        body: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Text("PageOne"),
             ],
           ),
         ));
-    ;
   }
 }
