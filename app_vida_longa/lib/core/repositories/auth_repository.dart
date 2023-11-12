@@ -1,4 +1,5 @@
 import "dart:async";
+import "package:app_vida_longa/core/controllers/we_exception.dart";
 import "package:app_vida_longa/domain/models/response_model.dart";
 import "package:app_vida_longa/domain/models/user_model.dart";
 import "package:firebase_auth/firebase_auth.dart";
@@ -12,7 +13,9 @@ class AuthRepository {
     await _auth
         .createUserWithEmailAndPassword(email: user.email, password: password)
         .then((snapshot) => null)
-        .onError((error, stackTrace) {});
+        .onError((error, stackTrace) {
+      response = WeException.handle(error);
+    });
 
     return response;
   }
@@ -23,25 +26,30 @@ class AuthRepository {
   }) async {
     late ResponseStatusModel response = ResponseStatusModel();
 
-    late List<String> signInMethods = [];
+    // late List<String> signInMethods = [];
 
-    await _auth.fetchSignInMethodsForEmail(email).then((data) {
-      signInMethods = data;
-    }).onError((error, stackTrace) {});
+    // await _auth.fetchSignInMethodsForEmail(email).then((data) {
+    //   signInMethods = data;
+    // }).onError((error, stackTrace) {
+    //   response = WeException.handle(error);
+    // });
 
-    if (response.status == ResponseStatusEnum.failed) {
-      return response;
-    }
+    // if (response.status == ResponseStatusEnum.failed) {
+    //   return response;
+    // }
 
-    if (signInMethods.isEmpty) {
-      response.status = ResponseStatusEnum.failed;
-      return response;
-    }
+    // if (signInMethods.isEmpty) {
+    //   response.status = ResponseStatusEnum.failed;
+    //   response.code = WeExceptionCodesEnum.firebaseAuthUserNotFound;
+    //   return response;
+    // }
 
     await _auth
         .signInWithEmailAndPassword(email: email, password: password)
         .then((snapshot) => null)
-        .onError((error, stackTrace) {});
+        .onError((error, stackTrace) {
+      response = WeException.handle(error);
+    });
 
     return response;
   }

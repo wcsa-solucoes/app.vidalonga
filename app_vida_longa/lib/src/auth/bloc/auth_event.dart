@@ -32,3 +32,11 @@ final class AuthSignUpEvent extends AuthEvent {
     required this.cpf,
   });
 }
+
+class AuthRecoveryPasswordEvent extends AuthEvent {
+  final String email;
+
+  AuthRecoveryPasswordEvent({
+    required this.email,
+  });
+}

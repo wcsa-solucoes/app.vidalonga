@@ -131,7 +131,7 @@ class UserRepository {
 
     await _instance
         .collection("users")
-        .where("register", isEqualTo: register)
+        .where("document", isEqualTo: register)
         .limit(1)
         .get()
         .then((snapshot) {

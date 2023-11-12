@@ -1,4 +1,5 @@
 import 'package:app_vida_longa/shared/widgets/custom_app_alert_modal.dart';
+import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/modals/custom_app_snackbar_modal.dart';
 import 'package:app_vida_longa/src/bloc/app_wrap_bloc.dart';
 import 'package:flutter/material.dart';
@@ -15,45 +16,17 @@ class AppWrapView extends StatefulWidget {
 class _AppWrapViewState extends State<AppWrapView> {
   final AppWrapBloc appWrapBloc = AppWrapBloc.instance;
 
-  int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Stack(
-          children: [
-            _handleAlerts(),
-            const RouterOutlet(),
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (value) {
-              setState(() {
-                switch (value) {
-                  case 0:
-                    // Modular.to.navigate("/app/home");
-                    break;
-                  case 1:
-                    if (_currentIndex != 1) {
-                      Modular.to.navigate("/app/navigation");
-                    }
-                    break;
-                  case 2:
-                    Modular.to.navigate("/app/auth/login");
-                    break;
-                }
-                _currentIndex = value;
-              });
-            },
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.other_houses), label: "other"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.account_circle_sharp), label: "account"),
-            ]),
-      ),
+          body: Stack(
+            children: [
+              _handleAlerts(),
+              const RouterOutlet(),
+            ],
+          ),
+          bottomNavigationBar: const CustomBottomNavigationBar()),
     );
   }
 
@@ -70,5 +43,18 @@ class _AppWrapViewState extends State<AppWrapView> {
         ),
       ],
     );
+  }
+
+  int handleIndex(String path) {
+    late int index = 0;
+    for (final element in Modular.to.navigateHistory) {
+      if (element.name.split("/").contains("navigation")) {
+        index = 0;
+      } else if (element.name.split("/").contains("auth")) {
+        index = 1;
+      }
+    }
+
+    return index;
   }
 }

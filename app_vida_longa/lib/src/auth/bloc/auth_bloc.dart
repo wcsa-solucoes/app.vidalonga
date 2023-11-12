@@ -18,9 +18,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthSignInEvent>(_signIn);
     on<AuthLoadingEvent>(_setLoading);
     on<AuthSignUpEvent>(_register);
+    on<AuthSignOutEvent>(_signOut);
+    on<AuthRecoveryPasswordEvent>(_recoveryPassword);
   }
 
-  late bool _isEnabled = false;
+  late bool _isEnabled = true;
 
   final UserService _userService = UserService.instance;
   final AuthService _authService = AuthService.instance;
@@ -47,11 +49,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else {
       _isEnabled = true;
     }
+    emit(AuthInitial(newUser: _user));
   }
 
   FutureOr<void> _register(
       AuthSignUpEvent event, Emitter<AuthState> emit) async {
     add(AuthLoadingEvent()); // _setLoading();
+
+    final ResponseStatusModel hasRegister =
+        await _userService.validateRegister(event.cpf);
+
+    if (hasRegister.status == ResponseStatusEnum.failed) {
+      emit(AuthInitial(newUser: UserModel.empty()));
+      return;
+    }
 
     _user = _userService.user;
 
@@ -59,13 +70,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _user.phone = FieldFormatHelper.phone(phone: event.phone);
     _user.document = FieldFormatHelper.register(register: event.cpf);
     _user.email = event.email;
-
-    final ResponseStatusModel hasRegister =
-        await _userService.validateRegister(event.cpf);
-
-    if (hasRegister.status == ResponseStatusEnum.failed) {
-      return;
-    }
 
     final ResponseStatusModel response =
         await _authService.register(_user, event.password);
@@ -78,7 +82,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
-    emit(AuthInitial(newUser: _user));
+    emit(AuthInitial(newUser: UserModel.empty()));
   }
 
   FutureOr<void> _setLoading(
@@ -92,5 +96,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Future.delayed(const Duration(seconds: 3), () {
       _isEnabled = true;
     });
+  }
+
+  void _signOut(AuthSignOutEvent event, Emitter<AuthState> emit) {
+    AuthService.logout();
+    emit(AuthInitial(newUser: _user));
+  }
+
+  void _recoveryPassword(
+      AuthRecoveryPasswordEvent event, Emitter<AuthState> emit) {
+    _authService.sendPasswordResetEmail(email: event.email);
   }
 }

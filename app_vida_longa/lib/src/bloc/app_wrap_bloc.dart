@@ -2,7 +2,6 @@ import "dart:async";
 import "dart:math";
 
 import "package:app_vida_longa/domain/models/response_model.dart";
-import "package:bloc_concurrency/bloc_concurrency.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 
 part 'app_wrap_event.dart';

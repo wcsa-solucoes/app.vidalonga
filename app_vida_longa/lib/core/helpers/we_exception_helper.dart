@@ -8,8 +8,6 @@ import "package:app_vida_longa/domain/models/response_model.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
-import "package:flutter/widgets.dart";
 
 abstract class WeExceptionHelper {
   static ResponseStatusModel handle(Exception exception) {
@@ -39,6 +37,11 @@ abstract class WeExceptionHelper {
     switch (response.code) {
       case WeExceptionCodesEnum.firebaseAuthEmailInUse:
         message = "Email já registrado.";
+        break;
+
+      case WeExceptionCodesEnum.firebaseAuthInvalidLoginCredentials:
+        message =
+            "Credenciais inválidas. Verifique os dados e tente novamente.";
         break;
       case WeExceptionCodesEnum.firebaseAuthInvalidEmail:
         message = "Error : WeExceptionCodesEnum.firebaseAuthInvalidEmail";
@@ -204,7 +207,11 @@ abstract class WeExceptionHelper {
       status: ResponseStatusEnum.failed,
     );
 
-    switch (exception.code) {
+    switch (exception.code.toLowerCase()) {
+      case "invalid_login_credentials":
+        response.code =
+            WeExceptionCodesEnum.firebaseAuthInvalidLoginCredentials;
+        break;
       case "email-already-in-use":
         response.code = WeExceptionCodesEnum.firebaseAuthEmailInUse;
         break;

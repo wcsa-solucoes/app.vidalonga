@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "app_vida_longa",
+            "cwd": "app_vida_longa",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "app_vida_longa (profile mode)",
+            "cwd": "app_vida_longa",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "app_vida_longa (release mode)",
+            "cwd": "app_vida_longa",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

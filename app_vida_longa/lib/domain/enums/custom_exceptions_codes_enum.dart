@@ -24,6 +24,7 @@ enum WeExceptionCodesEnum implements WeExceptionCodesInterface {
   firebaseAuthEmailNotVerified,
   firebaseAuthCredentialAlreadyInUse,
   firebaseAuthInvalidCredentialType,
+  firebaseAuthInvalidLoginCredentials,
 
   /// Flutter Core Errors 42We Codes for WeException
   coreTypeError,
