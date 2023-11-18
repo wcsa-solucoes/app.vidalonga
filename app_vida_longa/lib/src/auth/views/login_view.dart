@@ -1,4 +1,5 @@
 import 'package:app_vida_longa/core/services/user_service.dart';
+import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -68,69 +69,67 @@ class _LoginViewState extends State<LoginView>
               ),
             );
           }
-          return Scaffold(
+          return CustomAppScaffold(
             appBar: AppBar(title: const Text("Vida longa"), centerTitle: true),
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  padding: const EdgeInsets.only(top: 30),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
+            // hasScrollView: true,
+            body: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                padding: const EdgeInsets.only(top: 30),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.7), // Cor da sombra
+                        spreadRadius: 3, // Raio de expansão da sombra
+                        blurRadius: 4, // Raio de desfoque da sombra
+                      ),
+                    ]),
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  children: [
+                    ToggleButtons(
+                      borderWidth: 2,
                       borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.7), // Cor da sombra
-                          spreadRadius: 3, // Raio de expansão da sombra
-                          blurRadius: 4, // Raio de desfoque da sombra
+                      fillColor: Colors.orange.withOpacity(0.2),
+                      // selectedBorderColor: Colors.orange,
+                      onPressed: (index) {
+                        setState(() {
+                          isLoginSelected = index == 0;
+                        });
+                      },
+                      isSelected: [isLoginSelected, !isLoginSelected],
+                      children: [
+                        Text(
+                          "Login",
+                          style: TextStyle(
+                              fontWeight:
+                                  isLoginSelected ? FontWeight.bold : null),
                         ),
-                      ]),
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    children: [
-                      ToggleButtons(
-                        borderWidth: 2,
-                        borderRadius: BorderRadius.circular(10),
-                        fillColor: Colors.orange.withOpacity(0.2),
-                        // selectedBorderColor: Colors.orange,
-                        onPressed: (index) {
-                          setState(() {
-                            isLoginSelected = index == 0;
-                          });
-                        },
-                        isSelected: [isLoginSelected, !isLoginSelected],
-                        children: [
-                          Text(
-                            "Login",
+                        Text("Cadastra-se",
                             style: TextStyle(
                                 fontWeight:
-                                    isLoginSelected ? FontWeight.bold : null),
-                          ),
-                          Text("Cadastra-se",
-                              style: TextStyle(
-                                  fontWeight: !isLoginSelected
-                                      ? FontWeight.bold
-                                      : null)),
-                        ],
-                      ),
-                      Stack(
-                        children: [
-                          Container(
-                            //border with elevation
+                                    !isLoginSelected ? FontWeight.bold : null)),
+                      ],
+                    ),
+                    Stack(
+                      children: [
+                        Container(
+                          //border with elevation
 
-                            margin: const EdgeInsets.all(10),
-                            padding: const EdgeInsets.all(10),
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * 0.75,
-                            child: Center(
-                              child:
-                                  isLoginSelected ? signInView() : signUpView(),
-                            ),
+                          margin: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(10),
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.75,
+                          child: Center(
+                            child:
+                                isLoginSelected ? signInView() : signUpView(),
                           ),
-                        ],
-                      )
-                    ],
-                  ),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ),
             ),

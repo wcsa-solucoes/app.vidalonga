@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -17,7 +18,7 @@ class _ArticleViewState extends State<ArticleView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomAppScaffold(
       appBar: AppBar(title: const Text("Article")),
       body: SingleChildScrollView(
         child: Column(
@@ -46,6 +47,7 @@ class _ArticleViewState extends State<ArticleView> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
+            IconButton(onPressed: () {}, icon: Icon(Icons.comment_rounded)),
             IconButton(
               icon: Icon(Icons.zoom_out),
               onPressed: () => setState(() {

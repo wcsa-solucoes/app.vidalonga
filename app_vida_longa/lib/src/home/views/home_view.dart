@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
+import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_chip.dart';
+import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/home/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
@@ -41,25 +43,22 @@ class _HomeViewState extends State<HomeView> {
           );
         }
         if (state is HomeLoaded) {
-          return SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: Scaffold(
-              appBar: AppBar(title: const Text("Home")),
-              body: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // search(),
-                    SizedBox(
-                        height: 50,
-                        width: MediaQuery.of(context).size.width,
-                        child: chips2(
-                            state.chipsCategorie!, state.articlesByCategory!)),
-                    testListView(state.articlesByCategory!),
-                  ],
-                ),
+          return CustomAppScaffold(
+            appBar: AppBar(title: const Text("Home")),
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // search(),
+                  SizedBox(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width,
+                      child: chips2(
+                          state.chipsCategorie!, state.articlesByCategory!)),
+                  testListView(state.articlesByCategory!),
+                ],
               ),
             ),
+            bottomNavigationBar: const CustomBottomNavigationBar(),
           );
         }
 
@@ -67,7 +66,7 @@ class _HomeViewState extends State<HomeView> {
           return SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            child: Scaffold(
+            child: CustomAppScaffold(
               appBar: AppBar(title: const Text("Home")),
               body: SingleChildScrollView(
                 child: Column(

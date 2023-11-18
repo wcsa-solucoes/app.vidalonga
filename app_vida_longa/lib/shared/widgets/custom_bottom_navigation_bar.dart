@@ -24,23 +24,23 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               setState(() {
                 switch (value) {
                   case 0:
-                    NavigationController.to("/app/navigation");
+                    NavigationController.to("/app/home");
                     break;
                   case 1:
-                    NavigationController.to("/app/auth/login");
+                    NavigationController.to("/app/navigation");
                   case 2:
-                    NavigationController.to("/app/home");
+                    NavigationController.to("/app/auth/login");
                     break;
                 }
               });
             },
             items: const [
               BottomNavigationBarItem(
+                  icon: Icon(Icons.favorite), label: "Home"),
+              BottomNavigationBarItem(
                   icon: Icon(Icons.navigation), label: "Navigation"),
               BottomNavigationBarItem(
                   icon: Icon(Icons.account_circle_rounded), label: "Conta"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.favorite), label: "Home"),
             ]);
       },
     );
@@ -49,11 +49,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   int handleIndex(String path) {
     late int index = 0;
     for (final element in Modular.to.navigateHistory) {
-      if (element.name.split("/").contains("navigation")) {
+      if (element.name.split("/").contains("home")) {
         index = 0;
-      } else if (element.name.split("/").contains("auth")) {
+      } else if (element.name.split("/").contains("navigation")) {
         index = 1;
-      } else if (element.name.split("/").contains("home")) {
+      } else if (element.name.split("/").contains("auth")) {
         index = 2;
       }
     }

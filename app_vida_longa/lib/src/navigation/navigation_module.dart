@@ -1,4 +1,4 @@
-import 'package:app_vida_longa/src/navigation/views/page_one.dart';
+import 'package:app_vida_longa/src/navigation/views/navigation_view.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class NavigationModule extends Module {
@@ -6,7 +6,7 @@ class NavigationModule extends Module {
   void routes(r) {
     r.child(
       "/",
-      child: (context) => const PageOne(),
+      child: (context) => const NavigationView(),
     );
   }
 }
