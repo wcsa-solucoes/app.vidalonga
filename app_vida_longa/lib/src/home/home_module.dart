@@ -1,3 +1,4 @@
+import 'package:app_vida_longa/src/comments/comments_module.dart';
 import 'package:app_vida_longa/src/home/bloc/home_bloc.dart';
 import 'package:app_vida_longa/src/home/views/article_view.dart';
 import 'package:app_vida_longa/src/home/views/home_page.dart';
@@ -13,5 +14,6 @@ class HomeModule extends Module {
   void routes(r) {
     r.child("/", child: (context) => const HomePage());
     r.child('/article', child: (context) => const ArticleView());
+    r.module("/comments", module: CommentsModule());
   }
 }
