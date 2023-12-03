@@ -1,3 +1,4 @@
+import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,7 +28,7 @@ class IconChoiceChip extends StatefulWidget {
 }
 
 class _IconChoiceChipState extends State<IconChoiceChip> {
-  late bool _isSelected;
+  bool _isSelected = false;
 
   @override
   void initState() {

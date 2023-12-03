@@ -10,7 +10,7 @@ part 'home_event.dart';
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc() : super(HomeLoading()) {
+  HomeBloc() : super(HomeLoadingState()) {
     on<HomeLoadedEvent>(_handleLoaded);
     on<HomeLoadingEvent>(_handleLoading);
     on<HomeCategoriesSelectedEvent>(_handleCategoriesSelected);
@@ -26,7 +26,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
   FutureOr<void> _handleCategoriesSelected(
       HomeCategoriesSelectedEvent event, Emitter<HomeState> emit) {
-    emit(HomeCategoriesSelected(
+    emit(HomeCategoriesSelectedState(
       articlesByCategorySelected: event.articles,
       chipsCategorie: event.chipsCategorie,
       articlesByCategory: _articles,
@@ -35,11 +35,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   FutureOr<void> _handleLoading(
       HomeLoadingEvent event, Emitter<HomeState> emit) {
-    emit(HomeLoading());
+    emit(HomeLoadingState());
   }
 
   FutureOr<void> _handleLoaded(HomeLoadedEvent event, Emitter<HomeState> emit) {
-    emit(HomeLoaded(
+    emit(HomeLoadedState(
       articlesByCategory: _articles,
       chipsCategorie: _allChips,
     ));

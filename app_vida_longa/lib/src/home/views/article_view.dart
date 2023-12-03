@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -47,15 +48,19 @@ class _ArticleViewState extends State<ArticleView> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            IconButton(onPressed: () {}, icon: Icon(Icons.comment_rounded)),
             IconButton(
-              icon: Icon(Icons.zoom_out),
+                onPressed: () {
+                  NavigationController.push("/app/home/comments");
+                },
+                icon: const Icon(Icons.comment_rounded)),
+            IconButton(
+              icon: const Icon(Icons.zoom_out),
               onPressed: () => setState(() {
                 fontSize = fontSize > 10 ? fontSize - 2 : 10;
               }),
             ),
             IconButton(
-              icon: Icon(Icons.zoom_in),
+              icon: const Icon(Icons.zoom_in),
               onPressed: () => setState(() {
                 fontSize += 2;
               }),

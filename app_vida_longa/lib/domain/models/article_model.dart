@@ -23,7 +23,7 @@ class ArticleModel {
       comment: map['comment'] as String,
       category: map['category'] as String,
       subscriptionType: SubscriptionTypeEnum.values.firstWhere(
-        (SubscriptionTypeEnum e) => e.name == map['subscriptionType'],
+        (SubscriptionTypeEnum e) => e.name == map['subscription_type'],
         orElse: () => SubscriptionTypeEnum.free,
       ),
       uuid: map['uuid'] as String,

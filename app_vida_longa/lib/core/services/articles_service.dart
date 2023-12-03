@@ -14,11 +14,18 @@ class ArticleService {
 
   static bool _hasInit = false;
 
+  static String _currentlyArticleId = "";
+  static String get currentlyArticleId => _currentlyArticleId;
+
   static void init() async {
     if (!_hasInit) {
       _hasInit = true;
       instance._init();
     }
+  }
+
+  static void setCurrentlyArticleId(String value) {
+    _currentlyArticleId = value;
   }
 
   final ArticlesRepository _repository = ArticlesRepository();

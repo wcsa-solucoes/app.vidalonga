@@ -18,39 +18,55 @@ class HomeState {
     this.isLoading,
     this.chipsCategorie = const [],
   });
+
+  T when<T>({
+    required T Function() initial,
+    T Function(HomeLoadingState state)? loading,
+    T Function(HomeLoadedState state)? loaded,
+    T Function(HomeErrorState state)? error,
+    T Function(HomeCategoriesSelectedState state)? categoriesSelected,
+  }) {
+    return switch (this) {
+      HomeLoadingState s => loading?.call(s) ?? initial(),
+      HomeLoadedState s => loaded?.call(s) ?? initial(),
+      HomeErrorState s => error?.call(s) ?? initial(),
+      HomeCategoriesSelectedState s => categoriesSelected?.call(s) ?? initial(),
+      _ => initial(),
+    };
+  }
 }
 
-final class HomeInitial extends HomeState {
-  HomeInitial({
+final class InitialHomeState extends HomeState {
+  InitialHomeState({
     super.articlesByCategory,
     super.isLoading,
   });
 }
 
-final class HomeLoaded extends HomeState {
-  HomeLoaded({
+final class HomeLoadedState extends HomeState {
+  HomeLoadedState({
     super.articlesByCategory,
     super.isLoading,
     super.chipsCategorie,
   });
 }
 
-class HomeLoading extends HomeState {
-  HomeLoading();
+class HomeLoadingState extends HomeState {
+  HomeLoadingState();
 }
 
-class HomeError extends HomeState {
+class HomeErrorState extends HomeState {
   final String? message;
-  HomeError({
+  HomeErrorState({
     this.message,
     super.articlesByCategory,
     super.isLoading,
   });
 }
 
-class HomeCategoriesSelected extends HomeState {
+class HomeCategoriesSelectedState extends HomeState {
   final List<List<ArticleModel>>? articlesByCategorySelected;
-  HomeCategoriesSelected({
+  HomeCategoriesSelectedState({
     required this.articlesByCategorySelected,
     super.isLoading,
     super.chipsCategorie,

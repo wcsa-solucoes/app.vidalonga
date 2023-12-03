@@ -9,6 +9,7 @@ class UserModel {
   late String email;
   late String phone;
   late String document;
+  @JsonKey(name: "photo_url")
   late String photoUrl;
   UserModel({
     this.id = "",

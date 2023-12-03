@@ -18,6 +18,7 @@ class _NavigationViewState extends State<NavigationView> {
         appBar: AppBar(title: const Text("Navegação")),
         bottomNavigationBar: const CustomBottomNavigationBar(),
         body: Builder(builder: (context) {
+          final user = UserService.instance.user;
           if (UserService.instance.user.name.isNotEmpty) {
             return Center(
               child: Column(
@@ -25,7 +26,7 @@ class _NavigationViewState extends State<NavigationView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text("Navegação"),
-                  Text("Usuário logado: " + UserService.instance.user.name),
+                  Text("Usuário logado: ${UserService.instance.user.name}"),
                 ],
               ),
             );
