@@ -2,6 +2,7 @@ import 'package:app_vida_longa/app_wrap_view.dart';
 import 'package:app_vida_longa/src/auth/auth_module.dart';
 import 'package:app_vida_longa/src/home/home_module.dart';
 import 'package:app_vida_longa/src/navigation/navigation_module.dart';
+import 'package:app_vida_longa/src/profile/profile_module.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class AppModule extends Module {
@@ -14,6 +15,7 @@ class AppModule extends Module {
       ModuleRoute("/auth", module: AuthModule()),
       ModuleRoute("/navigation", module: NavigationModule()),
       ModuleRoute("/home", module: HomeModule()),
+      ModuleRoute("/profile", module: ProfileModule()),
     ]);
   }
 }

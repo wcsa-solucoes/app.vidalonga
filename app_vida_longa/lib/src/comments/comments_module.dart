@@ -1,4 +1,3 @@
-import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/src/comments/bloc/comments_bloc.dart';
 import 'package:app_vida_longa/src/comments/comments_view.dart';
 import 'package:flutter_modular/flutter_modular.dart';

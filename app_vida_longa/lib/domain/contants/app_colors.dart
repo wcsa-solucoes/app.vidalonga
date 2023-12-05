@@ -23,10 +23,10 @@ class AppColors {
   static const Color secondary = Color(0xFFEE8B60);
   static const Color tertiary = Color(0xFFFFFFFF);
   static const Color alternate = Color(0xFFE1EDF9);
-  static const Color primaryText = Color(0xFFFFFFFF);
+  static const Color primaryText = Color(0xFF14181B); //dark 0xFFFFFFFF;
   static const Color secondaryText = Color(0xFF95A1AC);
   static const Color primaryBackground = Color(0xFF1E2429);
-  static const Color secondaryBackground = Color(0xFF14181B);
+  static const Color secondaryBackground = Color(0xFFFFFFFF);
   static const Color accent1 = Color(0xFFEEEEEE);
   static const Color accent2 = Color(0xFFE0E0E0);
   static const Color accent3 = Color(0xFF757575);
@@ -40,6 +40,10 @@ class AppColors {
   static const Color categoryColor = secondaryText;
   static const Color unselectedTextStyleColor = Color(0xFF3A96D0);
   static const Color selectedTextStyleColor = Color(0xBB115AC6);
+  static const Color turquoise = Color(0xFF39D2C0);
+
+  static const Color gray600 = Color(0xFF57636C); //L/D 0xFF57636C
+  static const Color lineGray = Color(0xFFE1EDF9); //dark 0xFF262D34
 
   static BoxDecoration backgroundGradient() {
     return const BoxDecoration(

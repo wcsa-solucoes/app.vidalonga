@@ -1,6 +1,4 @@
 import 'package:app_vida_longa/shared/widgets/custom_app_alert_modal.dart';
-import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
-import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/modals/custom_app_snackbar_modal.dart';
 import 'package:app_vida_longa/src/bloc/app_wrap_bloc.dart';
 import 'package:flutter/material.dart';

@@ -18,7 +18,6 @@ class _NavigationViewState extends State<NavigationView> {
         appBar: AppBar(title: const Text("Navegação")),
         bottomNavigationBar: const CustomBottomNavigationBar(),
         body: Builder(builder: (context) {
-          final user = UserService.instance.user;
           if (UserService.instance.user.name.isNotEmpty) {
             return Center(
               child: Column(

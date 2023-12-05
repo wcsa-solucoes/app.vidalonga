@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:flutter/material.dart';

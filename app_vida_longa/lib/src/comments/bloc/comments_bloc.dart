@@ -2,9 +2,7 @@ import 'dart:async';
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/core/services/comments_service.dart';
-import 'package:app_vida_longa/domain/models/article_model.dart';
 import 'package:app_vida_longa/domain/models/comment_model.dart';
-import 'package:app_vida_longa/src/bloc/app_wrap_bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 

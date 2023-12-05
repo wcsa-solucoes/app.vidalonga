@@ -2,6 +2,14 @@ import "package:json_annotation/json_annotation.dart";
 
 part "user_model.g.dart";
 
+enum SubscriptionLevelEnum {
+  free("Grátis"),
+  premium("Prêmio");
+
+  final String name;
+  const SubscriptionLevelEnum(this.name);
+}
+
 @JsonSerializable()
 class UserModel {
   late String id;
@@ -11,6 +19,8 @@ class UserModel {
   late String document;
   @JsonKey(name: "photo_url")
   late String photoUrl;
+  late SubscriptionLevelEnum subscriptionLevel;
+
   UserModel({
     this.id = "",
     this.name = "",
@@ -18,6 +28,7 @@ class UserModel {
     this.phone = "",
     this.document = "",
     this.photoUrl = "",
+    this.subscriptionLevel = SubscriptionLevelEnum.free,
   });
 
   static UserModel empty() {
@@ -28,6 +39,7 @@ class UserModel {
       phone: "",
       document: "",
       photoUrl: "",
+      subscriptionLevel: SubscriptionLevelEnum.free,
     );
   }
 

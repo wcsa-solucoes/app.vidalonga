@@ -1,3 +1,5 @@
+import 'package:app_vida_longa/core/services/user_service.dart';
+import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -29,7 +31,12 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   case 1:
                     NavigationController.to("/app/navigation");
                   case 2:
-                    NavigationController.to("/app/auth/login");
+                    if (UserService.instance.status ==
+                        UserServiceStatusEnum.loggedOut) {
+                      NavigationController.to("/app/auth/login");
+                    } else {
+                      NavigationController.to("/app/profile");
+                    }
                     break;
                 }
               });
@@ -53,7 +60,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         index = 0;
       } else if (element.name.split("/").contains("navigation")) {
         index = 1;
-      } else if (element.name.split("/").contains("auth")) {
+      } else if (element.name.split("/").contains("auth") ||
+          element.name.split("/").contains("profile")) {
         index = 2;
       }
     }
