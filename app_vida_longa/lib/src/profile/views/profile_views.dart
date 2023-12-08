@@ -1,8 +1,12 @@
+import 'package:app_vida_longa/core/helpers/app_helper.dart';
+import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
+import 'package:app_vida_longa/domain/models/user_model.dart';
 import 'package:app_vida_longa/shared/widgets/button_list.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:app_vida_longa/src/profile/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +20,7 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+  final AuthBloc _authBloc = AuthBloc();
   late final ProfileBloc _profileBloc;
   final String _userEmail = UserService.instance.user.email;
   final String _userName = UserService.instance.user.name;
@@ -32,7 +37,8 @@ class _ProfileViewState extends State<ProfileView> {
       listener: (context, state) {},
       builder: (context, state) {
         return CustomAppScaffold(
-          appBar: AppBar(title: const Text("Profile")),
+          appBar: AppBar(title: const Text("Perfil")),
+          hasSafeArea: true,
           body: Builder(builder: (context) {
             return _body();
           }),
@@ -45,13 +51,39 @@ class _ProfileViewState extends State<ProfileView> {
 
   Widget _body() {
     return Column(
-      // crossAxisAlignment: CrossAxisAlignment.center,
-      // mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _userInfos(),
-        _userCard(),
-        button(), //
+        _userCard(UserService.instance.user.subscriptionLevel),
+        _userCard(SubscriptionLevelEnum.premium),
+        const SizedBox(height: 10,),
+        button("Editar perfil"), //
+        button("Informações de pagamento"), //
+        button("Alterar senha"), //
+        button("Meus favoritos"), //
+        const SizedBox(height: 10,),
+        logout(),
       ],
+    );
+  }
+
+  Widget logout(){
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.white,
+       
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(32.0),
+        ),
+      ),
+      onPressed: () {
+        _authBloc.add(AuthSignOutEvent());
+      },
+      child: const Text('Sair',  style:  TextStyle(
+          fontFamily: 'Lexend Deca',
+          color: AppColors.blackCard,
+          fontSize: 14.0,
+          fontWeight: FontWeight.w500,
+        ),),
     );
   }
 
@@ -95,7 +127,7 @@ class _ProfileViewState extends State<ProfileView> {
                     _userName,
                     style: const TextStyle(
                       fontFamily: 'Lexend Deca',
-                      color: AppColors.gray600,
+                      color: AppColors.blackCard,
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                     ),
@@ -107,7 +139,7 @@ class _ProfileViewState extends State<ProfileView> {
                       _userEmail,
                       style: const TextStyle(
                         fontFamily: 'Lexend Deca',
-                        color: AppColors.gray600,
+                        color: AppColors.blackCard,
                         fontSize: 14.0,
                         fontWeight: FontWeight.normal,
                       ),
@@ -122,7 +154,7 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget _userCard() {
+  Widget _userCard(SubscriptionLevelEnum status) {
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(10.0, 15.0, 10.0, 0.0),
       child: Row(
@@ -131,7 +163,7 @@ class _ProfileViewState extends State<ProfileView> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            width: MediaQuery.sizeOf(context).width * 0.92,
+            width: MediaQuery.sizeOf(context).width * 0.9,
             decoration: BoxDecoration(
               boxShadow: const [
                 BoxShadow(
@@ -140,14 +172,14 @@ class _ProfileViewState extends State<ProfileView> {
                   offset: Offset(0.0, 2.0),
                 )
               ],
-              gradient: const LinearGradient(
+              gradient:  LinearGradient(
                 colors: [
-                  AppColors.turquoise,
-                  Color(0xFF438EC2),
+                 status == SubscriptionLevelEnum.premium? AppColors.turquoise: AppColors.secondaryBackground,
+                  const Color(0xFF438EC2),
                 ],
-                stops: [0.0, 1.0],
-                begin: AlignmentDirectional(0.94, -1.0),
-                end: AlignmentDirectional(-0.94, 1.0),
+                stops: const [0.0, 1.0],
+                begin: const AlignmentDirectional(0.94, -1.0),
+                end: const AlignmentDirectional(-0.94, 1.0),
               ),
               borderRadius: BorderRadius.circular(8.0),
             ),
@@ -182,7 +214,7 @@ class _ProfileViewState extends State<ProfileView> {
                           _userName,
                           style: GoogleFonts.getFont(
                             'Roboto Mono',
-                            color: AppColors.gray600,
+                            color: AppColors.blackCard,
                             fontSize: 22.0,
                             fontWeight: FontWeight.w800,
                           ),
@@ -199,10 +231,10 @@ class _ProfileViewState extends State<ProfileView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        UserService.instance.user.subscriptionLevel.name,
+                        status.name,
                         style: GoogleFonts.getFont(
                           'Roboto Mono',
-                          color: const Color.fromRGBO(87, 99, 108, 1),
+                          color: AppColors.blackCard,//const Color.fromRGBO(87, 99, 108, 1),
                           fontSize: 14.0,
                           fontWeight: FontWeight.normal,
                         ),
@@ -211,7 +243,7 @@ class _ProfileViewState extends State<ProfileView> {
                         '11/24',
                         style: GoogleFonts.getFont(
                           'Roboto Mono',
-                          color: const Color.fromRGBO(87, 99, 108, 1),
+                          color: AppColors.blackCard,//const Color.fromRGBO(87, 99, 108, 1),
                           fontSize: 14.0,
                           fontWeight: FontWeight.normal,
                         ),
@@ -227,7 +259,7 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget button() {
+  Widget button(String text, {Function()? onPressed}) {
     return Material(
       color: Colors.transparent,
       elevation: 0.0,
@@ -259,7 +291,7 @@ class _ProfileViewState extends State<ProfileView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Editar perfil',
+                text,
                 style: GoogleFonts.getFont(
                   'Urbanist',
                   color: AppColors.primaryText,
@@ -277,7 +309,7 @@ class _ProfileViewState extends State<ProfileView> {
                   size: 20.0,
                 ),
                 onPressed: () {
-                  print('IconButton pressed ...');
+                  AppHelper.displayAlertInfo("Funcionalidade em breve!");
                 },
               ),
             ],

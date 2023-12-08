@@ -70,10 +70,20 @@ class _LoginViewState extends State<LoginView>
             );
           }
           return CustomAppScaffold(
-            appBar: AppBar(title: const Text("Vida longa"), centerTitle: true),
-            // hasScrollView: true,
+            appBar: AppBar(title: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                 SizedBox(
+                  height: 40,
+                  width: 70,
+                  child: Image(image: AssetImage('assets/images/AVATAR_(1).png', ), fit: BoxFit.fitWidth),),
+                Text("Vida Longa")
+              ],
+            ), centerTitle: true),
+            hasScrollView: true,
             body: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(top: 10, bottom: 100),
               child: Container(
                 padding: const EdgeInsets.only(top: 30),
                 decoration: BoxDecoration(
@@ -148,7 +158,7 @@ class _LoginViewState extends State<LoginView>
           children: [
             Text("Seja bem vindo!",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-            Text("Preencha as informações para entrar.",
+            Text("Preencha as informações para logar no aplicativo.",
                 style: TextStyle(fontSize: 16)),
           ],
         ),

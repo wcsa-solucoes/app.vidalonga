@@ -3,8 +3,8 @@ import "package:json_annotation/json_annotation.dart";
 part "user_model.g.dart";
 
 enum SubscriptionLevelEnum {
-  free("Grátis"),
-  premium("Prêmio");
+  free("GRATUITO"),
+  premium("ASSINANTE");
 
   final String name;
   const SubscriptionLevelEnum(this.name);

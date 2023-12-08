@@ -100,7 +100,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _signOut(AuthSignOutEvent event, Emitter<AuthState> emit) {
     AuthService.logout();
-    emit(AuthInitial(newUser: _user));
+    emit(AuthInitial(newUser: UserModel.empty()));
   }
 
   void _recoveryPassword(

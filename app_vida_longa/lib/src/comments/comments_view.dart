@@ -26,7 +26,7 @@ class _CommentsViewState extends State<CommentsView> {
     final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
     return CustomAppScaffold(
-      appBar: AppBar(title: const Text("Comments")),
+      appBar: AppBar(title: const Text("Comentários")),
       body: BlocBuilder<CommentsBloc, CommentsState>(
         bloc: _commentsBloc,
         builder: (context, state) {

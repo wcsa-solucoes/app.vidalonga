@@ -35,7 +35,7 @@ class _HomeViewState extends State<HomeView> {
       listener: (context, state) {},
       builder: (BuildContext context, HomeState state) {
         return CustomAppScaffold(
-          appBar: AppBar(title: const Text("Home")),
+          appBar: AppBar(title: const Text("Início")),
           body: Builder(builder: (context) {
             return state.when(
               initial: () => Container(),
