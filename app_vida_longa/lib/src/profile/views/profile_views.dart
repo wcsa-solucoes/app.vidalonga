@@ -1,5 +1,4 @@
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
-import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
@@ -271,8 +270,8 @@ class _ProfileViewState extends State<ProfileView> {
         height: 50.0,
         decoration: BoxDecoration(
           color: AppColors.secondaryBackground,
-          boxShadow: [
-            const BoxShadow(
+          boxShadow: const [
+            BoxShadow(
               blurRadius: 0.0,
               color: AppColors.lightGray,
               offset: Offset(0.0, 2.0),

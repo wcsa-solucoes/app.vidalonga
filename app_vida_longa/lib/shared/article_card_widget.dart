@@ -1,5 +1,6 @@
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
+import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:flutter/material.dart';
@@ -61,9 +62,9 @@ class ArticleCard extends StatelessWidget {
             InkWell(
               onTap: () {
                 ArticleService.setCurrentlyArticleId(article.uuid);
-                NavigationController.push("/app/home/article", arguments: {
-                  "articleId": article.uuid,
-                });
+                var path2 = routes.app.home.article.path;
+                NavigationController.push(path2,
+                    arguments: {"articleId": article.uuid, "article": article});
               },
               child: Container(
                 height: 190,
@@ -74,7 +75,7 @@ class ArticleCard extends StatelessWidget {
                     ),
                     color: AppColors.white,
                     image: DecorationImage(
-                        image: NetworkImage(url), fit: BoxFit.fill)),
+                        image: NetworkImage(article.image), fit: BoxFit.fill)),
                 width: MediaQuery.of(context).size.width,
               ),
             ),

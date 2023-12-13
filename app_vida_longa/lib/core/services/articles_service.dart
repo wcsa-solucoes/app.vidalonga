@@ -28,6 +28,8 @@ class ArticleService {
     _currentlyArticleId = value;
   }
 
+  
+
   final ArticlesRepository _repository = ArticlesRepository();
 
   final List<ArticleModel> _articles = <ArticleModel>[];
