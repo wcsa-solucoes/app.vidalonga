@@ -9,13 +9,9 @@ import 'package:google_fonts/google_fonts.dart';
 class ArticleCard extends StatelessWidget {
   const ArticleCard({
     super.key,
-    required this.context,
-    required this.url,
     required this.article,
   });
 
-  final BuildContext context;
-  final String url;
   final ArticleModel article;
 
   @override

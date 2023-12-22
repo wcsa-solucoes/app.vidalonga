@@ -1,5 +1,5 @@
 import 'package:app_vida_longa/src/profile/bloc/profile_bloc.dart';
-import 'package:app_vida_longa/src/profile/views/profile_views.dart';
+import 'package:app_vida_longa/src/profile/views/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';

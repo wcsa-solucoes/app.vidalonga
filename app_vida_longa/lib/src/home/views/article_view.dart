@@ -57,33 +57,15 @@ class _ArticleViewState extends State<ArticleView> {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-      appBar: AppBar(title: const Text("Artigo")),
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text("Artigo"),
+      ),
       hasScrollView: true,
       body: Column(
         children: widgets,
       ),
       bottomNavigationBar: optionsBottomBar(),
-      // child: ListView.builder(
-      //   itemCount: widget.article.contents.length,
-      //   itemBuilder: (context, index) {
-      //     final item = widget.article.contents[index];
-
-      //     if (item.type == "text") {
-      //       return StreamBuilder<double>(
-      //         initialData: fontSize,
-      //         stream: _streamControllerFontSize.stream,
-      //         builder: ((context, snapshot) {
-      //           return Html(style: {
-      //             "body": Style(fontSize: FontSize(snapshot.data!))
-      //           }, data: item.content);
-      //         }),
-      //       );
-      //     }
-      //     return Html(extensions: const [
-      //       IframeHtmlExtension(),
-      //     ], data: item.content);
-      //   },
-      // ),
     );
   }
 

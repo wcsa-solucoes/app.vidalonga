@@ -15,7 +15,7 @@ class _NavigationViewState extends State<NavigationView> {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-        appBar: AppBar(title: const Text("Navegação")),
+        appBar: AppBar(centerTitle: true, title: const Text("Navegação")),
         bottomNavigationBar: const CustomBottomNavigationBar(),
         body: Builder(builder: (context) {
           var isNotEmpty2 = UserService.instance.user.name.isNotEmpty;

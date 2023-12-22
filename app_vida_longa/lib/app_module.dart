@@ -1,5 +1,6 @@
 import 'package:app_vida_longa/app_wrap_view.dart';
 import 'package:app_vida_longa/src/auth/auth_module.dart';
+import 'package:app_vida_longa/src/categories/categories_module.dart';
 import 'package:app_vida_longa/src/home/home_module.dart';
 import 'package:app_vida_longa/src/navigation/navigation_module.dart';
 import 'package:app_vida_longa/src/profile/profile_module.dart';
@@ -16,6 +17,7 @@ class AppModule extends Module {
       ModuleRoute("/navigation", module: NavigationModule()),
       ModuleRoute("/home", module: HomeModule()),
       ModuleRoute("/profile", module: ProfileModule()),
+      ModuleRoute("/categories", module: CategoriesModule()),
     ]);
   }
 }

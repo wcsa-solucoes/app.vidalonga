@@ -21,7 +21,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       builder: (context, snapshot) {
         return BottomNavigationBar(
             currentIndex: handleIndex(snapshot.data!),
+            unselectedItemColor: Colors.grey,
             selectedItemColor: Colors.orange,
+            unselectedLabelStyle: TextStyle(color: Colors.grey),
+            selectedLabelStyle: TextStyle(color: Colors.orange),
+            showUnselectedLabels: true,
             onTap: (value) {
               setState(() {
                 switch (value) {
@@ -38,6 +42,9 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                       NavigationController.to("/app/profile");
                     }
                     break;
+                  case 3:
+                    NavigationController.to("/app/categories/");
+                    break;
                 }
               });
             },
@@ -48,6 +55,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   icon: Icon(Icons.navigation), label: "Navigation"),
               BottomNavigationBarItem(
                   icon: Icon(Icons.account_circle_rounded), label: "Conta"),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.category_rounded), label: "Categorias"),
             ]);
       },
     );
@@ -63,6 +72,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       } else if (element.name.split("/").contains("auth") ||
           element.name.split("/").contains("profile")) {
         index = 2;
+      } else if (element.name.split("/").contains("categories")) {
+        index = 3;
       }
     }
 

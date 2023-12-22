@@ -17,18 +17,16 @@ class ArticleService {
   static String _currentlyArticleId = "";
   static String get currentlyArticleId => _currentlyArticleId;
 
-  static void init() async {
+  static Future<void> init() async {
     if (!_hasInit) {
       _hasInit = true;
-      instance._init();
+      await instance._init();
     }
   }
 
   static void setCurrentlyArticleId(String value) {
     _currentlyArticleId = value;
   }
-
-  
 
   final ArticlesRepository _repository = ArticlesRepository();
 
@@ -39,8 +37,8 @@ class ArticleService {
   List<List<ArticleModel>> get articlesByCategories =>
       _instance._articlesByCategories;
 
-  void _init() {
-    unawaited(getAll());
+  Future<void> _init() async {
+    await getAll();
   }
 
   Future<Tuple2<ResponseStatusModel, List<ArticleModel>>> getAll() async {

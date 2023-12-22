@@ -13,12 +13,8 @@ class HomeModule extends Module {
   @override
   void routes(r) {
     r.child("/", child: (context) => const HomePage());
-    r.child('/article', 
-    child: (context) {
-      var args = r.args;
-      var articleView = ArticleView(article: args.data["article"]);
-      return articleView;
-    });
+    r.child('/article',
+        child: (context) => ArticleView(article: r.args.data["article"]));
     r.module("/comments", module: CommentsModule());
   }
 }

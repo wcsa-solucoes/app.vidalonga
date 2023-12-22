@@ -19,9 +19,6 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   late final HomeBloc _homeBloc;
-  final url =
-      'https://www.selecoes.com.br/media/_versions/legacy/f/f/29c14d1e8e6937dd549d3cbf3fc86b1ac12b956e_widemd.jpg';
-
   @override
   void initState() {
     _homeBloc = Modular.get<HomeBloc>();
@@ -35,7 +32,14 @@ class _HomeViewState extends State<HomeView> {
       listener: (context, state) {},
       builder: (BuildContext context, HomeState state) {
         return CustomAppScaffold(
-          appBar: AppBar(title: const Text("Início")),
+          appBar: AppBar(
+              centerTitle: true,
+              title: const Text(
+                "Início",
+                // style: TextStyle(
+                //   fontFamily: 'Urbanist',
+                // ),
+              )),
           body: Builder(builder: (context) {
             return state.when(
               initial: () => Container(),
@@ -172,6 +176,18 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ),
+              // Row(
+              //   children: categoryArticles.first.subCategories.map((e) {
+              //     return Padding(
+              //       padding: const EdgeInsets.all(8.0),
+              //       child: IconChoiceChip(
+              //         isSelected: false,
+              //         label: e.name,
+              //         onSelected: (bool selected) {},
+              //       ),
+              //     );
+              //   }).toList(),
+              // ),
               Container(
                 color: AppColors.white,
                 height: 250,
@@ -182,10 +198,9 @@ class _HomeViewState extends State<HomeView> {
                   itemBuilder: (BuildContext context, int articleIndex) {
                     final article = categoryArticles[articleIndex];
                     return Padding(
-                      padding:
-                          const EdgeInsets.only(left: 15, top: 0, bottom: 0),
-                      child: ArticleCard(
-                          context: context, url: url, article: article),
+                      padding: const EdgeInsets.only(
+                          left: 10, top: 0, bottom: 0, right: 15),
+                      child: ArticleCard(article: article),
                     );
                   },
                 ),

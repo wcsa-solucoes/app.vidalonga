@@ -1,6 +1,7 @@
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/core/services/auth_service.dart';
+import 'package:app_vida_longa/core/services/categories_service.dart';
 import 'package:app_vida_longa/main_module.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 
 void main() async {
@@ -32,7 +34,8 @@ void startControllers() {
 
 void startServices() async {
   AuthService.init();
-  ArticleService.init();
+  await ArticleService.init();
+  CategoriesService.init();
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }
