@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:app_vida_longa/core/services/user_service.dart';
+import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
@@ -71,21 +73,33 @@ class _ArticleViewState extends State<ArticleView> {
 
   Widget optionsBottomBar() {
     return BottomAppBar(
-      height: 50,
+      clipBehavior: Clip.antiAlias,
+      height: 60,
+      shape: const CircularNotchedRectangle(),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           IconButton(
               onPressed: () {
                 NavigationController.push("/app/home/comments");
               },
-              icon: const Icon(Icons.comment_rounded)),
+              icon: const Icon(
+                Icons.comment_rounded,
+                size: 30,
+              )),
           IconButton(
-            icon: const Icon(Icons.zoom_out),
+            icon: const Icon(
+              Icons.zoom_out,
+              size: 30,
+            ),
             onPressed: () => _handleFontSize(-2),
           ),
           IconButton(
-            icon: const Icon(Icons.zoom_in),
+            icon: const Icon(
+              Icons.zoom_in,
+              size: 30,
+            ),
             onPressed: () => _handleFontSize(2),
           ),
         ],

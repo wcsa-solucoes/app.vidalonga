@@ -54,6 +54,7 @@ dependencies:
   webview_flutter_platform_interface: ^2.6.0
   meta: ^1.9.1
   uuid: ^3.0.4
+  qr_flutter: ^4.1.0
 
 
 dev_dependencies:

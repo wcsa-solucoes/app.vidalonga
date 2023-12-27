@@ -1,4 +1,5 @@
 import 'package:app_vida_longa/core/services/user_service.dart';
+import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/src/comments/bloc/comments_bloc.dart';
 import 'package:flutter/material.dart';
@@ -91,25 +92,41 @@ class _CommentsViewState extends State<CommentsView> {
                   reverse: true,
                   scrollDirection: Axis.vertical,
                   child: TextField(
+                    //disabled
+                    enabled: !(UserService.instance.status ==
+                        UserServiceStatusEnum.loggedOut),
                     controller: _commentController,
                     keyboardType: TextInputType.multiline,
                     maxLines: null, // Permite um número ilimitado de linhas
                     minLines: 1, // Mínimo de uma linha
-                    decoration: const InputDecoration(
-                      hintText: "Adicione um comentário.",
+                    decoration: InputDecoration(
+                      hintText: UserService.instance.status ==
+                              UserServiceStatusEnum.loggedOut
+                          ? "Logue para poder comentar."
+                          : "Adicione um comentário.",
                       border: InputBorder.none,
                     ),
                   ),
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.send),
-                onPressed: () {
-                  _commentsBloc
-                      .add(CreateCommentEvent(_commentController.text));
-                  _commentController.clear();
-                  FocusScope.of(context).unfocus();
-                },
+              Opacity(
+                opacity: UserService.instance.status ==
+                        UserServiceStatusEnum.loggedOut
+                    ? 0.5
+                    : 1,
+                child: AbsorbPointer(
+                  absorbing: UserService.instance.status ==
+                      UserServiceStatusEnum.loggedOut,
+                  child: IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: () {
+                      _commentsBloc
+                          .add(CreateCommentEvent(_commentController.text));
+                      _commentController.clear();
+                      FocusScope.of(context).unfocus();
+                    },
+                  ),
+                ),
               ),
             ],
           ),

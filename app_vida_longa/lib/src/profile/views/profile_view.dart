@@ -1,3 +1,4 @@
+import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
@@ -9,6 +10,8 @@ import 'package:app_vida_longa/src/profile/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -59,10 +62,34 @@ class _ProfileViewState extends State<ProfileView> {
         const SizedBox(
           height: 10,
         ),
-        const OpenPageButtonWiget("Editar perfil"), //
-        const OpenPageButtonWiget("Informações de pagamento"), //
-        const OpenPageButtonWiget("Alterar senha"), //
-        const OpenPageButtonWiget("Meus favoritos"), //
+        QrImageView(
+          //convert para dd/MM/yyyy
+          data:
+              "Gerado em ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}",
+
+          version: QrVersions.auto,
+          size: 200.0,
+        ),
+        OpenPageButtonWiget(
+          "Editar perfil",
+          onPressed: () =>
+              AppHelper.displayAlertInfo("Funcionalidade em breve!"),
+        ), //
+        OpenPageButtonWiget(
+          "Informações de pagamento",
+          onPressed: () =>
+              AppHelper.displayAlertInfo("Funcionalidade em breve!"),
+        ), //
+        OpenPageButtonWiget(
+          "Alterar senha",
+          onPressed: () =>
+              AppHelper.displayAlertInfo("Funcionalidade em breve!"),
+        ), //
+        OpenPageButtonWiget(
+          "Meus favoritos",
+          onPressed: () =>
+              AppHelper.displayAlertInfo("Funcionalidade em breve!"),
+        ), //
         const SizedBox(
           height: 10,
         ),
@@ -181,10 +208,10 @@ class _ProfileViewState extends State<ProfileView> {
               ],
               gradient: LinearGradient(
                 colors: [
+                  Colors.white,
                   status == SubscriptionLevelEnum.premium
                       ? AppColors.turquoise
-                      : AppColors.secondaryBackground,
-                  const Color(0xFF438EC2),
+                      : Colors.orange,
                 ],
                 stops: const [0.0, 1.0],
                 begin: const AlignmentDirectional(0.94, -1.0),
@@ -250,7 +277,8 @@ class _ProfileViewState extends State<ProfileView> {
                         ),
                       ),
                       Text(
-                        '11/24',
+                        DateFormat('dd/MM/yy')
+                            .format(DateTime.now().add(Duration(days: 30))),
                         style: GoogleFonts.getFont(
                           'Roboto Mono',
                           color: AppColors

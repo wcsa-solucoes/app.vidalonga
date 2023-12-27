@@ -34,21 +34,21 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
   FutureOr<void> createComment(
       CreateCommentEvent event, Emitter<CommentsState> emit) async {
     await _service.createComment(event.comment);
-    AppHelper.displayAlertError("Comentário criado com sucesso!");
+    AppHelper.displayAlertSuccess("Comentário criado com sucesso!");
     emit(CommentsLoadedState(_service.articles));
   }
 
   FutureOr<void> deleteComment(
       DeleteCommentEvent event, Emitter<CommentsState> emit) async {
     await _service.deleteComment(event.comment);
-    AppHelper.displayAlertError("Comentário deletado com sucesso!");
+    AppHelper.displayAlertSuccess("Comentário deletado com sucesso!");
     emit(CommentsLoadedState(_service.articles));
   }
 
   FutureOr<void> updateComment(
       UpdateCommentEvent event, Emitter<CommentsState> emit) async {
     await _service.updateComment(event.comment);
-    AppHelper.displayAlertError("Comentário atualizado com sucesso!");
+    AppHelper.displayAlertSuccess("Comentário atualizado com sucesso!");
     emit(CommentsLoadedState(_service.articles));
   }
 }

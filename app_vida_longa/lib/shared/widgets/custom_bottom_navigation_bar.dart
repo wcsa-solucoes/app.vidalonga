@@ -56,7 +56,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               BottomNavigationBarItem(
                   icon: Icon(Icons.account_circle_rounded), label: "Conta"),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.category_rounded), label: "Categorias"),
+                  icon: Icon(Icons.list), label: "Categorias"),
             ]);
       },
     );
