@@ -21,7 +21,7 @@ class _ArticlesViewState extends State<ArticlesView> {
         body: Column(
           children: [
             Text("Artigos", style: Theme.of(context).textTheme.displaySmall),
-            Container(
+            SizedBox(
               // color: Colors.amber,
               width: MediaQuery.sizeOf(context).width,
               height: MediaQuery.sizeOf(context).height * 0.9,
@@ -32,7 +32,7 @@ class _ArticlesViewState extends State<ArticlesView> {
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 10.0),
-                    child: Container(
+                    child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.8,
                       height: MediaQuery.of(context).size.height * 0.3,
                       child:

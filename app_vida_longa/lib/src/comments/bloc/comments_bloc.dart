@@ -3,9 +3,8 @@ import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/core/services/comments_service.dart';
 import 'package:app_vida_longa/domain/models/comment_model.dart';
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
-
 part 'comments_event.dart';
 part 'comments_state.dart';
 

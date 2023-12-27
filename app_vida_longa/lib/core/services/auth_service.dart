@@ -94,7 +94,9 @@ class AuthService {
       //     LocalStorageConstants.kKeyUserSettings,
       //     LocalStorageConstants.favoriteCity,
       //     AppConstants.kNotAvailable);
-    } catch (error) {}
+    } catch (error) {
+      throw Exception(error);
+    }
   }
 
   void _authStatusListener() {

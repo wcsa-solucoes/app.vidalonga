@@ -23,7 +23,7 @@ class IconChoiceChip extends StatefulWidget {
   });
 
   @override
-  _IconChoiceChipState createState() => _IconChoiceChipState();
+  State<IconChoiceChip> createState() => _IconChoiceChipState();
 }
 
 class _IconChoiceChipState extends State<IconChoiceChip> {

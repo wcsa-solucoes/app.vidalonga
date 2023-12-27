@@ -277,8 +277,8 @@ class _ProfileViewState extends State<ProfileView> {
                         ),
                       ),
                       Text(
-                        DateFormat('dd/MM/yy')
-                            .format(DateTime.now().add(Duration(days: 30))),
+                        DateFormat('dd/MM/yy').format(
+                            DateTime.now().add(const Duration(days: 30))),
                         style: GoogleFonts.getFont(
                           'Roboto Mono',
                           color: AppColors

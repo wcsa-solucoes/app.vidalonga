@@ -127,7 +127,11 @@ class _ButtonListState extends State<ButtonList> {
       width: widget.buttonSize,
       height: widget.buttonSize,
       child: Theme(
-        data: Theme.of(context).copyWith(useMaterial3: true),
+        data: Theme.of(context).copyWith(
+          buttonTheme: ButtonTheme.of(context).copyWith(
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+        ),
         child: IgnorePointer(
           ignoring: (widget.showLoadingIndicator && loading),
           child: IconButton(

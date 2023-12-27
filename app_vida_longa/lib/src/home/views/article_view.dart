@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:app_vida_longa/core/services/user_service.dart';
-import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';

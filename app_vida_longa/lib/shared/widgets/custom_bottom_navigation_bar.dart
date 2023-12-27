@@ -23,8 +23,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             currentIndex: handleIndex(snapshot.data!),
             unselectedItemColor: Colors.grey,
             selectedItemColor: Colors.orange,
-            unselectedLabelStyle: TextStyle(color: Colors.grey),
-            selectedLabelStyle: TextStyle(color: Colors.orange),
+            unselectedLabelStyle: const TextStyle(color: Colors.grey),
+            selectedLabelStyle: const TextStyle(color: Colors.orange),
             showUnselectedLabels: true,
             onTap: (value) {
               setState(() {
