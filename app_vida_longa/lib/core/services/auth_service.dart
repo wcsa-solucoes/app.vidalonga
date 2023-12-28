@@ -114,6 +114,41 @@ class AuthService {
     NavigationController.to("/app/auth/login");
   }
 
+  Future<bool> changePassword(String password) async {
+    final User? user = _auth.currentUser;
+
+    if (user == null) {
+      return false;
+    }
+    try {
+      await user.updatePassword(password);
+      NotificationController.alert(
+          response: ResponseStatusModel(
+              status: ResponseStatusEnum.success,
+              message: "Senha alterada com sucesso!"));
+      return true;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        NotificationController.alert(
+            response: ResponseStatusModel(
+                status: ResponseStatusEnum.error,
+                message: "Senha muito fraca."));
+      } else if (e.code == 'requires-recent-login') {
+        NotificationController.alert(
+            response: ResponseStatusModel(
+                status: ResponseStatusEnum.error,
+                message: "Faça login novamente para alterar a senha."));
+      }
+    } catch (e) {
+      NotificationController.alert(
+          response: ResponseStatusModel(
+              status: ResponseStatusEnum.error,
+              message: "Não foi possível alterar a senha."));
+    }
+
+    return false;
+  }
+
   void _init() {
     _authStatusListener();
     _handleUser();

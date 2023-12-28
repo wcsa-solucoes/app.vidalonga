@@ -11,7 +11,7 @@ const routes = (
         comments: (path: "/app/home/article/comments"),
       ),
     ),
-    profile: (path: "/profile"),
+    profile: (path: "/app/profile", edit: (path: "/app/profile/edit")),
     categories: (
       path: "/app/categories",
       subCategories: (

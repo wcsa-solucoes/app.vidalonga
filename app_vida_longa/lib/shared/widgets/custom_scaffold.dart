@@ -29,7 +29,7 @@ class CustomAppScaffold extends StatefulWidget {
     this.hasScrollView = true,
     this.hasSafeArea = true,
     this.contentPadding =
-        const EdgeInsets.symmetric(horizontal: 5, vertical: 16),
+        const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
     super.key,
     this.defaultBottomBar = true,
   });
