@@ -40,6 +40,11 @@ class UserService {
     }
   }
 
+  Future<void> uploadPhoto(String url) async {
+    _user.photoUrl = url;
+    _userRepository.update(_user);
+  }
+
   void handleUserLogout() {
     _user = UserModel();
 

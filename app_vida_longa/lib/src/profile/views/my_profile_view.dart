@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/services/auth_service.dart';
+import 'package:app_vida_longa/core/services/service_files.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +20,17 @@ class _MyProfileViewState extends State<MyProfileView> {
   TextEditingController confirmPassword = TextEditingController();
   bool isLoading = false;
 
+  final IFilesService _filesService = FilesService();
+
+  File? image;
+
+  Future pickImage() async {
+    final image = await _filesService.pickFromGallery();
+    if (image == null) return;
+    final imageTemp = File(image.path);
+    setState(() => this.image = imageTemp);
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
@@ -28,15 +42,42 @@ class _MyProfileViewState extends State<MyProfileView> {
           children: [
             CircleAvatar(
               radius: 50,
-              child: UserService.instance.user.photoUrl.isEmpty
+              backgroundImage: image != null
+                  ? FileImage(image!)
+                  : UserService.instance.user.photoUrl.isNotEmpty
+                      ? NetworkImage(UserService.instance.user.photoUrl)
+                          as ImageProvider
+                      : null,
+              child: image == null && UserService.instance.user.photoUrl.isEmpty
                   ? const Icon(
                       Icons.person,
                       size: 40,
                     )
-                  : Image.network(UserService.instance.user.photoUrl),
+                  : null,
             ),
+            image == null
+                ? TextButton(
+                    onPressed: () async {
+                      pickImage();
+                    },
+                    child: const Text("Alterar foto"))
+                : TextButton(
+                    child: const Text("Salvar foto"),
+                    onPressed: () async {
+                      final value = await _filesService.uploadFile(image!);
+
+                      if (value) {
+                        setState(() {
+                          image = null;
+                        });
+                      }
+                    },
+                  ),
             Text(UserService.instance.user.name),
             Text(UserService.instance.user.email),
+            const SizedBox(
+              height: 50,
+            ),
             const Text("Trocar senha"),
             TextField(
               controller: password,
@@ -52,7 +93,7 @@ class _MyProfileViewState extends State<MyProfileView> {
                 labelText: "Confirmar Senha",
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
             isLoading
