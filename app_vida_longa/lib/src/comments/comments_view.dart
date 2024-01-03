@@ -1,6 +1,8 @@
 import 'package:app_vida_longa/core/services/user_service.dart';
+import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/src/comments/bloc/comments_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,7 +29,21 @@ class _CommentsViewState extends State<CommentsView> {
     final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
     return CustomAppScaffold(
-      appBar: AppBar(title: const Text("Comentários")),
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: AppColors.white,
+        title: const DefaultText(
+          "Comentários",
+          fontSize: 20,
+          fontWeight: FontWeight.w300,
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: BlocBuilder<CommentsBloc, CommentsState>(
         bloc: _commentsBloc,
         builder: (context, state) {
@@ -41,7 +57,7 @@ class _CommentsViewState extends State<CommentsView> {
               child: Column(
                 children: [
                   state.comments.isEmpty
-                      ? const Text("No comments")
+                      ? const DefaultText("Não há comentários nesse artigo!")
                       : ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),

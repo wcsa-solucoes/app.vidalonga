@@ -2,7 +2,10 @@
 const routes = (
   app: (
     path: "/app",
-    auth: (path: "/app/auth"),
+    auth: (
+      path: "/app/auth",
+      login: (path: "/app/auth/login"),
+    ),
     navigation: (path: "/navigation"),
     home: (
       path: "/app/home",

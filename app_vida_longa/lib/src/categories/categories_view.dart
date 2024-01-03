@@ -1,7 +1,9 @@
 import 'package:app_vida_longa/core/services/categories_service.dart';
+import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/shared/widgets/open_button_page.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:flutter/material.dart';
@@ -20,13 +22,11 @@ class _CategoriesViewState extends State<CategoriesView> {
       hasScrollView: true,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
+        backgroundColor: AppColors.white,
+        title: DefaultText(
           "Categorias",
-          // style: TextStyle(
-          //   color: Colors.black,
-          //   fontFamily: 'Urbanist',
-          //   fontWeight: FontWeight.bold,
-          // ),
+          fontSize: 20,
+          fontWeight: FontWeight.w300,
         ),
       ),
       body: SizedBox(

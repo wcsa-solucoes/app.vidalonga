@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/helpers/field_format_helper.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
+import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/custom_exceptions_codes_enum.dart';
 import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
@@ -169,7 +170,7 @@ class UserService {
 
   void initUser() {
     _userRepository.updateListener();
-    NavigationController.to("/app/navigation");
+    NavigationController.to(routes.app.profile.path);
 
     //init others services
   }

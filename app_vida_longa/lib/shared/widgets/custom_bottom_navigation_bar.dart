@@ -1,5 +1,6 @@
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
+import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:flutter/material.dart';
@@ -32,20 +33,18 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               setState(() {
                 switch (value) {
                   case 0:
-                    NavigationController.to("/app/home");
+                    NavigationController.to(routes.app.home.path);
                     break;
                   case 1:
-                    NavigationController.to("/app/navigation");
+                    NavigationController.to(routes.app.categories.path);
+                    break;
                   case 2:
                     if (UserService.instance.status ==
                         UserServiceStatusEnum.loggedOut) {
-                      NavigationController.to("/app/auth/login");
+                      NavigationController.to(routes.app.auth.login.path);
                     } else {
-                      NavigationController.to("/app/profile");
+                      NavigationController.to(routes.app.profile.path);
                     }
-                    break;
-                  case 3:
-                    NavigationController.to("/app/categories/");
                     break;
                 }
               });
@@ -54,15 +53,13 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               BottomNavigationBarItem(
                   icon: Icon(Icons.favorite), label: "Início"),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.navigation), label: "Navigation"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.account_circle_rounded), label: "Conta"),
-              BottomNavigationBarItem(
                   icon: FaIcon(
                     FontAwesomeIcons.layerGroup,
                     size: 20,
                   ),
                   label: "Categorias"),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.account_circle_rounded), label: "Conta"),
             ]);
       },
     );
@@ -73,13 +70,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     for (final element in Modular.to.navigateHistory) {
       if (element.name.split("/").contains("home")) {
         index = 0;
-      } else if (element.name.split("/").contains("navigation")) {
+      } else if (element.name.split("/").contains("categories")) {
         index = 1;
       } else if (element.name.split("/").contains("auth") ||
           element.name.split("/").contains("profile")) {
         index = 2;
-      } else if (element.name.split("/").contains("categories")) {
-        index = 3;
       }
     }
 

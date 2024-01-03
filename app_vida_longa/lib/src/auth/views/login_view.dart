@@ -72,24 +72,7 @@ class _LoginViewState extends State<LoginView>
             );
           }
           return CustomAppScaffold(
-            appBar: AppBar(
-                title: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 40,
-                      width: 70,
-                      child: Image(
-                          image: AssetImage(
-                            'assets/images/AVATAR_(1).png',
-                          ),
-                          fit: BoxFit.fitWidth),
-                    ),
-                    Text("Vida Longa")
-                  ],
-                ),
-                centerTitle: true),
+            isWithAppBar: false,
             hasScrollView: true,
             body: Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 100),

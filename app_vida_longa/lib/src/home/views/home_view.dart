@@ -4,6 +4,7 @@ import 'package:app_vida_longa/shared/article_card_widget.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_chip.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/src/home/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,13 +34,14 @@ class _HomeViewState extends State<HomeView> {
       builder: (BuildContext context, HomeState state) {
         return CustomAppScaffold(
           appBar: AppBar(
-              centerTitle: true,
-              title: const Text(
-                "Início",
-                // style: TextStyle(
-                //   fontFamily: 'Urbanist',
-                // ),
-              )),
+            centerTitle: true,
+            backgroundColor: AppColors.white,
+            title: const DefaultText(
+              "Início",
+              fontSize: 20,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
           body: Builder(builder: (context) {
             return state.when(
               initial: () => Container(),

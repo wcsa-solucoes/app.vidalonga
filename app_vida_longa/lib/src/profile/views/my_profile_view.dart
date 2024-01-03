@@ -41,7 +41,19 @@ class _MyProfileViewState extends State<MyProfileView> {
   Widget build(BuildContext context) {
     return CustomAppScaffold(
         appBar: AppBar(
-          title: const Text('Meu Perfil'),
+          centerTitle: true,
+          backgroundColor: AppColors.white,
+          title: const DefaultText(
+            "Meu Perfil",
+            fontSize: 20,
+            fontWeight: FontWeight.w300,
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
         hasScrollView: true,
         body: Column(

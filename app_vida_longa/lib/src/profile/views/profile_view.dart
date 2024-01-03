@@ -5,6 +5,7 @@ import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/shared/widgets/open_button_page.dart';
 import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
@@ -41,7 +42,13 @@ class _ProfileViewState extends State<ProfileView> {
         return CustomAppScaffold(
           appBar: AppBar(
             centerTitle: true,
-            title: const Text("Perfil"),
+            backgroundColor: AppColors.white,
+            title: DefaultText(
+              "Perfil",
+              fontSize: 20,
+              fontWeight: FontWeight.w300,
+            ),
+            //back button syle
           ),
           hasSafeArea: true,
           body: Builder(builder: (context) {

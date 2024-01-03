@@ -7,6 +7,7 @@ class CustomAppScaffold extends StatefulWidget {
   final Widget? floatingActionButton;
   final FloatingActionButtonLocation? floatingActionButtonLocation;
   final PreferredSizeWidget? appBar;
+  final bool isWithAppBar;
   final Future<bool> Function()? onBack;
   final Color backgroundColor;
   final bool extendBodyBehindAppBar;
@@ -32,6 +33,7 @@ class CustomAppScaffold extends StatefulWidget {
         const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
     super.key,
     this.defaultBottomBar = true,
+    this.isWithAppBar = true,
   });
 
   @override
@@ -73,19 +75,22 @@ class _CustomAppScaffoldState extends State<CustomAppScaffold> {
                     ),
             ),
           ),
-          appBar: AppBar(
-            // toolbarHeight: 80,
-            backgroundColor: AppColors.unselectedTextStyleColor,
-            title: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-              ),
-              child: Image.asset(
-                'assets/images/LOGO_VIDA_HORIZ_white-2048x370.png',
-              ),
-            ),
-            // Você também pode usar Image.network() se estiver usando uma imagem da internet
-          ),
+          appBar: widget.isWithAppBar
+              ? widget.appBar ??
+                  AppBar(
+                    // toolbarHeight: 80,
+                    backgroundColor: AppColors.unselectedTextStyleColor,
+                    title: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                      child: Image.asset(
+                        'assets/images/LOGO_VIDA_HORIZ_white-2048x370.png',
+                      ),
+                    ),
+                    // Você também pode usar Image.network() se estiver usando uma imagem da internet
+                  )
+              : null,
           // bottomNavigationBar: widget.defaultBottomBar
           //   ? const CustomBottomNavigationBar()
           //   : ColoredBox(
