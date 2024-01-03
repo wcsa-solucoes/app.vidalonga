@@ -4,7 +4,6 @@ import 'package:app_vida_longa/domain/models/sub_category_model.dart';
 
 class ArticleModel {
   late String title = "";
-  // late String comment = "";
   late String category = "";
   late SubscriptionTypeEnum subscriptionType;
   late String uuid = "";
@@ -14,7 +13,6 @@ class ArticleModel {
 
   ArticleModel({
     this.title = "",
-    // this.comment = "",
     this.category = "",
     this.subscriptionType = SubscriptionTypeEnum.free,
     this.uuid = '',

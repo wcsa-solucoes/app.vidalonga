@@ -1,5 +1,8 @@
 import 'package:app_vida_longa/core/services/articles_service.dart';
+import 'package:app_vida_longa/domain/models/article_model.dart';
 import 'package:app_vida_longa/domain/models/category_model.dart';
+import 'package:collection/collection.dart';
+import 'package:app_vida_longa/domain/models/sub_category_model.dart';
 
 class CategoriesService {
   CategoriesService._ineternal();
@@ -30,40 +33,46 @@ class CategoriesService {
     _instance._selectedCategory = value;
   }
 
-  // void _init() async {
-  //   //popule categories em funcao dos artigos
-  //   for (var article in _articleService.articles) {
-  //     if (!_categories.any((category) => category.name == article.category)) {
-  //       _categories.add(CategoryModel(
-  //           name: article.category,
-  //           image: "",
-  //           subCategories: article.subCategories));
-  //     }
-
-  //     // for (var subCategory in article.subCategories) {
-  //     //   if (!_categories.any((category) => category.name == subCategory.name)) {
-  //     //     _categories.add(CategoryModel(name: subCategory.name, image: "", subCategories: ));
-  //     //   }
-  //     // }
-  //   }
-  // }
   void _init() async {
-    // populate categories based on the articles
+    Map<String, Set<ArticleModel>> subCategoryArticlesMap = {};
+
     for (var article in _articleService.articles) {
-      if (!_categories.any((category) => category.name == article.category)) {
-        _categories.add(CategoryModel(
-            name: article.category,
-            image: "",
-            subCategories: article.subCategories));
-      }
       for (var subCategory in article.subCategories) {
-        if (!_categories.any((category) => category.name == subCategory.name)) {
-          subCategory.articles = _articleService.articles
-              .where((article) => article.subCategories.contains(subCategory))
-              .toList();
+        String key = '${article.category}|${subCategory.name}';
+        subCategoryArticlesMap
+            .putIfAbsent(key, () => <ArticleModel>{})
+            .add(article);
+      }
+    }
+
+    for (var key in subCategoryArticlesMap.keys) {
+      var parts = key.split('|');
+      var categoryName = parts[0];
+      var subCategoryName = parts[1];
+
+      var category = _categories.firstWhereOrNull(
+        (c) => c.name == categoryName,
+      );
+      if (category == null) {
+        category =
+            CategoryModel(name: categoryName, image: "", subCategories: []);
+        _categories.add(category);
+      }
+
+      var subCategory = category.subCategories.firstWhereOrNull(
+        (sc) => sc.name == subCategoryName,
+      );
+      if (subCategory == null) {
+        subCategory = SubCategoryModel(name: subCategoryName, articles: []);
+        category.subCategories.add(subCategory);
+      }
+
+      var articlesToAdd = subCategoryArticlesMap[key]!;
+      for (var article in articlesToAdd) {
+        if (!subCategory.articles!.any((a) => a.uuid == article.uuid)) {
+          subCategory.articles!.add(article);
         }
       }
     }
-    _categories.length;
   }
 }

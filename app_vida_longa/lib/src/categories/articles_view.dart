@@ -28,15 +28,15 @@ class _ArticlesViewState extends State<ArticlesView> {
               child: ListView.builder(
                 padding: const EdgeInsets.only(
                     bottom: 100, left: 8, right: 8, top: 20),
-                itemCount: 3, //widget.subCategory.articles?.length ?? 0,
+                itemCount: widget.subCategory.articles?.length ?? 0,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.8,
                       height: MediaQuery.of(context).size.height * 0.3,
-                      child:
-                          ArticleCard(article: widget.subCategory.articles![0]),
+                      child: ArticleCard(
+                          article: widget.subCategory.articles![index]),
                     ),
                   );
                 },
