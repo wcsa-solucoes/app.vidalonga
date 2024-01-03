@@ -1,4 +1,4 @@
-package com.example.app_vida_longa
+package com.appvidalonga.dev
 
 import io.flutter.embedding.android.FlutterActivity
 

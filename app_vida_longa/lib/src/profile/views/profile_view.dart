@@ -192,14 +192,13 @@ class _ProfileViewState extends State<ProfileView> {
 
   Widget _userCard(SubscriptionLevelEnum status) {
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(10.0, 15.0, 10.0, 0.0),
+      padding: const EdgeInsets.all(8),
       child: Row(
-        mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            width: MediaQuery.sizeOf(context).width * 0.9,
+            width: MediaQuery.sizeOf(context).width * 0.88,
             decoration: BoxDecoration(
               boxShadow: const [
                 BoxShadow(

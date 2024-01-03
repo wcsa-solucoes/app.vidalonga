@@ -15,9 +15,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  String mode = const String.fromEnvironment("MODE", defaultValue: "dev");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+    name: mode,
   );
   Bloc.observer = MyBlocObserver();
 
@@ -57,7 +58,7 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     // AppHelper.setStatusBarColor();
     return MaterialApp.router(
-      theme: ThemeData(fontFamily: "Inter", useMaterial3: true),
+      theme: ThemeData(fontFamily: "Inter", useMaterial3: false),
       routeInformationParser: Modular.routeInformationParser,
       routerDelegate: Modular.routerDelegate,
       // localizationsDelegates: GlobalCupertinoLocalizations.delegates,

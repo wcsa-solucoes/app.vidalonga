@@ -5,24 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "app_vida_longa",
-            "cwd": "app_vida_longa",
-            "request": "launch",
-            "type": "dart"
-        },
-        {
-            "name": "app_vida_longa (profile mode)",
-            "cwd": "app_vida_longa",
+            "name": "dev",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "args": [
+                "--flavor",
+                "dev",
+                "--dart-define=MODE=dev",
+                "--dart-define=flavor=develop"
+            ],
+            "program": "app_vida_longa/lib/main.dart"
         },
         {
-            "name": "app_vida_longa (release mode)",
-            "cwd": "app_vida_longa",
+            "name": "prod",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
-        }
+            "args": [
+                "--flavor",
+                "prod",
+                "--dart-define=MODE=prod",
+            ],
+            "program": "app_vida_longa/lib/main.dart"
+        },
     ]
 }
