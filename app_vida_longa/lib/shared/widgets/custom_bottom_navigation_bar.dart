@@ -4,6 +4,7 @@ import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar({super.key});
@@ -57,7 +58,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               BottomNavigationBarItem(
                   icon: Icon(Icons.account_circle_rounded), label: "Conta"),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.list), label: "Categorias"),
+                  icon: FaIcon(
+                    FontAwesomeIcons.layerGroup,
+                    size: 20,
+                  ),
+                  label: "Categorias"),
             ]);
       },
     );

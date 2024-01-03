@@ -81,11 +81,11 @@ class _ProfileViewState extends State<ProfileView> {
           onPressed: () =>
               AppHelper.displayAlertInfo("Funcionalidade em breve!"),
         ), //
-        OpenPageButtonWiget(
-          "Alterar senha",
-          onPressed: () =>
-              AppHelper.displayAlertInfo("Funcionalidade em breve!"),
-        ), //
+        // OpenPageButtonWiget(
+        //   "Alterar senha",
+        //   onPressed: () =>
+        //       AppHelper.displayAlertInfo("Funcionalidade em breve!"),
+        // ), //
         OpenPageButtonWiget(
           "Meus favoritos",
           onPressed: () =>

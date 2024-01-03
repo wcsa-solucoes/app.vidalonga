@@ -35,6 +35,9 @@ class AppColors {
   static const Color warning = Color(0xFFFCDC0C);
   static const Color error = Color(0xFFE21C3D);
   static const Color info = Color(0xFF1C4494);
+  static const Color selectedColor = Color(0xBB0960D0);
+
+  static const Color backgroundColor = Color(0xFFF1F4F8);
 
   static const Color titleColor = Color(0xBB052F72);
   static const Color categoryColor = secondaryText;

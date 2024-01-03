@@ -23,7 +23,7 @@ class CustomAppScaffold extends StatefulWidget {
     this.floatingActionButtonLocation,
     this.appBar,
     this.onBack,
-    this.backgroundColor = AppColors.white,
+    this.backgroundColor = AppColors.backgroundColor,
     this.extendBodyBehindAppBar = false,
     this.resizeToAvoidBottomInset = false,
     this.hasScrollView = true,

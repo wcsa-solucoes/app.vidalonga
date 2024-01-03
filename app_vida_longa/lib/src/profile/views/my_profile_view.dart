@@ -4,9 +4,15 @@ import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/service_files.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
+import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
+import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
+
+import 'package:google_fonts/google_fonts.dart';
 
 class MyProfileView extends StatefulWidget {
   const MyProfileView({super.key});
@@ -60,9 +66,17 @@ class _MyProfileViewState extends State<MyProfileView> {
                     onPressed: () async {
                       pickImage();
                     },
-                    child: const Text("Alterar foto"))
+                    child: const Card(
+                        child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: DefaultText("Alterar foto"),
+                    )))
                 : TextButton(
-                    child: const Text("Salvar foto"),
+                    child: const Card(
+                        child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: DefaultText("Salvar foto"),
+                    )),
                     onPressed: () async {
                       final value = await _filesService.uploadFile(image!);
 
@@ -73,32 +87,47 @@ class _MyProfileViewState extends State<MyProfileView> {
                       }
                     },
                   ),
-            Text(UserService.instance.user.name),
-            Text(UserService.instance.user.email),
+            DefaultText(UserService.instance.user.name),
+            DefaultText(UserService.instance.user.email),
             const SizedBox(
               height: 50,
             ),
-            const Text("Trocar senha"),
-            TextField(
+            Text(
+              "Deseja trocar a senha?",
+              style: GoogleFonts.getFont(
+                'Urbanist',
+                color: AppColors.dimGray,
+                fontWeight: FontWeight.w500,
+                fontSize: 14.0,
+                //underline text
+                decoration: TextDecoration.underline,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            DecoratedTextFieldWidget(
               controller: password,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: "Senha",
-              ),
-            ),
-            TextField(
-              controller: confirmPassword,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: "Confirmar Senha",
-              ),
+              isPassword: true,
+              labelText: "Nova senha",
+              hintText: "Nova senha",
             ),
             const SizedBox(
-              height: 50,
+              height: 10,
+            ),
+            DecoratedTextFieldWidget(
+              isPassword: true,
+              controller: confirmPassword,
+              labelText: "Confirmar senha",
+              hintText: "Confirmar senha",
+            ),
+            const SizedBox(
+              height: 20,
             ),
             isLoading
                 ? const CircularProgressIndicator()
-                : ElevatedButton(
+                : FlatButton(
+                    textLabel: "Salvar nova senha",
                     onPressed: () async {
                       setState(() {
                         isLoading = !isLoading;
@@ -118,10 +147,44 @@ class _MyProfileViewState extends State<MyProfileView> {
                       } else {
                         AppHelper.displayAlertError("As senhas não conferem.");
                       }
-                    },
-                    child: const Text("Salvar"),
-                  ),
+                    })
           ],
         ));
+  }
+}
+
+class FlatButton extends StatefulWidget {
+  const FlatButton({
+    super.key,
+    required this.textLabel,
+    this.onPressed,
+  });
+  final String textLabel;
+  final void Function()? onPressed;
+
+  @override
+  State<FlatButton> createState() => _FlatButtonState();
+}
+
+class _FlatButtonState extends State<FlatButton> {
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: widget.onPressed,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30.0),
+          color: AppColors.white,
+        ),
+        width: MediaQuery.of(context).size.width * 0.5,
+        height: 50.0,
+        child: const Center(
+          child: DefaultText(
+            'Salvar nova senha',
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
   }
 }
