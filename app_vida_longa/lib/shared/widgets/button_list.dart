@@ -68,6 +68,7 @@ class _ButtonListState extends State<ButtonList> {
       effectiveIcon = Icon(
         icon.icon,
         size: icon.size,
+        color: icon.color,
       );
       iconSize = icon.size;
       iconColor = icon.color;

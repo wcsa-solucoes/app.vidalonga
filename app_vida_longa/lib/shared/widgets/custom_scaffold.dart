@@ -73,7 +73,19 @@ class _CustomAppScaffoldState extends State<CustomAppScaffold> {
                     ),
             ),
           ),
-          appBar: widget.appBar,
+          appBar: AppBar(
+            // toolbarHeight: 80,
+            backgroundColor: AppColors.unselectedTextStyleColor,
+            title: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+              ),
+              child: Image.asset(
+                'assets/images/LOGO_VIDA_HORIZ_white-2048x370.png',
+              ),
+            ),
+            // Você também pode usar Image.network() se estiver usando uma imagem da internet
+          ),
           // bottomNavigationBar: widget.defaultBottomBar
           //   ? const CustomBottomNavigationBar()
           //   : ColoredBox(

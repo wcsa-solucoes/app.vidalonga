@@ -55,7 +55,7 @@ class OpenPageButtonWiget extends StatelessWidget {
                 buttonSize: 46.0,
                 icon: const Icon(
                   Icons.chevron_right_rounded,
-                  color: Color(0xFF95A1AC),
+                  color: AppColors.unselectedTextStyleColor,
                   size: 30.0,
                 ),
                 onPressed: onPressed,

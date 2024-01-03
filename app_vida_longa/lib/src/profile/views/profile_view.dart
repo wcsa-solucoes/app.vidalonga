@@ -64,14 +64,13 @@ class _ProfileViewState extends State<ProfileView> {
         const SizedBox(
           height: 10,
         ),
-        QrImageView(
-          //convert para dd/MM/yyyy
-          data:
-              "Gerado em ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}",
-
-          version: QrVersions.auto,
-          size: 200.0,
-        ),
+        // QrImageView(
+        //   //convert para dd/MM/yyyy
+        //   data:
+        //       "Gerado em ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}",
+        //   version: QrVersions.auto,
+        //   size: 200.0,
+        // ),
         OpenPageButtonWiget(
           "Editar perfil",
           onPressed: () =>
@@ -133,7 +132,8 @@ class _ProfileViewState extends State<ProfileView> {
         children: [
           Card(
             clipBehavior: Clip.antiAliasWithSaveLayer,
-            color: const Color(0xBB0F65D8),
+            // color: const Color(0xBB0F65D8),
+            color: Colors.transparent,
             elevation: 0.0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(60.0),
@@ -141,14 +141,20 @@ class _ProfileViewState extends State<ProfileView> {
             child: Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(2.0, 2.0, 2.0, 2.0),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(60.0),
-                child: Image.asset(
-                  'assets/images/longavida.png',
-                  width: 70.0,
-                  height: 70.0,
-                  fit: BoxFit.fill,
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(60.0),
+                  child: UserService.instance.user.photoUrl.isEmpty
+                      ? Image.asset(
+                          'assets/images/longavida.png',
+                          width: 70.0,
+                          height: 70.0,
+                          fit: BoxFit.fill,
+                        )
+                      : Image.network(
+                          UserService.instance.user.photoUrl,
+                          width: 70.0,
+                          height: 70.0,
+                          fit: BoxFit.fill,
+                        )),
             ),
           ),
           Expanded(
@@ -211,7 +217,7 @@ class _ProfileViewState extends State<ProfileView> {
                 colors: [
                   Colors.white,
                   status == SubscriptionLevelEnum.premium
-                      ? AppColors.turquoise
+                      ? const Color(0xBB0F65D8)
                       : Colors.orange,
                 ],
                 stops: const [0.0, 1.0],
