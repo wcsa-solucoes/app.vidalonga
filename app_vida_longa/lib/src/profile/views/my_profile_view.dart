@@ -8,8 +8,8 @@ import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
+import 'package:app_vida_longa/shared/widgets/flat_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -162,41 +162,5 @@ class _MyProfileViewState extends State<MyProfileView> {
                     })
           ],
         ));
-  }
-}
-
-class FlatButton extends StatefulWidget {
-  const FlatButton({
-    super.key,
-    required this.textLabel,
-    this.onPressed,
-  });
-  final String textLabel;
-  final void Function()? onPressed;
-
-  @override
-  State<FlatButton> createState() => _FlatButtonState();
-}
-
-class _FlatButtonState extends State<FlatButton> {
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: widget.onPressed,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30.0),
-          color: AppColors.white,
-        ),
-        width: MediaQuery.of(context).size.width * 0.5,
-        height: 50.0,
-        child: const Center(
-          child: DefaultText(
-            'Salvar nova senha',
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
   }
 }

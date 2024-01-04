@@ -10,7 +10,7 @@ class DecoratedTextFieldWidget extends StatefulWidget {
     required this.labelText,
     required this.hintText,
     this.textInputAction = TextInputAction.next,
-    // this.inputFormatter,
+    this.inputFormatters,
     this.keyboardType,
     this.isPassword = false,
   });
@@ -21,6 +21,7 @@ class DecoratedTextFieldWidget extends StatefulWidget {
   final TextInputAction textInputAction;
   final bool isPassword;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<DecoratedTextFieldWidget> createState() =>
@@ -50,11 +51,10 @@ class _DecoratedTextFieldWidgetState extends State<DecoratedTextFieldWidget> {
       controller: widget.controller,
       obscureText: isPasswordInvisible,
       keyboardType: widget.keyboardType,
-      inputFormatters: widget.keyboardType != null
-          ? [FilteringTextInputFormatter.digitsOnly]
-          : null,
+      inputFormatters: widget.inputFormatters,
       textInputAction: widget.textInputAction,
       decoration: InputDecoration(
+        //mask
         suffixIcon: _handleSuffixIcon(),
         labelText: widget.labelText,
         hintText: widget.hintText,

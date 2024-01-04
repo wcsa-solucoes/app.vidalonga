@@ -1,8 +1,13 @@
 import 'package:app_vida_longa/core/services/user_service.dart';
+import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
+import 'package:app_vida_longa/shared/widgets/default_text.dart';
+import 'package:app_vida_longa/shared/widgets/flat_button.dart';
 import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({
@@ -31,6 +36,16 @@ class _LoginViewState extends State<LoginView>
   final TextEditingController _phoneRegisterController =
       TextEditingController();
   final TextEditingController _cpfRegisterController = TextEditingController();
+
+  final MaskTextInputFormatter maskFormatter = MaskTextInputFormatter(
+      mask: '(##) # ####-####',
+      filter: {"#": RegExp(r'[0-9]')},
+      type: MaskAutoCompletionType.lazy);
+
+  final MaskTextInputFormatter cpfFormatter = MaskTextInputFormatter(
+      mask: '###.###.###-##',
+      filter: {"#": RegExp(r'[0-9]')},
+      type: MaskAutoCompletionType.lazy);
 
   @override
   void initState() {
@@ -74,12 +89,13 @@ class _LoginViewState extends State<LoginView>
           return CustomAppScaffold(
             isWithAppBar: false,
             hasScrollView: true,
+            resizeToAvoidBottomInset: true,
             body: Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 100),
+              padding: const EdgeInsets.only(top: 10, bottom: 250),
               child: Container(
                 padding: const EdgeInsets.only(top: 30),
                 decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.backgroundColor,
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
@@ -94,7 +110,7 @@ class _LoginViewState extends State<LoginView>
                     ToggleButtons(
                       borderWidth: 2,
                       borderRadius: BorderRadius.circular(10),
-                      fillColor: Colors.orange.withOpacity(0.2),
+                      fillColor: AppColors.selectedColor.withOpacity(0.2),
                       // selectedBorderColor: Colors.orange,
                       onPressed: (index) {
                         setState(() {
@@ -103,16 +119,13 @@ class _LoginViewState extends State<LoginView>
                       },
                       isSelected: [isLoginSelected, !isLoginSelected],
                       children: [
-                        Text(
+                        DefaultText(
                           "Login",
-                          style: TextStyle(
-                              fontWeight:
-                                  isLoginSelected ? FontWeight.bold : null),
+                          fontWeight: isLoginSelected ? FontWeight.bold : null,
                         ),
-                        Text("Cadastra-se",
-                            style: TextStyle(
-                                fontWeight:
-                                    !isLoginSelected ? FontWeight.bold : null)),
+                        DefaultText("Cadastra-se",
+                            fontWeight:
+                                !isLoginSelected ? FontWeight.bold : null),
                       ],
                     ),
                     Stack(
@@ -154,46 +167,42 @@ class _LoginViewState extends State<LoginView>
                 style: TextStyle(fontSize: 16)),
           ],
         ),
-
-        TextField(
+        const SizedBox(
+          height: 10,
+        ),
+        DecoratedTextFieldWidget(
           controller: _emailLoginController,
-          decoration: const InputDecoration(
-            labelText: "Email",
-          ),
+          labelText: "Email",
+          hintText: "Email",
         ),
-        TextField(
+
+        const SizedBox(
+          height: 10,
+        ),
+        DecoratedTextFieldWidget(
           controller: _passwordLoginController,
-          obscureText: canViewPassword,
-          decoration: InputDecoration(
-            labelText: "Senha",
-            suffixIcon: IconButton(
-              onPressed: () {
-                setState(() {
-                  canViewPassword = !canViewPassword;
-                });
-              },
-              icon: Icon(
-                !canViewPassword ? Icons.visibility : Icons.visibility_off,
-              ),
-            ),
-          ),
+          isPassword: true,
+          labelText: "Senha",
+          hintText: "Email",
         ),
-        ElevatedButton(
-          onPressed: () {
-            _authBloc.add(AuthSignInEvent(
-              email: _emailLoginController.text,
-              password: _passwordLoginController.text,
-            ));
-          },
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.blueAccent),
+
+        const SizedBox(
+          height: 10,
+        ),
+        Card(
+          elevation: 1,
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
           ),
-          child: const Text(
-            "Login",
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
+          child: FlatButton(
+              onPressed: () {
+                _authBloc.add(AuthSignInEvent(
+                  email: _emailLoginController.text,
+                  password: _passwordLoginController.text,
+                ));
+              },
+              textLabel: "Entrar"),
         ),
         TextButton(
           onPressed: () {
@@ -208,85 +217,134 @@ class _LoginViewState extends State<LoginView>
   }
 
   Widget signUpView() {
-    return Column(
-      children: [
-        const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Crie a sua conta",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-            Text("Preencha as informações para criar a sua conta",
-                style: TextStyle(fontSize: 16)),
-          ],
-        ),
-        TextField(
-          controller: _emailRegisterController,
-          decoration: const InputDecoration(
+    const double padding = 10;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Crie a sua conta",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+              Text("Preencha as informações para criar a sua conta",
+                  style: TextStyle(fontSize: 16)),
+            ],
+          ),
+          const SizedBox(
+            height: padding,
+          ),
+          DecoratedTextFieldWidget(
+            controller: _emailRegisterController,
             labelText: "Email",
+            hintText: "Email",
           ),
-        ),
-        TextField(
-          controller: _nameRegisterController,
-          decoration: const InputDecoration(
+          const SizedBox(
+            height: padding,
+          ),
+          DecoratedTextFieldWidget(
+            controller: _nameRegisterController,
             labelText: "Nome",
+            hintText: "Nome",
           ),
-        ),
-        TextField(
-          controller: _phoneRegisterController,
-          decoration: const InputDecoration(
+          const SizedBox(
+            height: padding,
+          ),
+          DecoratedTextFieldWidget(
+            controller: _phoneRegisterController,
             labelText: "Telefone",
+            hintText: "Telefone",
+            keyboardType: TextInputType.phone,
+            inputFormatters: [maskFormatter],
           ),
-        ),
-        TextField(
-          controller: _cpfRegisterController,
-          decoration: const InputDecoration(
+          const SizedBox(
+            height: padding,
+          ),
+          DecoratedTextFieldWidget(
+            controller: _cpfRegisterController,
             labelText: "CPF",
+            hintText: "CPF",
+            keyboardType: TextInputType.number,
+            inputFormatters: [cpfFormatter],
           ),
-        ),
-        TextField(
-          controller: _passwordRegisterController,
-          obscureText: canViewPassword,
-          decoration: InputDecoration(
+          const SizedBox(
+            height: padding,
+          ),
+          DecoratedTextFieldWidget(
+            controller: _passwordRegisterController,
             labelText: "Senha",
-            suffixIcon: IconButton(
-              onPressed: () {
-                setState(() {
-                  canViewPassword = !canViewPassword;
-                });
-              },
-              icon: Icon(
-                !canViewPassword ? Icons.visibility : Icons.visibility_off,
+            hintText: "Senha",
+            isPassword: true,
+          ),
+          const SizedBox(
+            height: padding,
+          ),
+          DecoratedTextFieldWidget(
+            controller: _passwordConfirmRegisterController,
+            isPassword: true,
+            labelText: "Confirmar Senha",
+            hintText: "Confirmar Senha",
+          ),
+          const SizedBox(
+            height: padding,
+          ),
+          Card(
+            color: Colors.blueAccent,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: InkWell(
+                onTap: () {
+                  if (_passwordRegisterController.text ==
+                      _passwordConfirmRegisterController.text) {
+                    final String cpfData = _cpfRegisterController.text
+                        .replaceAll(".", "")
+                        .replaceAll("-", "");
+                    final String phoneData = _phoneRegisterController.text
+                        .replaceAll("(", "")
+                        .replaceAll(")", "")
+                        .replaceAll(" ", "")
+                        .replaceAll("-", "");
+
+                    _authBloc.add(AuthSignUpEvent(
+                      name: _nameRegisterController.text,
+                      phone: phoneData,
+                      cpf: cpfData,
+                      email: _emailRegisterController.text,
+                      password: _passwordRegisterController.text,
+                    ));
+                  }
+                },
+                // style: ButtonStyle(
+                //   backgroundColor: MaterialStateProperty.all(Colors.blueAccent),
+                // ),
+                child: const Text("Cadastrar-se",
+                    style: TextStyle(color: Colors.white)),
               ),
             ),
           ),
-        ),
-        TextField(
-          controller: _passwordConfirmRegisterController,
-          obscureText: canViewPassword,
-          decoration: const InputDecoration(
-            labelText: "Confirmar Senha",
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            if (_passwordRegisterController.text ==
-                _passwordConfirmRegisterController.text) {
-              _authBloc.add(AuthSignUpEvent(
-                name: _nameRegisterController.text,
-                phone: _phoneRegisterController.text,
-                cpf: _cpfRegisterController.text,
-                email: _emailRegisterController.text,
-                password: _passwordRegisterController.text,
-              ));
-            }
-          },
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.blueAccent),
-          ),
-          child:
-              const Text("Cadastrar-se", style: TextStyle(color: Colors.white)),
-        ),
-      ],
+          //   Card(
+          //   shape:
+          //       RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          //   child: FlatButton(
+          //     onPressed: () {
+          //       if (_passwordRegisterController.text ==
+          //           _passwordConfirmRegisterController.text) {
+          //         _authBloc.add(AuthSignUpEvent(
+          //           name: _nameRegisterController.text,
+          //           phone: _phoneRegisterController.text,
+          //           cpf: _cpfRegisterController.text,
+          //           email: _emailRegisterController.text,
+          //           password: _passwordRegisterController.text,
+          //         ));
+          //       }
+          //     },
+          //     textLabel: "Cadastrar-se",
+          //   ),
+          // ),
+        ],
+      ),
     );
   }
 }

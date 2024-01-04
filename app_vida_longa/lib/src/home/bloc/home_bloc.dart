@@ -12,15 +12,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeLoadedEvent>(_handleLoaded);
     on<HomeLoadingEvent>(_handleLoading);
     on<HomeCategoriesSelectedEvent>(_handleCategoriesSelected);
-    if (_articles.isNotEmpty) {
-      _allChips = _articles
-          .map<ChipCategorie>((List<ArticleModel> e) => ChipCategorie(
-                label: e.first.category,
-                selected: false,
-              ))
-          .toList();
-      add(HomeLoadedEvent(articles: _articles, chipsCategorie: _allChips));
-    }
+    _allChips = _articles
+        .map<ChipCategorie>((List<ArticleModel> e) => ChipCategorie(
+              label: e.first.category,
+              selected: false,
+            ))
+        .toList();
+    add(HomeLoadedEvent(articles: _articles, chipsCategorie: _allChips));
   }
   FutureOr<void> _handleCategoriesSelected(
       HomeCategoriesSelectedEvent event, Emitter<HomeState> emit) {

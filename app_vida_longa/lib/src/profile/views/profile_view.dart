@@ -43,7 +43,7 @@ class _ProfileViewState extends State<ProfileView> {
           appBar: AppBar(
             centerTitle: true,
             backgroundColor: AppColors.white,
-            title: DefaultText(
+            title: const DefaultText(
               "Perfil",
               fontSize: 20,
               fontWeight: FontWeight.w300,
@@ -101,6 +101,9 @@ class _ProfileViewState extends State<ProfileView> {
           height: 10,
         ),
         logout(),
+        const SizedBox(
+          height: 50,
+        ),
       ],
     );
   }

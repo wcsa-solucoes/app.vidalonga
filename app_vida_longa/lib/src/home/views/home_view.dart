@@ -42,15 +42,19 @@ class _HomeViewState extends State<HomeView> {
               fontWeight: FontWeight.w300,
             ),
           ),
-          body: Builder(builder: (context) {
-            return state.when(
-              initial: () => Container(),
-              loading: _loadingState,
-              loaded: _loadedState,
-              error: (state) => _errorState(),
-              categoriesSelected: _categoriesSelectedState,
-            );
-          }),
+          body: SizedBox(
+            width: MediaQuery.sizeOf(context).width,
+            height: MediaQuery.sizeOf(context).height,
+            child: Builder(builder: (context) {
+              return state.when(
+                initial: () => Container(),
+                loading: _loadingState,
+                loaded: _loadedState,
+                error: (state) => _errorState(),
+                categoriesSelected: _categoriesSelectedState,
+              );
+            }),
+          ),
           bottomNavigationBar: const CustomBottomNavigationBar(),
         );
       },
@@ -64,6 +68,14 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _loadedState(HomeLoadedState state) {
+    if (state.articlesByCategory!.isEmpty) {
+      return const SizedBox(
+          child: Center(
+              child: Padding(
+        padding: EdgeInsets.only(bottom: 100),
+        child: DefaultText("Nenhum artigo encontrado :("),
+      )));
+    }
     return SingleChildScrollView(
       child: Column(
         children: [

@@ -23,7 +23,7 @@ class _CategoriesViewState extends State<CategoriesView> {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: AppColors.white,
-        title: DefaultText(
+        title: const DefaultText(
           "Categorias",
           fontSize: 20,
           fontWeight: FontWeight.w300,
@@ -32,21 +32,30 @@ class _CategoriesViewState extends State<CategoriesView> {
       body: SizedBox(
         width: MediaQuery.sizeOf(context).width,
         height: MediaQuery.sizeOf(context).height,
-        child: ListView.builder(
-          itemCount: CategoriesService.instance.categories.length,
-          itemBuilder: (context, index) {
-            var categorie = CategoriesService.instance.categories[index];
-            return OpenPageButtonWiget(
-              categorie.name,
-              onPressed: () {
-                CategoriesService.setCurrentlyCategory(
-                    CategoriesService.instance.categories[index]);
-                NavigationController.push(
-                    routes.app.categories.subCategories.path);
-              },
-            );
-          },
-        ),
+        child: Builder(builder: (context) {
+          if (CategoriesService.instance.categories.isEmpty) {
+            return const Center(
+                child: Padding(
+              padding: EdgeInsets.only(bottom: 100),
+              child: DefaultText("Nenhuma categoria encontrada :("),
+            ));
+          }
+          return ListView.builder(
+            itemCount: CategoriesService.instance.categories.length,
+            itemBuilder: (context, index) {
+              var categorie = CategoriesService.instance.categories[index];
+              return OpenPageButtonWiget(
+                categorie.name,
+                onPressed: () {
+                  CategoriesService.setCurrentlyCategory(
+                      CategoriesService.instance.categories[index]);
+                  NavigationController.push(
+                      routes.app.categories.subCategories.path);
+                },
+              );
+            },
+          );
+        }),
       ),
       bottomNavigationBar: const CustomBottomNavigationBar(),
     );

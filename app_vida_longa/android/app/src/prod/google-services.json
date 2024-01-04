@@ -9,7 +9,26 @@
       "client_info": {
         "mobilesdk_app_id": "1:307746117848:android:12ab5637c98d94981ddfad",
         "android_client_info": {
-          "package_name": "com.appvidalonga.dev"
+          "package_name": "com.example.app_vida_longa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjcWNhDt2dKkS_s1Vb19NQ3PMCO1Z1v-g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:307746117848:android:49054368054ca97c1ddfad",
+        "android_client_info": {
+          "package_name": "com.flutterflow.homeU"
         }
       },
       "oauth_client": [],

@@ -58,6 +58,7 @@ dependencies:
   qr_flutter: ^4.1.0
   path_provider: ^2.1.1
   image_picker: ^1.0.5
+  mask_text_input_formatter: ^2.7.0
 
 
 dev_dependencies:

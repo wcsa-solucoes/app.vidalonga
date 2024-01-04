@@ -91,12 +91,6 @@ class _CustomAppScaffoldState extends State<CustomAppScaffold> {
                     // Você também pode usar Image.network() se estiver usando uma imagem da internet
                   )
               : null,
-          // bottomNavigationBar: widget.defaultBottomBar
-          //   ? const CustomBottomNavigationBar()
-          //   : ColoredBox(
-          //       color: widget.backgroundColor,
-          //       child: widget.bottomNavigationBar,
-          //     ),
           bottomNavigationBar: ColoredBox(
             color: widget.backgroundColor,
             child: widget.bottomNavigationBar,
