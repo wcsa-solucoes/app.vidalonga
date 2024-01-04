@@ -7,15 +7,19 @@ import "package:firebase_auth/firebase_auth.dart";
 class AuthRepository {
   late final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<ResponseStatusModel> register(UserModel user, String password) async {
+  Future<ResponseStatusModel> register(
+      UserModel user, String password, String name) async {
     late ResponseStatusModel response = ResponseStatusModel();
 
-    await _auth
+    UserCredential? userCredential = await _auth
         .createUserWithEmailAndPassword(email: user.email, password: password)
         .then((snapshot) => null)
         .onError((error, stackTrace) {
       response = WeException.handle(error);
     });
+    if (userCredential != null) {
+      userCredential.user?.updateDisplayName(name);
+    }
 
     return response;
   }

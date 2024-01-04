@@ -4,6 +4,7 @@ import "package:app_vida_longa/core/helpers/app_helper.dart";
 import "package:app_vida_longa/core/helpers/field_format_helper.dart";
 import "package:app_vida_longa/core/repositories/auth_repository.dart";
 import "package:app_vida_longa/core/services/user_service.dart";
+import "package:app_vida_longa/domain/contants/routes.dart";
 import "package:app_vida_longa/domain/models/response_model.dart";
 import "package:app_vida_longa/domain/models/user_model.dart";
 import "package:app_vida_longa/src/core/navigation_controller.dart";
@@ -67,12 +68,12 @@ class AuthService {
     return await _authRepository.sendEmailValidation();
   }
 
-  Future<ResponseStatusModel> register(UserModel user, String password) async {
+  Future<ResponseStatusModel> register(
+      UserModel user, String password, String name) async {
     user.phone = FieldFormatHelper.phone(phone: user.phone);
-    // user.register = FieldFormatHelper.register(register: user.register);
 
     final ResponseStatusModel response =
-        await _authRepository.register(user, password);
+        await _authRepository.register(user, password, name);
 
     if (response.status == ResponseStatusEnum.success) {
       unawaited(_userService.create(user));
@@ -111,7 +112,7 @@ class AuthService {
   }
 
   void _handleDisconnectedRedirect() {
-    NavigationController.to("/app/auth/login");
+    NavigationController.to(routes.app.auth.login.path);
   }
 
   Future<bool> changePassword(String password) async {

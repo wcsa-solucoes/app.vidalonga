@@ -70,7 +70,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _user.email = event.email;
 
     final ResponseStatusModel response =
-        await _authService.register(_user, event.password);
+        await _authService.register(_user, event.password, _user.name);
 
     if (response.status == ResponseStatusEnum.success) {
       _userService.initUser();

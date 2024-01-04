@@ -52,6 +52,7 @@ class UserService {
     if (_status != UserServiceStatusEnum.accountedCreated) {
       _status = UserServiceStatusEnum.loggedOut;
     }
+    _status = UserServiceStatusEnum.loggedOut;
 
     _hasSentValidationEmail = false;
   }
@@ -176,6 +177,6 @@ class UserService {
   }
 
   void _handleRecentUserRegister() {
-    Modular.to.navigate('/app/auth/register');
+    Modular.to.navigate(routes.app.profile.path);
   }
 }
