@@ -1,21 +1,40 @@
 {
   "project_info": {
-    "project_number": "12532074830",
-    "project_id": "vidalonga-dev",
-    "storage_bucket": "vidalonga-dev.appspot.com"
+    "project_number": "307746117848",
+    "project_id": "vidalonga-7be23",
+    "storage_bucket": "vidalonga-7be23.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:12532074830:android:c10409b259772b082cf61f",
+        "mobilesdk_app_id": "1:307746117848:android:12ab5637c98d94981ddfad",
         "android_client_info": {
-          "package_name": "com.appvidalonga.dev"
+          "package_name": "com.example.app_vida_longa"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC7QWyuD5G-oHEcBoprID2OvxI4MUJytyQ"
+          "current_key": "AIzaSyBjcWNhDt2dKkS_s1Vb19NQ3PMCO1Z1v-g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:307746117848:android:49054368054ca97c1ddfad",
+        "android_client_info": {
+          "package_name": "com.flutterflow.homeU"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjcWNhDt2dKkS_s1Vb19NQ3PMCO1Z1v-g"
         }
       ],
       "services": {
