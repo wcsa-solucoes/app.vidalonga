@@ -2,13 +2,16 @@ import 'dart:async';
 
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/helpers/field_format_helper.dart';
+import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
+import 'package:app_vida_longa/core/services/favorites_service.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/custom_exceptions_codes_enum.dart';
 import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:tuple/tuple.dart';
@@ -171,9 +174,14 @@ class UserService {
 
   void initUser() {
     _userRepository.updateListener();
-    NavigationController.to(routes.app.profile.path);
+    IFavoritesRepository favoritesRepository =
+        FavoritesRepositoryImpl(FirebaseFirestore.instance);
 
-    //init others services
+    IFavoritesService favoritesService = FavoritesServiceImpl.instance;
+
+    favoritesService.init(favoritesRepository, user.id);
+
+    NavigationController.to(routes.app.profile.path);
   }
 
   void _handleRecentUserRegister() {

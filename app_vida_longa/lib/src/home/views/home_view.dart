@@ -166,7 +166,7 @@ class _HomeViewState extends State<HomeView> {
           const NeverScrollableScrollPhysics(), // Add this to keep the ListView from scrolling
       shrinkWrap: true,
       itemCount: articlesByCategory.length,
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(bottom: 200),
 
       itemBuilder: (BuildContext context, int categoryIndex) {
         final categoryArticles = articlesByCategory[categoryIndex];

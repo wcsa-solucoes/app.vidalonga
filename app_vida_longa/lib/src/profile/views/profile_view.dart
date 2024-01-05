@@ -10,6 +10,7 @@ import 'package:app_vida_longa/shared/widgets/open_button_page.dart';
 import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/profile/bloc/profile_bloc.dart';
+import 'package:app_vida_longa/src/profile/views/favorites_articles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -82,21 +83,11 @@ class _ProfileViewState extends State<ProfileView> {
           onPressed: () =>
               NavigationController.push(routes.app.profile.edit.path),
         ), //
-        OpenPageButtonWiget(
-          "Informações de pagamento",
-          onPressed: () =>
-              AppHelper.displayAlertInfo("Funcionalidade em breve!"),
-        ), //
-        // OpenPageButtonWiget(
-        //   "Alterar senha",
-        //   onPressed: () =>
-        //       AppHelper.displayAlertInfo("Funcionalidade em breve!"),
-        // ), //
-        OpenPageButtonWiget(
-          "Meus favoritos",
-          onPressed: () =>
-              AppHelper.displayAlertInfo("Funcionalidade em breve!"),
-        ), //
+
+        OpenPageButtonWiget("Meus favoritos", onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const FavoritesArticlesView()));
+        }), //
         const SizedBox(
           height: 10,
         ),
