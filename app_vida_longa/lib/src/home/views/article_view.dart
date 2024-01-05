@@ -25,7 +25,7 @@ class ArticleView extends StatefulWidget {
 class _ArticleViewState extends State<ArticleView> {
   double fontSize = 16.0;
   List<Widget> widgets = [];
-  IFavoritesService _favoritesService = FavoritesServiceImpl.instance;
+  final IFavoritesService _favoritesService = FavoritesServiceImpl.instance;
 
   final StreamController<double> _streamControllerFontSize =
       StreamController.broadcast();
