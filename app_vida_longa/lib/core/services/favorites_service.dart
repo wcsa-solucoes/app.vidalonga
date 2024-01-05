@@ -55,8 +55,6 @@ class FavoritesServiceImpl extends IFavoritesService {
         favorites.add(article);
       }
     }
-
-    AppHelper.displayAlertSuccess('FavoritosFavoritos carregados com sucesso!');
   }
 
   @override

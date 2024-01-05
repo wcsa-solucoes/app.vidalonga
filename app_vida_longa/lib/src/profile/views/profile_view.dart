@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -71,13 +72,7 @@ class _ProfileViewState extends State<ProfileView> {
         const SizedBox(
           height: 10,
         ),
-        // QrImageView(
-        //   //convert para dd/MM/yyyy
-        //   data:
-        //       "Gerado em ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}",
-        //   version: QrVersions.auto,
-        //   size: 200.0,
-        // ),
+
         OpenPageButtonWiget(
           "Editar perfil",
           onPressed: () =>
@@ -94,6 +89,13 @@ class _ProfileViewState extends State<ProfileView> {
         logout(),
         const SizedBox(
           height: 50,
+        ),
+        QrImageView(
+          //convert para dd/MM/yyyy
+          data:
+              "Gerado em ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}",
+          version: QrVersions.auto,
+          size: 200.0,
         ),
       ],
     );
