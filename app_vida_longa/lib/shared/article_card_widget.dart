@@ -3,6 +3,7 @@ import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -71,7 +72,8 @@ class ArticleCard extends StatelessWidget {
                     ),
                     color: AppColors.white,
                     image: DecorationImage(
-                        image: NetworkImage(article.image), fit: BoxFit.fill)),
+                        image: CachedNetworkImageProvider(article.image),
+                        fit: BoxFit.fill)),
                 width: MediaQuery.of(context).size.width,
               ),
             ),
