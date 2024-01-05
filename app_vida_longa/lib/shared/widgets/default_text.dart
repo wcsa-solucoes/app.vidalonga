@@ -8,6 +8,7 @@ class DefaultText extends StatelessWidget {
   final double? fontSize;
   final Color? color;
   final TextAlign? textAlign;
+  final int? maxLines;
 
   const DefaultText(
     this.text, {
@@ -16,13 +17,14 @@ class DefaultText extends StatelessWidget {
     this.textAlign,
     this.color,
     super.key,
+    this.maxLines,
   });
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      maxLines: 1,
+      maxLines: maxLines ?? 1,
       overflow: TextOverflow.ellipsis,
       textAlign: textAlign,
       style: GoogleFonts.getFont(

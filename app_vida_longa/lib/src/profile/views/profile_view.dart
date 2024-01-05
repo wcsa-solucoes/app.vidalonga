@@ -11,6 +11,7 @@ import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/profile/bloc/profile_bloc.dart';
 import 'package:app_vida_longa/src/profile/views/favorites_articles.dart';
+import 'package:app_vida_longa/src/profile/views/qr_code_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -82,20 +83,18 @@ class _ProfileViewState extends State<ProfileView> {
         OpenPageButtonWiget("Meus favoritos", onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => const FavoritesArticlesView()));
-        }), //
+        }),
+
+        OpenPageButtonWiget("Abrir QRCode", onPressed: () {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const QrCodeView()));
+        }),
         const SizedBox(
           height: 10,
         ),
         logout(),
         const SizedBox(
           height: 50,
-        ),
-        QrImageView(
-          //convert para dd/MM/yyyy
-          data:
-              "Gerado em ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}",
-          version: QrVersions.auto,
-          size: 200.0,
         ),
       ],
     );
