@@ -1,5 +1,6 @@
 import "dart:async";
 import "package:app_vida_longa/core/controllers/we_exception.dart";
+import "package:app_vida_longa/core/helpers/print_colored_helper.dart";
 import "package:app_vida_longa/domain/models/response_model.dart";
 import "package:app_vida_longa/domain/models/user_model.dart";
 import "package:firebase_auth/firebase_auth.dart";
@@ -11,14 +12,23 @@ class AuthRepository {
       UserModel user, String password, String name) async {
     late ResponseStatusModel response = ResponseStatusModel();
 
-    UserCredential? userCredential = await _auth
+    UserCredential? userCredential;
+    await _auth
         .createUserWithEmailAndPassword(email: user.email, password: password)
-        .then((snapshot) => null)
-        .onError((error, stackTrace) {
+        .then((snapshot) {
+      userCredential = snapshot;
+    }).onError((error, stackTrace) {
       response = WeException.handle(error);
     });
     if (userCredential != null) {
-      userCredential.user?.updateDisplayName(name);
+      User? user = userCredential?.user;
+      await user
+          ?.updateDisplayName(name)
+          .then((value) => null)
+          .onError((error, stackTrace) {
+        PrintColoredHelper.printCyan(error.toString());
+        response = WeException.handle(error);
+      });
     }
 
     return response;

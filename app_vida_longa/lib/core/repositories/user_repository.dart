@@ -175,6 +175,12 @@ class UserRepository {
   void _handleStreamUpdate(
     DocumentSnapshot<Map<String, dynamic>> documentSnapshot,
   ) {
+    if (!documentSnapshot.exists) {
+      var data = documentSnapshot.data();
+      if (data == null) {
+        return;
+      }
+    }
     _userController.sink.add(UserModel.fromJson(documentSnapshot.data()!));
   }
 }

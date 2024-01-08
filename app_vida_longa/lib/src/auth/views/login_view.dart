@@ -250,23 +250,23 @@ class _LoginViewState extends State<LoginView>
           const SizedBox(
             height: padding,
           ),
-          DecoratedTextFieldWidget(
-            controller: _phoneRegisterController,
-            labelText: "Telefone",
-            hintText: "Telefone",
-            keyboardType: TextInputType.phone,
-            inputFormatters: [maskFormatter],
-          ),
-          const SizedBox(
-            height: padding,
-          ),
-          DecoratedTextFieldWidget(
-            controller: _cpfRegisterController,
-            labelText: "CPF",
-            hintText: "CPF",
-            keyboardType: TextInputType.number,
-            inputFormatters: [cpfFormatter],
-          ),
+          // DecoratedTextFieldWidget(
+          //   controller: _phoneRegisterController,
+          //   labelText: "Telefone",
+          //   hintText: "Telefone",
+          //   keyboardType: TextInputType.phone,
+          //   inputFormatters: [maskFormatter],
+          // ),
+          // const SizedBox(
+          //   height: padding,
+          // ),
+          // DecoratedTextFieldWidget(
+          //   controller: _cpfRegisterController,
+          //   labelText: "CPF",
+          //   hintText: "CPF",
+          //   keyboardType: TextInputType.number,
+          //   inputFormatters: [cpfFormatter],
+          // ),
           const SizedBox(
             height: padding,
           ),
