@@ -1,6 +1,6 @@
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
-import 'package:app_vida_longa/shared/article_card_widget.dart';
+import 'package:app_vida_longa/shared/widgets/article_card_widget.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_chip.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
