@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyCcq5O4xVEtk2t8dYi2_8sHi5ggorNvUxs</string>
+	<string>AIzaSyAFYculxQNtsUvHVgbdlaEPBytSpgCjWVw</string>
 	<key>GCM_SENDER_ID</key>
-	<string>307746117848</string>
+	<string>12532074830</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.appVidaLonga</string>
+	<string>com.appvidalonga.dev</string>
 	<key>PROJECT_ID</key>
-	<string>vidalonga-7be23</string>
+	<string>vidalonga-dev</string>
 	<key>STORAGE_BUCKET</key>
-	<string>vidalonga-7be23.appspot.com</string>
+	<string>vidalonga-dev.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:307746117848:ios:63f93b76eb48e35f1ddfad</string>
+	<string>1:12532074830:ios:d97527ad4c470cbc2cf61f</string>
 </dict>
 </plist>
