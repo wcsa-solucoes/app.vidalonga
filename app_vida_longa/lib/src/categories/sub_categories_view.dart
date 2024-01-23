@@ -17,6 +17,8 @@ class SubCategoriesView extends StatefulWidget {
 class _SubCategoriesViewState extends State<SubCategoriesView> {
   @override
   Widget build(BuildContext context) {
+    final subCategories =
+        CategoriesService.instance.selectedCategory.subCategories;
     return CustomAppScaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -38,11 +40,9 @@ class _SubCategoriesViewState extends State<SubCategoriesView> {
           width: MediaQuery.sizeOf(context).width,
           height: MediaQuery.sizeOf(context).height,
           child: ListView.builder(
-              itemCount: CategoriesService
-                  .instance.selectedCategory.subCategories.length,
+              itemCount: subCategories.length,
               itemBuilder: (context, index) {
-                var subCategorie = CategoriesService
-                    .instance.selectedCategory.subCategories[index];
+                var subCategorie = subCategories[index];
 
                 //  NavigationController.push(
                 //   routes.app.categories.subCategories.path,
@@ -51,9 +51,8 @@ class _SubCategoriesViewState extends State<SubCategoriesView> {
                 return OpenPageButtonWiget(
                   subCategorie.name,
                   onPressed: () {
-                    CategoriesService.instance.selectArticlesFromSubCategory(
-                        CategoriesService
-                            .instance.selectedCategory.subCategories[index]);
+                    CategoriesService.instance
+                        .selectArticlesFromSubCategory(subCategories[index]);
                     NavigationController.push(
                       routes.app.categories.subCategories.articles.path,
                       arguments: {"subCategory": subCategorie},

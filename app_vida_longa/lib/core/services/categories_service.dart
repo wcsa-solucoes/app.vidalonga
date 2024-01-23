@@ -59,15 +59,15 @@ class CategoriesService {
 
   void selectArticlesFromSubCategory(SubCategoryModel subCategory) {
     _articlesFromSubcategories.clear();
-    //select articles from subcategory
-    _articleService.articles.forEach((article) {
+
+    for (var article in _articleService.articles) {
       for (var sc in article.subCategories) {
         if (sc.uuid == subCategory.uuid) {
           _articlesFromSubcategories.add(article);
           PrintColoredHelper.printGreen(article.title);
         }
       }
-    });
+    }
   }
 
   Future<void> _init() async {
@@ -76,66 +76,55 @@ class CategoriesService {
       _categoriesCollection.addAll(response.categories);
     }
 
-    //article doesnt the name of category, just the uuid
-    //_categoriesCollection has full object, with name and uuid
-    //so we need to update the article with the name of subcategory
-
-    _updateArticlesWithSubCategoryName();
-
     Map<String, Set<ArticleModel>> subCategoryArticlesMap = {};
 
-    // for (var article in _articleService.articles) {
-    //   for (var subCategory in article.subCategories) {
-    //     String key = '${article.category}|${subCategory.name}';
-    //     subCategoryArticlesMap
-    //         .putIfAbsent(key, () => <ArticleModel>{})
-    //         .add(article);
-    //   }
-    // }
-
-    // for (var key in subCategoryArticlesMap.keys) {
-    //   var parts = key.split('|');
-    //   var categoryName = parts[0];
-    //   var subCategoryName = parts[1];
-
-    //   var category = _categories.firstWhereOrNull(
-    //     (c) => c.name == categoryName,
-    //   );
-    //   if (category == null) {
-    //     category = CategoryModel(
-    //         name: categoryName,
-    //         //image: "",
-    //         subCategories: []);
-    //     _categories.add(category);
-    //   }
-
-    //   var subCategory = category.subCategories.firstWhereOrNull(
-    //     (sc) => sc.name == subCategoryName,
-    //   );
-    //   if (subCategory == null) {
-    //     subCategory = SubCategoryModel(name: subCategoryName, articles: []);
-    //     category.subCategories.add(subCategory);
-    //   }
-
-    //   var articlesToAdd = subCategoryArticlesMap[key]!;
-    //   for (var article in articlesToAdd) {
-    //     if (!subCategory.articles!.any((a) => a.uuid == article.uuid)) {
-    //       subCategory.articles!.add(article);
-    //     }
-    //   }
-    // }
-  }
-
-  _updateArticlesWithSubCategoryName() {
     for (var article in _articleService.articles) {
       for (var subCategory in article.subCategories) {
-        var subCategoryFire = _categoriesCollection
-            .expand((c) => c.subCategories)
-            .firstWhereOrNull((sc) => sc.uuid == subCategory.uuid);
-        if (subCategoryFire != null) {
-          subCategory.name = subCategoryFire.name;
+        String key = '${article.categoryTitle}|${subCategory.uuid}';
+        subCategoryArticlesMap
+            .putIfAbsent(key, () => <ArticleModel>{})
+            .add(article);
+      }
+    }
+
+    for (var key in subCategoryArticlesMap.keys) {
+      var parts = key.split('|');
+      var categoryName = parts[0];
+      var subCategoryUuid = parts[1];
+
+      var category = _categories.firstWhereOrNull(
+        (c) => c.name == categoryName,
+      );
+      if (category == null) {
+        category = CategoryModel(
+            name: categoryName,
+            //image: "",
+            subCategories: []);
+        _categories.add(category);
+      }
+
+      var subCategory = category.subCategories.firstWhereOrNull(
+        (sc) => sc.name == subCategoryUuid,
+      );
+      var fullSubcategory = _categoriesCollection
+          .expand((c) => c.subCategories)
+          .firstWhereOrNull((sc) => sc.uuid == subCategoryUuid);
+      if (subCategory == null) {
+        subCategory = SubCategoryModel(
+            name: fullSubcategory!.name,
+            articles: [],
+            uuid: fullSubcategory.uuid);
+        category.subCategories.add(subCategory);
+      }
+
+      var articlesToAdd = subCategoryArticlesMap[key]!;
+      for (var article in articlesToAdd) {
+        if (!subCategory.articles!.any((a) => a.uuid == article.uuid)) {
+          subCategory.articles!.add(article);
         }
       }
     }
+
+    print("CategoriesService - _init - _categoriesCollection");
   }
 }
