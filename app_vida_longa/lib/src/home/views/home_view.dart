@@ -142,8 +142,8 @@ class _HomeViewState extends State<HomeView> {
                 );
               } else {
                 var selectedArticles = articlesByCategorySelectedAll
-                    .where((articles) => selectedChips
-                        .any((chip) => articles.first.category == chip.label))
+                    .where((articles) => selectedChips.any(
+                        (chip) => articles.first.categoryUuid == chip.uuid))
                     .toList();
 
                 _homeBloc.add(
@@ -181,7 +181,7 @@ class _HomeViewState extends State<HomeView> {
               Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: Text(
-                  categoryArticles.first.category.toUpperCase(),
+                  categoryArticles.first.categoryTitle.toUpperCase(),
                   style: GoogleFonts.getFont(
                     'Poppins',
                     fontWeight: FontWeight.w500,
@@ -190,18 +190,6 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ),
-              // Row(
-              //   children: categoryArticles.first.subCategories.map((e) {
-              //     return Padding(
-              //       padding: const EdgeInsets.all(8.0),
-              //       child: IconChoiceChip(
-              //         isSelected: false,
-              //         label: e.name,
-              //         onSelected: (bool selected) {},
-              //       ),
-              //     );
-              //   }).toList(),
-              // ),
               Container(
                 color: AppColors.white,
                 height: 250,

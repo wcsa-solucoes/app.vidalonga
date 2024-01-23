@@ -4,7 +4,8 @@ import 'package:app_vida_longa/domain/models/sub_category_model.dart';
 
 class ArticleModel {
   late String title = "";
-  late String category = "";
+  late String categoryUuid = "";
+  late String categoryTitle = "";
   late SubscriptionTypeEnum subscriptionType;
   late String uuid = "";
   late String image = "";
@@ -13,18 +14,19 @@ class ArticleModel {
 
   ArticleModel({
     this.title = "",
-    this.category = "",
+    this.categoryUuid = "",
     this.subscriptionType = SubscriptionTypeEnum.free,
     this.uuid = '',
     this.image = '',
     this.contents = const [],
     this.subCategories = const [],
+    this.categoryTitle = "",
   });
 
   factory ArticleModel.fromMap(Map<String, dynamic> map) {
     return ArticleModel(
       title: map['title'] as String,
-      category: (map['categories'] as List<dynamic>)
+      categoryUuid: (map['categories'] as List<dynamic>)
           .map((e) => e as String)
           .toList()
           .first,
@@ -38,7 +40,7 @@ class ArticleModel {
           .map((e) => ContentModel.fromMap(e as Map<String, dynamic>))
           .toList(),
       subCategories: (map['subcategories'] as List<dynamic>).map((e) {
-        return SubCategoryModel(name: e);
+        return SubCategoryModel(uuid: e);
       }).toList(),
     );
   }

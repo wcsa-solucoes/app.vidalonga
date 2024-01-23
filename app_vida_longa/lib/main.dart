@@ -2,14 +2,17 @@ import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/categories_service.dart';
+import 'package:app_vida_longa/core/services/in_app_purchase_service.dart';
 import 'package:app_vida_longa/main_module.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-
 import 'package:firebase_core/firebase_core.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'firebase_options.dart';
+
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,6 +24,7 @@ void main() async {
     name: mode,
   );
   Bloc.observer = MyBlocObserver();
+  InAppPurchaseStoreKitPlatform.registerPlatform();
 
   startServices();
   startControllers();
@@ -35,7 +39,11 @@ void startControllers() {
 void startServices() async {
   AuthService.init();
   await ArticleService.init();
-  CategoriesService.init();
+  await CategoriesService.init();
+
+  // PaymentServiceTest.instance.init();
+  // PaymentService.instance.init();
+  InAppPurchaseImplServices.instance.init(InAppPurchase.instance);
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }

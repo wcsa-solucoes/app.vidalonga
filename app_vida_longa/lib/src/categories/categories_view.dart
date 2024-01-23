@@ -33,7 +33,7 @@ class _CategoriesViewState extends State<CategoriesView> {
         width: MediaQuery.sizeOf(context).width,
         height: MediaQuery.sizeOf(context).height,
         child: Builder(builder: (context) {
-          if (CategoriesService.instance.categories.isEmpty) {
+          if (CategoriesService.instance.categoriesCollection.isEmpty) {
             return const Center(
                 child: Padding(
               padding: EdgeInsets.only(bottom: 100),
@@ -41,14 +41,18 @@ class _CategoriesViewState extends State<CategoriesView> {
             ));
           }
           return ListView.builder(
-            itemCount: CategoriesService.instance.categories.length,
+            itemCount: CategoriesService.instance.categoriesCollection.length,
             itemBuilder: (context, index) {
-              var categorie = CategoriesService.instance.categories[index];
+              var categorie =
+                  CategoriesService.instance.categoriesCollection[index];
               return OpenPageButtonWiget(
                 categorie.name,
                 onPressed: () {
-                  CategoriesService.setCurrentlyCategory(
-                      CategoriesService.instance.categories[index]);
+                  // CategoriesService.setCurrentlyCategory(
+                  //     CategoriesService.instance.categories[index]);
+                  CategoriesService.instance.selectSubcategoriesFromCategory(
+                      CategoriesService.instance.categoriesCollection[index]);
+
                   NavigationController.push(
                       routes.app.categories.subCategories.path);
                 },

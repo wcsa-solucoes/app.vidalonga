@@ -1,3 +1,4 @@
+import 'package:app_vida_longa/core/services/categories_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/models/sub_category_model.dart';
 import 'package:app_vida_longa/shared/widgets/article_card_widget.dart';
@@ -42,7 +43,8 @@ class _ArticlesViewState extends State<ArticlesView> {
               child: ListView.builder(
                 padding: const EdgeInsets.only(
                     bottom: 100, left: 8, right: 8, top: 20),
-                itemCount: widget.subCategory.articles?.length ?? 0,
+                itemCount:
+                    CategoriesService.instance.articlesFromSubcategories.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 10.0),
@@ -50,7 +52,8 @@ class _ArticlesViewState extends State<ArticlesView> {
                       width: MediaQuery.of(context).size.width * 0.8,
                       height: MediaQuery.of(context).size.height * 0.3,
                       child: ArticleCard(
-                          article: widget.subCategory.articles![index]),
+                          article: CategoriesService
+                              .instance.articlesFromSubcategories[index]),
                     ),
                   );
                 },

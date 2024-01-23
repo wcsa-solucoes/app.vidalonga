@@ -1,8 +1,12 @@
 import 'dart:async';
 
 import 'package:app_vida_longa/core/repositories/articles_repository.dart';
+import 'package:app_vida_longa/core/repositories/categories_repository.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
+import 'package:app_vida_longa/domain/models/category_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:tuple/tuple.dart';
 
 class ArticleService {
@@ -16,6 +20,9 @@ class ArticleService {
 
   static String _currentlyArticleId = "";
   static String get currentlyArticleId => _currentlyArticleId;
+  final List<CategoryModel> _categories = <CategoryModel>[];
+  List<CategoryModel> get categories => _instance._categories;
+  late final CategoriesRepository _categoriesRepository;
 
   static Future<void> init() async {
     if (!_hasInit) {
@@ -36,9 +43,26 @@ class ArticleService {
   final List<List<ArticleModel>> _articlesByCategories = <List<ArticleModel>>[];
   List<List<ArticleModel>> get articlesByCategories =>
       _instance._articlesByCategories;
-
+  List<CategoryModel?> get categoriesCollection =>
+      _instance._categoriesCollection;
+  List<CategoryModel?> _categoriesCollection = <CategoryModel?>[];
   Future<void> _init() async {
+    await getCategories();
+
     await getAll();
+  }
+
+  Future<void> getCategories() async {
+    _categoriesRepository =
+        CategoriesRepository(firestore: FirebaseFirestore.instance);
+
+    _categoriesCollection.clear();
+
+    final result = await _categoriesRepository.getAll();
+
+    if (result.response.status == ResponseStatusEnum.success) {
+      _categoriesCollection.addAll(result.categories);
+    }
   }
 
   Future<Tuple2<ResponseStatusModel, List<ArticleModel>>> getAll() async {
@@ -52,6 +76,14 @@ class ArticleService {
   }
 
   void _updateArticles(List<ArticleModel> articles) {
+    for (var article in articles) {
+      article.categoryTitle = _categoriesCollection
+              .firstWhereOrNull(
+                  (element) => element!.uuid == article.categoryUuid)
+              ?.name ??
+          "";
+    }
+
     _articles.clear();
     _articles.addAll(articles);
   }
@@ -64,7 +96,7 @@ class ArticleService {
         previousValue.add(<ArticleModel>[element]);
       } else {
         final List<ArticleModel> lastList = previousValue.last;
-        if (lastList.first.category == element.category) {
+        if (lastList.first.categoryUuid == element.categoryUuid) {
           lastList.add(element);
         } else {
           previousValue.add(<ArticleModel>[element]);

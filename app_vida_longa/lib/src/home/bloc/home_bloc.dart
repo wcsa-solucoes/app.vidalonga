@@ -14,8 +14,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeCategoriesSelectedEvent>(_handleCategoriesSelected);
     _allChips = _articles
         .map<ChipCategorie>((List<ArticleModel> e) => ChipCategorie(
-              label: e.first.category,
+              label: e.first.categoryTitle,
               selected: false,
+              uuid: e.first.categoryUuid,
             ))
         .toList();
     add(HomeLoadedEvent(articles: _articles, chipsCategorie: _allChips));
@@ -50,7 +51,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           previousValue.add(<ArticleModel>[element]);
         } else {
           final List<ArticleModel> lastList = previousValue.last;
-          if (lastList.first.category == element.category) {
+          if (lastList.first.categoryUuid == element.categoryUuid) {
             lastList.add(element);
           } else {
             previousValue.add(<ArticleModel>[element]);

@@ -51,6 +51,9 @@ class _SubCategoriesViewState extends State<SubCategoriesView> {
                 return OpenPageButtonWiget(
                   subCategorie.name,
                   onPressed: () {
+                    CategoriesService.instance.selectArticlesFromSubCategory(
+                        CategoriesService
+                            .instance.selectedCategory.subCategories[index]);
                     NavigationController.push(
                       routes.app.categories.subCategories.articles.path,
                       arguments: {"subCategory": subCategorie},

@@ -3,9 +3,11 @@ part of 'home_bloc.dart';
 class ChipCategorie {
   late String label;
   late bool selected;
+  late String uuid;
   ChipCategorie({
     this.label = "",
     this.selected = false,
+    this.uuid = "",
   });
 }
 
