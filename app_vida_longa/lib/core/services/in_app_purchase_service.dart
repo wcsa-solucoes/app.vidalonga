@@ -55,6 +55,8 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
     _kIds = {
       'app.vidalongaapp.assinaturamensal',
       'app.vidalongaapp.assinaturamensal.test.40',
+      "com.vidalonga.assinaturamensal",
+      "com.vidalonga.assinaturamensal.10"
     };
 
     final Stream<List<PurchaseDetails>> purchaseUpdated =
