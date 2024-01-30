@@ -124,7 +124,5 @@ class CategoriesService {
         }
       }
     }
-
-    print("CategoriesService - _init - _categoriesCollection");
   }
 }

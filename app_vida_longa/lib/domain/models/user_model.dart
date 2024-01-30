@@ -1,14 +1,7 @@
+import "package:app_vida_longa/domain/enums/subscription_type.dart";
 import "package:json_annotation/json_annotation.dart";
 
 part "user_model.g.dart";
-
-enum SubscriptionLevelEnum {
-  free("GRATUITO"),
-  premium("ASSINANTE");
-
-  final String name;
-  const SubscriptionLevelEnum(this.name);
-}
 
 @JsonSerializable()
 class UserModel {
@@ -19,7 +12,7 @@ class UserModel {
   late String document;
   @JsonKey(name: "photo_url")
   late String photoUrl;
-  late SubscriptionLevelEnum subscriptionLevel;
+  late SubscriptionEnum subscriptionLevel;
 
   UserModel({
     this.id = "",
@@ -28,7 +21,7 @@ class UserModel {
     this.phone = "",
     this.document = "",
     this.photoUrl = "",
-    this.subscriptionLevel = SubscriptionLevelEnum.free,
+    this.subscriptionLevel = SubscriptionEnum.nonPaying,
   });
 
   static UserModel empty() {
@@ -39,7 +32,7 @@ class UserModel {
       phone: "",
       document: "",
       photoUrl: "",
-      subscriptionLevel: SubscriptionLevelEnum.free,
+      subscriptionLevel: SubscriptionEnum.nonPaying,
     );
   }
 

@@ -41,8 +41,6 @@ void startServices() async {
   await ArticleService.init();
   await CategoriesService.init();
 
-  // PaymentServiceTest.instance.init();
-  // PaymentService.instance.init();
   InAppPurchaseImplServices.instance.init(InAppPurchase.instance);
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -80,13 +78,13 @@ class MyBlocObserver extends BlocObserver {
   @override
   void onCreate(BlocBase bloc) {
     super.onCreate(bloc);
-    PrintColoredHelper.printWhite('onCreate -- ${bloc.runtimeType}');
+    PrintColoredHelper.printError('onCreate -- ${bloc.runtimeType}');
   }
 
   @override
   void onEvent(Bloc bloc, Object? event) {
     super.onEvent(bloc, event);
-    PrintColoredHelper.printPink("onEvent ${event.runtimeType}");
+    PrintColoredHelper.printError("onEvent ${event.runtimeType}");
   }
 
   @override

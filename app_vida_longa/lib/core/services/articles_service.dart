@@ -45,7 +45,9 @@ class ArticleService {
       _instance._articlesByCategories;
   List<CategoryModel?> get categoriesCollection =>
       _instance._categoriesCollection;
-  List<CategoryModel?> _categoriesCollection = <CategoryModel?>[];
+
+  final List<CategoryModel?> _categoriesCollection = <CategoryModel?>[];
+
   Future<void> _init() async {
     await getCategories();
 

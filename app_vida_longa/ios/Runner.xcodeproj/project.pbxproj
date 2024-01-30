@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D42D4892B5AC0420033F4BF /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D42D4882B5AC0420033F4BF /* StoreKit.framework */; };
 		0DE461C12B54243D00A886C6 /* config in Resources */ = {isa = PBXBuildFile; fileRef = 0DE461C02B54243D00A886C6 /* config */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
@@ -32,6 +33,7 @@
 
 /* Begin PBXFileReference section */
 		01C0ADA32A5D784B7C08799B /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D42D4882B5AC0420033F4BF /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		0DE461C02B54243D00A886C6 /* config */ = {isa = PBXFileReference; lastKnownFileType = folder; name = config; path = ../../../../../../../Downloads/config; sourceTree = "<group>"; };
 		0DE461C42B5428C000A886C6 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
@@ -62,6 +64,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8B433AE62994430DD98671E9 /* Pods_Runner.framework in Frameworks */,
+				0D42D4892B5AC0420033F4BF /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,6 +143,7 @@
 		ABD1360678FCE06DFDDCDDB6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0D42D4882B5AC0420033F4BF /* StoreKit.framework */,
 				01C0ADA32A5D784B7C08799B /* Pods_Runner.framework */,
 			);
 			name = Frameworks;

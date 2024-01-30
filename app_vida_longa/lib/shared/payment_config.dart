@@ -22,39 +22,22 @@
 /// payment configurations that can be modified without the need to update your
 /// application.
 
+// ignore_for_file: dangling_library_doc_comments
+
 /// Sample configuration for Apple Pay. Contains the same content as the file
 /// under `assets/default_payment_profile_apple_pay.json`.
 const String defaultApplePay = '''{
   "provider": "apple_pay",
   "data": {
-    "merchantIdentifier": "merchant.com.sams.fish",
+    "merchantIdentifier": "merchant.com.vidalonga.appvidalonga",
     "displayName": "Sam's Fish",
-    "merchantCapabilities": ["3DS", "debit", "credit"],
-    "supportedNetworks": ["amex", "visa", "discover", "masterCard"],
-    "countryCode": "US",
-    "currencyCode": "USD",
+    "merchantCapabilities": [ "credit"],
+    "supportedNetworks": ["visa", "masterCard"],
+    "countryCode": "BR",
+    "currencyCode": "BRL",
     "requiredBillingContactFields": ["emailAddress", "name", "phoneNumber", "postalAddress"],
     "requiredShippingContactFields": [],
-    "shippingMethods": [
-      {
-        "amount": "0.00",
-        "detail": "Available within an hour",
-        "identifier": "in_store_pickup",
-        "label": "In-Store Pickup"
-      },
-      {
-        "amount": "4.99",
-        "detail": "5-8 Business Days",
-        "identifier": "flat_rate_shipping_id_2",
-        "label": "UPS Ground"
-      },
-      {
-        "amount": "29.99",
-        "detail": "1-3 Business Days",
-        "identifier": "flat_rate_shipping_id_1",
-        "label": "FedEx Priority Mail"
-      }
-    ]
+    "shippingMethods": []
   }
 }''';
 
@@ -92,8 +75,8 @@ const String defaultGooglePay = '''{
       "merchantName": "Example Merchant Name"
     },
     "transactionInfo": {
-      "countryCode": "US",
-      "currencyCode": "USD"
+      "countryCode": "BR",
+      "currencyCode": "BRL"
     }
   }
 }''';

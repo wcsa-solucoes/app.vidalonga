@@ -1,6 +1,7 @@
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
+import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
@@ -11,6 +12,7 @@ import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/profile/bloc/profile_bloc.dart';
 import 'package:app_vida_longa/src/profile/views/favorites_articles.dart';
 import 'package:app_vida_longa/src/profile/views/qr_code_view.dart';
+import 'package:app_vida_longa/src/profile/views/subscriptions_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -66,8 +68,8 @@ class _ProfileViewState extends State<ProfileView> {
     return Column(
       children: [
         _userInfos(),
+
         _userCard(UserService.instance.user.subscriptionLevel),
-        _userCard(SubscriptionLevelEnum.premium),
         const SizedBox(
           height: 10,
         ),
@@ -86,6 +88,11 @@ class _ProfileViewState extends State<ProfileView> {
         OpenPageButtonWiget("Abrir QRCode", onPressed: () {
           Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => const QrCodeView()));
+        }),
+
+        OpenPageButtonWiget("Assinaturas", onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const SubscriptionsView()));
         }),
         const SizedBox(
           height: 10,
@@ -195,98 +202,106 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget _userCard(SubscriptionLevelEnum status) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: MediaQuery.sizeOf(context).width * 0.88,
-            decoration: BoxDecoration(
-              boxShadow: const [
-                BoxShadow(
-                  blurRadius: 6.0,
-                  color: Color(0x4B1A1F24),
-                  offset: Offset(0.0, 2.0),
-                )
-              ],
-              gradient: LinearGradient(
-                colors: [
-                  Colors.white,
-                  status == SubscriptionLevelEnum.premium
-                      ? const Color(0xBB0F65D8)
-                      : Colors.orange,
-                ],
-                stops: const [0.0, 1.0],
-                begin: const AlignmentDirectional(0.94, -1.0),
-                end: const AlignmentDirectional(-0.94, 1.0),
-              ),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
+  Widget _userCard(SubscriptionEnum subscriptionType) {
+    return StreamBuilder<UserModel>(
+        initialData: UserService.instance.user,
+        stream: UserService.instance.userStream,
+        builder: (context, snapshot) {
+          return Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Image.asset(
-                      'assets/images/thumbnail_vidalonga4.png',
-                      width: 206.0,
-                      height: 80.0,
-                      fit: BoxFit.cover,
+                Container(
+                  width: MediaQuery.sizeOf(context).width * 0.88,
+                  decoration: BoxDecoration(
+                    boxShadow: const [
+                      BoxShadow(
+                        blurRadius: 6.0,
+                        color: Color(0x4B1A1F24),
+                        offset: Offset(0.0, 2.0),
+                      )
+                    ],
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.white,
+                        snapshot.data!.subscriptionLevel ==
+                                SubscriptionEnum.paying
+                            ? const Color(0xBB0F65D8)
+                            : Colors.orange,
+                      ],
+                      stops: const [0.0, 1.0],
+                      begin: const AlignmentDirectional(0.94, -1.0),
+                      end: const AlignmentDirectional(-0.94, 1.0),
                     ),
-                  ],
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsetsDirectional.fromSTEB(20.0, 0, 20.0, 0.0),
-                  child: Row(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Image.asset(
+                            'assets/images/thumbnail_vidalonga4.png',
+                            width: 206.0,
+                            height: 80.0,
+                            fit: BoxFit.cover,
+                          ),
+                        ],
+                      ),
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(
-                            0.0, 30.0, 0.0, 0.0),
-                        child: Text(
-                          _userName,
-                          style: GoogleFonts.getFont(
-                            'Roboto Mono',
-                            color: AppColors.blackCard,
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.w800,
-                          ),
+                            20.0, 0, 20.0, 0.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 30.0, 0.0, 0.0),
+                              child: Text(
+                                _userName,
+                                style: GoogleFonts.getFont(
+                                  'Roboto Mono',
+                                  color: AppColors.blackCard,
+                                  fontSize: 22.0,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                      20.0, 12.0, 20.0, 16.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        status.name,
-                        style: GoogleFonts.getFont(
-                          'Roboto Mono',
-                          color: AppColors
-                              .blackCard, //const Color.fromRGBO(87, 99, 108, 1),
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                      Text(
-                        DateFormat('dd/MM/yy').format(
-                            DateTime.now().add(const Duration(days: 30))),
-                        style: GoogleFonts.getFont(
-                          'Roboto Mono',
-                          color: AppColors
-                              .blackCard, //const Color.fromRGBO(87, 99, 108, 1),
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.normal,
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            20.0, 12.0, 20.0, 16.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              subscriptionType.name,
+                              style: GoogleFonts.getFont(
+                                'Roboto Mono',
+                                color: AppColors
+                                    .blackCard, //const Color.fromRGBO(87, 99, 108, 1),
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                            Text(
+                              DateFormat('dd/MM/yy').format(
+                                  DateTime.now().add(const Duration(days: 30))),
+                              style: GoogleFonts.getFont(
+                                'Roboto Mono',
+                                color: AppColors
+                                    .blackCard, //const Color.fromRGBO(87, 99, 108, 1),
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -294,9 +309,7 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
+        });
   }
 }

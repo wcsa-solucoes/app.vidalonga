@@ -5,8 +5,10 @@ import 'package:app_vida_longa/core/helpers/field_format_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';
+import 'package:app_vida_longa/core/services/subscription_service.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/custom_exceptions_codes_enum.dart';
+import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
@@ -33,6 +35,8 @@ class UserService {
 
   final StreamController<UserModel> _userController =
       StreamController<UserModel>.broadcast();
+
+  final SubscriptionService _subscriptionService = SubscriptionService();
 
   Stream<UserModel> get userStream => _userController.stream;
 
@@ -186,5 +190,13 @@ class UserService {
 
   void _handleRecentUserRegister() {
     Modular.to.navigate(routes.app.profile.path);
+  }
+
+  Future<void> updateSubscriberStatusFromRoles(
+      SubscriptionEnum subscriptionType) async {
+    await _subscriptionService
+        .updateSubscriberStatusFromRoles(subscriptionType);
+    _user.subscriptionLevel = subscriptionType;
+    _userController.sink.add(_user);
   }
 }
