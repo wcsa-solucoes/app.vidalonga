@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class ISubscriptionRepository {
   Future<ResponseStatusModel> updateSubscriberStatusFromRoles(
-      SubscriptionEnum subscription);
+      SubscriptionEnum subscription, String platform);
 }
 
 class SubscriptionRepositoryImpl implements ISubscriptionRepository {
@@ -17,12 +17,13 @@ class SubscriptionRepositoryImpl implements ISubscriptionRepository {
 
   @override
   Future<ResponseStatusModel> updateSubscriberStatusFromRoles(
-      SubscriptionEnum subscriptionType) async {
+      SubscriptionEnum subscriptionType, String platform) async {
     ResponseStatusModel responseStatusModel = ResponseStatusModel();
 
     await firestore.collection('users').doc(UserService.instance.user.id).set(
       {
         "roles": {"subscriptionType": subscriptionType.name},
+        "lastPlatformUpdate": platform
       },
       SetOptions(merge: true),
     );

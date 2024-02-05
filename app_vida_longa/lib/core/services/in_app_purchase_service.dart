@@ -51,7 +51,8 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
     _init();
   }
 
-  void _init() {
+  void _init() async {
+    // await _handleIAPService.getPurchases();
     _kIds = {
       'app.vidalongaapp.assinaturamensal',
       'app.vidalongaapp.assinaturamensal.test.40',
@@ -78,15 +79,28 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
   }
 
   void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetailsList) async {
-    for (var purchaseDetails in purchaseDetailsList) {
-      PrintColoredHelper.printWhite(
-          ' (PurchaseDetails): date: ${DateTime.fromMillisecondsSinceEpoch(int.parse(purchaseDetails.transactionDate!))} status${purchaseDetails.status}  purchaseID: ${purchaseDetails.purchaseID} productID: ${purchaseDetails.productID},');
-    }
-
+    PrintColoredHelper.printError(purchaseDetailsList.length.toString());
     for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
       if (purchaseDetails.status == PurchaseStatus.canceled) {
         PrintColoredHelper.printGreen('purchase canceled');
         _finishIncompleteIosTransactions();
+      }
+      if (purchaseDetails.verificationData.source == "app_store") {
+        final AppStorePurchaseDetails applePurDet =
+            purchaseDetails as AppStorePurchaseDetails;
+        if (applePurDet.transactionDate != null) {
+          PrintColoredHelper.printOrange(
+              "Date: ${DateTime.fromMillisecondsSinceEpoch(int.parse(applePurDet.transactionDate!))} ");
+        }
+
+        PrintColoredHelper.printPink(
+            'status: ${applePurDet.status}  purchaseID: ${applePurDet.purchaseID} productID: ${applePurDet.productID},');
+        //green
+        PrintColoredHelper.printGreen(
+            "skPayTransac transcationId: ${applePurDet.skPaymentTransaction.transactionIdentifier}");
+        //white
+        PrintColoredHelper.printWhite(
+            "orgTransac transcationId: ${applePurDet.skPaymentTransaction.originalTransaction?.transactionIdentifier}");
       }
 
       if (purchaseDetails.status == PurchaseStatus.pending) {
@@ -99,9 +113,20 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
             purchaseDetails.status == PurchaseStatus.restored) {
           // A compra foi bem-sucedida ou restaurada.
           // Aqui, você deve entregar o produto e validar o recibo da compra.
+          PrintColoredHelper.printCyan(
+              "purchased or restored // pendingCompletePurchase :${purchaseDetails.pendingCompletePurchase}");
 
           if (purchaseDetails.status == PurchaseStatus.purchased) {
-            await _handleIAPService.handlePurchase(purchaseDetails);
+            if (Platform.isIOS) {
+              await _handleIAPService.handlePurchase(
+                  purchaseDetails, 'applePurchases', 'ios');
+            } else if (Platform.isAndroid) {
+              await _handleIAPService.handlePurchase(
+                  purchaseDetails, 'googlePurchases', 'android');
+            }
+            //red
+            PrintColoredHelper.printError(
+                'handlePurchase purchaseID: ${purchaseDetails.purchaseID}');
           }
 
           if (purchaseDetails.status == PurchaseStatus.restored) {
@@ -111,6 +136,7 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
           // Importante: Sempre complete a transação para iOS.
           if (purchaseDetails.pendingCompletePurchase) {
             await _inAppPurchase.completePurchase(purchaseDetails);
+            PrintColoredHelper.printCyan('completePurchase');
           }
         }
       }
@@ -178,11 +204,6 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
       }
 
       if (purchaseParam != null) {
-        // await iosPlatformAddition.presentCodeRedemptionSheet();
-        // SKPaymentQueueWrapper().presentCodeRedemptionSheet();
-        // SKPaymentQueueWrapper().handlePaymentQueueDelegateCallbacks(MethodCall());
-        // SKPaymentQueueWrapper().restoreTransactions();
-
         await _inAppPurchase
             .buyNonConsumable(purchaseParam: purchaseParam)
             .then(

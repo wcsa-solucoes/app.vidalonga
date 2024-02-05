@@ -17,33 +17,17 @@ class HandleIAPService {
     firestore: FirebaseFirestore.instance,
   );
 
-  Future<void> handlePurchase(PurchaseDetails purchaseDetails) async {
-    if (_purchases.isEmpty) {
-      await UserService.instance
-          .updateSubscriberStatusFromRoles(SubscriptionEnum.paying);
-      await savePurchase(purchaseDetails);
-      return;
-    }
-
-    //compare the date bewtween the purchase and the last purchase date
-    //if the last purchase date is older than the purchase date, then update the subscription status
-    DateTime dateOfLastPurchaseDate = DateTime.fromMillisecondsSinceEpoch(
-        int.parse(_purchases.last.transactionDate!));
-
-    DateTime dateOfNewPurchaseDate = DateTime.fromMillisecondsSinceEpoch(
-        int.parse(purchaseDetails.transactionDate!));
-
-    //if the diffenrence has more than 30 days, then update the subscription status
-    if (dateOfNewPurchaseDate.difference(dateOfLastPurchaseDate).inDays > 30) {
-      await UserService.instance
-          .updateSubscriberStatusFromRoles(SubscriptionEnum.paying);
-      await savePurchase(purchaseDetails);
-    }
+  Future<void> handlePurchase(PurchaseDetails purchaseDetails,
+      String collection, String platform) async {
+    await UserService.instance
+        .updateSubscriberStatusFromRoles(SubscriptionEnum.paying, platform);
+    await savePurchase(purchaseDetails, collection);
   }
 
-  Future<void> savePurchase(PurchaseDetails purchaseDetails) async {
+  Future<void> savePurchase(
+      PurchaseDetails purchaseDetails, String collection) async {
     _purchases.add(purchaseDetails);
-    await _handleIAPRepository.savePurchase(_purchases);
+    await _handleIAPRepository.savePurchase(_purchases, collection);
   }
 
   Future<void> getPurchases() async {

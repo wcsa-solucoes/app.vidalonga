@@ -5,6 +5,7 @@ import 'package:app_vida_longa/core/helpers/field_format_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';
+import 'package:app_vida_longa/core/services/handle_iap_service.dart';
 import 'package:app_vida_longa/core/services/subscription_service.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/custom_exceptions_codes_enum.dart';
@@ -176,7 +177,7 @@ class UserService {
     return response;
   }
 
-  void initUser() {
+  void initUser() async {
     _userRepository.updateListener();
     IFavoritesRepository favoritesRepository =
         FavoritesRepositoryImpl(FirebaseFirestore.instance);
@@ -184,6 +185,7 @@ class UserService {
     IFavoritesService favoritesService = FavoritesServiceImpl.instance;
 
     favoritesService.init(favoritesRepository, user.id);
+    // HandleIAPService.instance.getPurchases();
 
     NavigationController.to(routes.app.profile.path);
   }
@@ -193,9 +195,9 @@ class UserService {
   }
 
   Future<void> updateSubscriberStatusFromRoles(
-      SubscriptionEnum subscriptionType) async {
-    await _subscriptionService
-        .updateSubscriberStatusFromRoles(subscriptionType);
+      SubscriptionEnum subscriptionType, String platform) async {
+    await _subscriptionService.updateSubscriberStatusFromRoles(
+        subscriptionType, platform);
     _user.subscriptionLevel = subscriptionType;
     _userController.sink.add(_user);
   }

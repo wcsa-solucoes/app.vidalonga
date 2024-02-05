@@ -1,0 +1,55 @@
+{
+    "purchases": [
+        {
+            "notificationType": "SUBSCRIBED",
+            "subtype": "RESUBSCRIBE",
+            "notificationUUID": "a47c599e-a0a6-40a4-aece-8c11017903ed",
+            "data": {
+                "appAppleId": 6446136437,
+                "bundleId": "app.vidalongaapp.com",
+                "bundleVersion": "1.0.5",
+                "environment": "Sandbox",
+                "signedTransactionInfo": {
+                    "transactionId": "2000000512420038",
+                    "originalTransactionId": "2000000507196541",
+                    "webOrderLineItemId": "2000000049789939",
+                    "bundleId": "app.vidalongaapp.com",
+                    "productId": "app.vidalongaapp.assinaturamensal",
+                    "subscriptionGroupIdentifier": "21268381",
+                    "purchaseDate": 1706624249000,
+                    "originalPurchaseDate": 1706014925000,
+                    "expiresDate": 1706624549000,
+                    "quantity": 1,
+                    "type": "Auto-Renewable Subscription",
+                    "inAppOwnershipType": "PURCHASED",
+                    "signedDate": 1706624272925,
+                    "environment": "Sandbox",
+                    "transactionReason": "PURCHASE",
+                    "storefront": "BRA",
+                    "storefrontId": "143503",
+                    "price": 29900,
+                    "currency": "BRL"
+                },
+                "signedRenewalInfo": {
+                    "originalTransactionId": "2000000507196541",
+                    "autoRenewProductId": "app.vidalongaapp.assinaturamensal",
+                    "productId": "app.vidalongaapp.assinaturamensal",
+                    "autoRenewStatus": 1,
+                    "signedDate": 1706624272925,
+                    "environment": "Sandbox",
+                    "recentSubscriptionStartDate": 1706624249000,
+                    "renewalDate": 1706624549000
+                },
+                "status": 1
+            },
+            "version": "2.0",
+            "signedDate": 1706624275359
+        }
+    ],
+    "userId": "",
+    "lastPurchaseId": "2000000512420038",
+    "lastPurchaseDate": 1706624249000,
+    "lastPurchaseProductId": "app.vidalongaapp.assinaturamensal",
+    "lastPurchaseTransactionId": "2000000512420038",
+    "lastPurchaseOriginalTransactionId": "2000000507196541"
+}
