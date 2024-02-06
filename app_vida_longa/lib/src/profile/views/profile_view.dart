@@ -12,7 +12,7 @@ import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/profile/bloc/profile_bloc.dart';
 import 'package:app_vida_longa/src/profile/views/favorites_articles.dart';
 import 'package:app_vida_longa/src/profile/views/qr_code_view.dart';
-import 'package:app_vida_longa/src/profile/views/subscriptions_view.dart';
+import 'package:app_vida_longa/src/profile/views/subscriptions/bloc/subscriptions_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';

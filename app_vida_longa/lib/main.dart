@@ -57,7 +57,7 @@ void startServices() async {
   await ArticleService.init();
   await CategoriesService.init();
 
-  InAppPurchaseImplServices.instance.init(InAppPurchase.instance);
+  // InAppPurchaseImplServices.instance.init(InAppPurchase.instance);
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }

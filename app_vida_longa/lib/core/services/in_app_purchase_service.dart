@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/handle_iap_service.dart';
-import 'package:app_vida_longa/domain/models/product_model.dart' as model;
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
@@ -19,14 +18,16 @@ abstract class IInAppPurchaseService {
   Future<bool> restorePurchase();
   Future<void> init(InAppPurchase inAppPurchase);
   late final StreamSubscription<List<PurchaseDetails>> _subscription;
-  final List<model.ProductModel> _products = [];
-  List<model.ProductModel> get products => _products;
+  // final List<model.ProductModel> _products = [];
+  // List<model.ProductModel> get products => _products;
   final List<ProductDetails> _productDetails = [];
   List<ProductDetails> get productDetails => _productDetails;
   late final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition;
   getTransactions();
 
   late final Set<String> _kIds;
+
+  Set<String> get kIds => _kIds;
 }
 
 class InAppPurchaseImplServices extends IInAppPurchaseService {
@@ -48,10 +49,10 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
   Future<void> init(InAppPurchase inAppPurchase) async {
     _inAppPurchase = inAppPurchase;
 
-    _init();
+    await _init();
   }
 
-  void _init() async {
+  Future<void> _init() async {
     // await _handleIAPService.getPurchases();
     _kIds = {
       'app.vidalongaapp.assinaturamensal',
@@ -74,8 +75,6 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
         PrintColoredHelper.printGreen('purchaseUpdates onDone');
       },
     );
-
-    getProductsDetails(_kIds);
   }
 
   void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetailsList) async {
@@ -114,23 +113,19 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
           // A compra foi bem-sucedida ou restaurada.
           // Aqui, você deve entregar o produto e validar o recibo da compra.
           PrintColoredHelper.printCyan(
-              "purchased or restored // pendingCompletePurchase :${purchaseDetails.pendingCompletePurchase}");
+              "pendingCompletePurchase :${purchaseDetails.pendingCompletePurchase}");
 
           if (purchaseDetails.status == PurchaseStatus.purchased) {
             if (Platform.isIOS) {
               await _handleIAPService.handlePurchase(
-                  purchaseDetails, 'applePurchases', 'ios');
+                  purchaseDetails, 'applePurchases', 'app_store');
             } else if (Platform.isAndroid) {
               await _handleIAPService.handlePurchase(
-                  purchaseDetails, 'googlePurchases', 'android');
+                  purchaseDetails, 'googlePurchases', 'google_play');
             }
             //red
             PrintColoredHelper.printError(
                 'handlePurchase purchaseID: ${purchaseDetails.purchaseID}');
-          }
-
-          if (purchaseDetails.status == PurchaseStatus.restored) {
-            //TODO restore purchase
           }
 
           // Importante: Sempre complete a transação para iOS.
@@ -146,6 +141,10 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
   @override
   Future<List<ProductDetails>?> getProductsDetails(
       Set<String> productIds) async {
+    if (_productDetails.isNotEmpty) {
+      return _productDetails;
+    }
+
     final isStoreAvailable = await _inAppPurchase.isAvailable();
 
     if (isStoreAvailable == false) return [];
@@ -156,7 +155,7 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
       await iosPlatformAddition.setDelegate(_IosPaymentQueueDelegate());
     }
 
-    final response = await _inAppPurchase.queryProductDetails(productIds);
+    final response = await _inAppPurchase.queryProductDetails(_kIds);
 
     if (response.productDetails.isEmpty == true) return [];
 

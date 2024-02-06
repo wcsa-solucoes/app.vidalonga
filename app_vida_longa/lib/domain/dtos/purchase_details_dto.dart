@@ -2,7 +2,6 @@ import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
-import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 abstract class PurchaseDetailsDto {
   static const String appleStoreSource = "apple_store";
@@ -60,6 +59,14 @@ abstract class PurchaseDetailsDto {
         "payment": {
           "applicationUsername":
               purchaseDetails.skPaymentTransaction.payment.applicationUsername,
+        },
+        "originalTransaction": {
+          "transactionIdentifier": purchaseDetails
+              .skPaymentTransaction.originalTransaction?.transactionIdentifier,
+          "transactionState": purchaseDetails
+              .skPaymentTransaction.originalTransaction?.transactionState.name,
+          "transactionTimeStamp": purchaseDetails
+              .skPaymentTransaction.originalTransaction?.transactionTimeStamp,
         }
       },
       // "verificationData": {

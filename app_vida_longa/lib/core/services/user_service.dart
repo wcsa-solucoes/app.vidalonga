@@ -5,7 +5,7 @@ import 'package:app_vida_longa/core/helpers/field_format_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';
-import 'package:app_vida_longa/core/services/handle_iap_service.dart';
+import 'package:app_vida_longa/core/services/in_app_purchase_service.dart';
 import 'package:app_vida_longa/core/services/subscription_service.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/custom_exceptions_codes_enum.dart';
@@ -17,6 +17,7 @@ import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:tuple/tuple.dart';
 
 class UserService {
@@ -186,6 +187,10 @@ class UserService {
 
     favoritesService.init(favoritesRepository, user.id);
     // HandleIAPService.instance.getPurchases();
+
+    final IInAppPurchaseService paymentService =
+        InAppPurchaseImplServices.instance;
+    paymentService.init(InAppPurchase.instance);
 
     NavigationController.to(routes.app.profile.path);
   }

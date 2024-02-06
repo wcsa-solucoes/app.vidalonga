@@ -60,6 +60,11 @@ class HandleIAPRepositoryImpl implements IHandleIAPRepository {
         }
       }
 
+      maps = appStorePurchases
+          .map((AppStorePurchaseDetails purchase) =>
+              PurchaseDetailsDto.toMapApple(purchase))
+          .toList();
+
       await firestore
           .collection(platform)
           .doc(UserService.instance.user.id)
@@ -71,11 +76,6 @@ class HandleIAPRepositoryImpl implements IHandleIAPRepository {
         },
         SetOptions(merge: true),
       );
-
-      maps = appStorePurchases
-          .map((AppStorePurchaseDetails purchase) =>
-              PurchaseDetailsDto.toMapApple(purchase))
-          .toList();
 
       await firestore
           .collection(platform)
