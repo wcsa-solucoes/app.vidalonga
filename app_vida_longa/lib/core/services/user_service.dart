@@ -35,12 +35,9 @@ class UserService {
 
   UserServiceStatusEnum get status => _status;
 
-  final StreamController<UserModel> _userController =
-      StreamController<UserModel>.broadcast();
-
   final SubscriptionService _subscriptionService = SubscriptionService();
 
-  Stream<UserModel> get userStream => _userController.stream;
+  Stream<UserModel> get userStream => _userRepository.userStream;
 
   late bool _hasSentValidationEmail = false;
 
@@ -51,7 +48,7 @@ class UserService {
   }
 
   Future<void> uploadPhoto(String url) async {
-    _user.photoUrl = url;
+    _user = user.copyWith(photoUrl: url);
     _userRepository.update(_user);
   }
 
@@ -77,8 +74,11 @@ class UserService {
 
     if (response.status == ResponseStatusEnum.failed) {
       if (response.code == WeExceptionCodesEnum.firebaseAuthUserNotFound) {
-        user.id = FirebaseAuth.instance.currentUser!.uid;
-        user.email = FirebaseAuth.instance.currentUser!.email!;
+        _user = user.copyWith(
+            id: FirebaseAuth.instance.currentUser!.uid,
+            email: FirebaseAuth.instance.currentUser!.email!);
+        // user.id = FirebaseAuth.instance.currentUser!.uid;
+        // user.email = FirebaseAuth.instance.currentUser!.email!;
 
         unawaited(_handleSendEmail());
       }
@@ -89,7 +89,8 @@ class UserService {
 
   Future<ResponseStatusModel> create(UserModel user) async {
     _status = UserServiceStatusEnum.accountedCreated;
-    user.id = FirebaseAuth.instance.currentUser!.uid;
+    user = user.copyWith(id: FirebaseAuth.instance.currentUser!.uid);
+
     _setUser(user);
     return await _userRepository.create(user);
   }
@@ -164,8 +165,13 @@ class UserService {
   }
 
   Future<ResponseStatusModel> update(UserModel user) async {
-    user.phone = FieldFormatHelper.phone(phone: user.phone);
-    user.document = FieldFormatHelper.register(register: user.document);
+    // user.phone = FieldFormatHelper.phone(phone: user.phone);
+    // user.document = FieldFormatHelper.register(register: user.document);
+
+    user = user.copyWith(
+      phone: user.phone,
+      document: user.document,
+    );
 
     final ResponseStatusModel response = await _userRepository.update(user);
 
@@ -203,7 +209,10 @@ class UserService {
       SubscriptionEnum subscriptionType, String platform) async {
     await _subscriptionService.updateSubscriberStatusFromRoles(
         subscriptionType, platform);
-    _user.subscriptionLevel = subscriptionType;
-    _userController.sink.add(_user);
+    // _user.subscriptionLevel = subscriptionType;
+    _user = _user.copyWith(subscriptionLevel: subscriptionType);
+    _setUser(_user);
+
+    // _userController.sink.add(_user);
   }
 }

@@ -12,7 +12,11 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       email: json['email'] as String? ?? "",
       phone: json['phone'] as String? ?? "",
       document: json['document'] as String? ?? "",
-      photoUrl: json['photoUrl'] as String? ?? "",
+      photoUrl: json['photo_url'] as String? ?? "",
+      subscriptionLevel: json['roles'] == null
+          ? SubscriptionEnum.nonPaying
+          : UserModel.subscriptionEnumFromJson(
+              json['roles'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
@@ -21,5 +25,5 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'email': instance.email,
       'phone': instance.phone,
       'document': instance.document,
-      'photoUrl': instance.photoUrl,
+      'photo_url': instance.photoUrl,
     };

@@ -1,7 +1,6 @@
 import "dart:async";
 import "package:app_vida_longa/core/controllers/notification_controller.dart";
 import "package:app_vida_longa/core/helpers/app_helper.dart";
-import "package:app_vida_longa/core/helpers/field_format_helper.dart";
 import "package:app_vida_longa/core/repositories/auth_repository.dart";
 import "package:app_vida_longa/core/services/user_service.dart";
 import "package:app_vida_longa/domain/contants/routes.dart";
@@ -70,7 +69,7 @@ class AuthService {
 
   Future<ResponseStatusModel> register(
       UserModel user, String password, String name) async {
-    user.phone = FieldFormatHelper.phone(phone: user.phone);
+    user = user.copyWith(phone: user.phone);
 
     final ResponseStatusModel response =
         await _authRepository.register(user, password, name);

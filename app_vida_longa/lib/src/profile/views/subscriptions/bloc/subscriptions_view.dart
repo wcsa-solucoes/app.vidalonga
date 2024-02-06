@@ -88,10 +88,6 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
             bloc: _subscriptionsBloc,
             listener: (context, state) {},
             builder: (context, state) {
-              if (UserService.instance.user.subscriptionLevel ==
-                  SubscriptionEnum.paying) {
-                return const DefaultText('Você já é assinante');
-              }
               if (state is SubscriptionsLoading) {
                 return const Center(
                   child: CircularProgressIndicator(),

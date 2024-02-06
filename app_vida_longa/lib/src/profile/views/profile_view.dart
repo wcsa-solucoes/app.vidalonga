@@ -69,7 +69,7 @@ class _ProfileViewState extends State<ProfileView> {
       children: [
         _userInfos(),
 
-        _userCard(UserService.instance.user.subscriptionLevel),
+        _userCard(),
         const SizedBox(
           height: 10,
         ),
@@ -202,7 +202,7 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget _userCard(SubscriptionEnum subscriptionType) {
+  Widget _userCard() {
     return StreamBuilder<UserModel>(
         initialData: UserService.instance.user,
         stream: UserService.instance.userStream,
@@ -281,7 +281,7 @@ class _ProfileViewState extends State<ProfileView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              subscriptionType.name,
+                              snapshot.data!.subscriptionLevel.name,
                               style: GoogleFonts.getFont(
                                 'Roboto Mono',
                                 color: AppColors

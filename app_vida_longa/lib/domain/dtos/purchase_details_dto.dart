@@ -77,9 +77,9 @@ abstract class PurchaseDetailsDto {
       //   "source": purchaseDetails.verificationData.source,
       // },
     };
-    checkForNonPrimitiveValues(map);
-    PrintColoredHelper.printOrange(
-        'Verificação de valores não primitivos concluída');
+    // checkForNonPrimitiveValues(map);
+    // PrintColoredHelper.printOrange(
+    //     'Verificação de valores não primitivos concluída');
 
     return map;
   }

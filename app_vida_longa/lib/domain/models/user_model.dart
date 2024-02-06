@@ -5,14 +5,16 @@ part "user_model.g.dart";
 
 @JsonSerializable()
 class UserModel {
-  late String id;
-  late String name;
-  late String email;
-  late String phone;
-  late String document;
+  final String id;
+  final String name;
+  final String email;
+  final String phone;
+  final String document;
   @JsonKey(name: "photo_url")
-  late String photoUrl;
-  late SubscriptionEnum subscriptionLevel;
+  final String photoUrl;
+  @JsonKey(
+      fromJson: subscriptionEnumFromJson, includeToJson: false, name: "roles")
+  final SubscriptionEnum subscriptionLevel;
 
   UserModel({
     this.id = "",
@@ -36,8 +38,40 @@ class UserModel {
     );
   }
 
+  static SubscriptionEnum subscriptionEnumFromJson(Map<String, dynamic> roles) {
+    final subscriptionType = roles["subscriptionType"];
+
+    if (subscriptionType == null) {
+      return SubscriptionEnum.nonPaying;
+    }
+    return SubscriptionEnum.values.firstWhere(
+      (e) => e.name == subscriptionType,
+      orElse: () => SubscriptionEnum.nonPaying,
+    );
+  }
+
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
+
+  UserModel copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? phone,
+    String? document,
+    String? photoUrl,
+    SubscriptionEnum? subscriptionLevel,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      document: document ?? this.document,
+      photoUrl: photoUrl ?? this.photoUrl,
+      subscriptionLevel: subscriptionLevel ?? this.subscriptionLevel,
+    );
+  }
 }

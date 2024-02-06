@@ -64,10 +64,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     _user = _userService.user;
 
-    _user.name = event.name;
-    _user.phone = FieldFormatHelper.phone(phone: event.phone);
-    _user.document = FieldFormatHelper.register(register: event.cpf);
-    _user.email = event.email;
+    _user = _user.copyWith(
+      name: event.name,
+      phone: FieldFormatHelper.phone(phone: event.phone),
+      document: FieldFormatHelper.register(register: event.cpf),
+      email: event.email,
+    );
+
+    // _user.name = event.name;
+    // _user.phone = FieldFormatHelper.phone(phone: event.phone);
+    // _user.document = FieldFormatHelper.register(register: event.cpf);
+    // _user.email = event.email;
 
     final ResponseStatusModel response =
         await _authService.register(_user, event.password, _user.name);

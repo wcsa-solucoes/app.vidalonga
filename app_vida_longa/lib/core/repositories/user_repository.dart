@@ -181,6 +181,7 @@ class UserRepository {
         return;
       }
     }
-    _userController.sink.add(UserModel.fromJson(documentSnapshot.data()!));
+    final UserModel userModel = UserModel.fromJson(documentSnapshot.data()!);
+    _userController.sink.add(userModel);
   }
 }
