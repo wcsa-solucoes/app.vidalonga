@@ -58,7 +58,7 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
       'app.vidalongaapp.assinaturamensal',
       'app.vidalongaapp.assinaturamensal.test.40',
       "com.vidalonga.assinaturamensal",
-      "com.vidalonga.assinaturamensal.10"
+      "com.vidalonga.assinaturamensal.10",
     };
 
     final Stream<List<PurchaseDetails>> purchaseUpdated =
@@ -82,7 +82,9 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
     for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
       if (purchaseDetails.status == PurchaseStatus.canceled) {
         PrintColoredHelper.printGreen('purchase canceled');
-        _finishIncompleteIosTransactions();
+        if (Platform.isIOS) {
+          await _finishIncompleteIosTransactions();
+        }
       }
       if (purchaseDetails.verificationData.source == "app_store") {
         final AppStorePurchaseDetails applePurDet =
@@ -129,7 +131,7 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
           }
 
           // Importante: Sempre complete a transação para iOS.
-          if (purchaseDetails.pendingCompletePurchase) {
+          if (purchaseDetails.pendingCompletePurchase && Platform.isIOS) {
             await _inAppPurchase.completePurchase(purchaseDetails);
             PrintColoredHelper.printCyan('completePurchase');
           }
