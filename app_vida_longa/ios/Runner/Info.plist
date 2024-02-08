@@ -45,5 +45,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>It&apos;s necessary your permission before you can add photos to your profile.</string>
 </dict>
 </plist>
