@@ -4,6 +4,7 @@ import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/handle_ipa_repository/implementations/handle_iap_google_repository.dart';
 import 'package:app_vida_longa/core/services/handle_iap_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
+import 'package:app_vida_longa/core/services/plans_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -22,13 +23,15 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
     ),
   );
 
+  final IPlansService _plansService = PlansServiceImpl.instance;
+
   late final InAppPurchase _inAppPurchase;
 
   late final StreamSubscription<List<PurchaseDetails>> _subscription;
   @override
   StreamSubscription<List<PurchaseDetails>> get subscription => _subscription;
 
-  Set<String> _kIds = {};
+  final Set<String> _kIds = {};
   @override
   Set<String> get kIds => _kIds;
 
@@ -44,11 +47,9 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
   }
 
   Future<void> _init() async {
-    _kIds = {
-      "com.vidalonga.assinaturamensal",
-      "com.vidalonga.assinaturamensal.10",
-      "com.vidalonga.assinaturamensal.90"
-    };
+    for (var plan in _plansService.plans) {
+      _kIds.add(plan.googlePlanId);
+    }
 
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         _inAppPurchase.purchaseStream;

@@ -16,7 +16,7 @@ class CategoriesService {
   static String _currentlyCategoryId = "";
   static String get currentlyCategoryId => _currentlyCategoryId;
 
-  final ArticleService _articleService = ArticleService.instance;
+  late final ArticleService _articleService;
   final List<CategoryModel> _categories = <CategoryModel>[];
   List<CategoryModel> get categories => _categories;
   late CategoryModel _selectedCategory;
@@ -36,10 +36,10 @@ class CategoriesService {
   List<ArticleModel> get articlesFromSubcategories =>
       _articlesFromSubcategories;
 
-  static Future<void> init() async {
+  static Future<void> init(ArticleService articleService) async {
     if (!_hasInit) {
       _hasInit = true;
-      await _instance._init();
+      await _instance._init(articleService);
     }
   }
 
@@ -70,7 +70,8 @@ class CategoriesService {
     }
   }
 
-  Future<void> _init() async {
+  Future<void> _init(ArticleService articleService) async {
+    _articleService = articleService;
     var response = await _categoriesRepository.getAll();
     if (response.response.status == ResponseStatusEnum.success) {
       _categoriesCollection.addAll(response.categories);

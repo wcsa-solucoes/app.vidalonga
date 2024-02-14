@@ -13,9 +13,11 @@ class HandleIAPService {
 
   Future<void> handlePurchase(
       PurchaseDetails purchaseDetails, String platform) async {
-    await UserService.instance
-        .updateSubscriberStatusFromRoles(SubscriptionEnum.paying, platform);
-    await savePurchase(purchaseDetails);
+    await Future.wait([
+      savePurchase(purchaseDetails),
+      UserService.instance
+          .updateSubscriberStatusFromRoles(SubscriptionEnum.paying, platform),
+    ]);
   }
 
   Future<void> savePurchase(PurchaseDetails purchaseDetails) async {

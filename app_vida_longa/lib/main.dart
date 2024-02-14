@@ -51,11 +51,15 @@ void startControllers() {
 }
 
 void startServices() async {
-  AuthService.init();
-  await ArticleService.init();
-  await CategoriesService.init();
+  Future.wait([
+    AuthService.init(),
+    ArticleService.init().then(
+      (value) {
+        CategoriesService.init(ArticleService.instance);
+      },
+    ),
+  ]);
 
-  // InAppPurchaseImplServices.instance.init(InAppPurchase.instance);
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }

@@ -18,7 +18,7 @@ class AuthService {
 
   static bool _hasInit = false;
 
-  static void init() async {
+  static Future<void> init() async {
     if (!_hasInit) {
       _hasInit = true;
       instance._init();

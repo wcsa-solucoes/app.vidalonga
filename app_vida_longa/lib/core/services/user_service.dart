@@ -8,6 +8,7 @@ import 'package:app_vida_longa/core/services/favorites_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/iap_purchase_apple_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/iap_purchase_google_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
+import 'package:app_vida_longa/core/services/plans_service.dart';
 import 'package:app_vida_longa/core/services/subscription_service.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/custom_exceptions_codes_enum.dart';
@@ -201,7 +202,10 @@ class UserService {
     } else {
       paymentService = InAppPurchaseImplServicesAppleImpl.instance;
     }
-    paymentService.init(InAppPurchase.instance);
+
+    PlansServiceImpl.instance.getPlans().then((value) {
+      paymentService.init(InAppPurchase.instance);
+    });
 
     NavigationController.to(routes.app.profile.path);
   }

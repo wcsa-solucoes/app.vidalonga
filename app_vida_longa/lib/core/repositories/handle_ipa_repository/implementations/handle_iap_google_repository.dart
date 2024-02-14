@@ -36,6 +36,18 @@ class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
           "No GooglePlayPurchaseDetails found in purchasesDetails");
     }
 
+    await firestore
+        .collection("googleInAppPurchases")
+        .doc(UserService.instance.user.id)
+        .set(
+      {
+        "userId": UserService.instance.user.id,
+        "lastSignatureId":
+            someGooglePlayurchaseDetails.billingClientPurchase.purchaseToken,
+      },
+      SetOptions(merge: true),
+    );
+
     for (var element in purchasesDetails) {
       if (element is GooglePlayPurchaseDetails) {
         googlePlayPurchases.add(element);
@@ -50,20 +62,6 @@ class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
         someGooglePlayurchaseDetails.billingClientPurchase.purchaseToken);
     PrintColoredHelper.printWhite(
         someGooglePlayurchaseDetails.billingClientPurchase.originalJson);
-
-    // someGooglePlayurchaseDetails.billingClientPurchase
-
-    await firestore
-        .collection("googleInAppPurchases")
-        .doc(UserService.instance.user.id)
-        .set(
-      {
-        "userId": UserService.instance.user.id,
-        "lastSignatureId":
-            someGooglePlayurchaseDetails.billingClientPurchase.purchaseToken,
-      },
-      SetOptions(merge: true),
-    );
 
     await firestore
         .collection("googleInAppPurchases")

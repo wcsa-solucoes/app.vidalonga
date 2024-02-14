@@ -3,6 +3,7 @@ import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/handle_ipa_repository/implementations/handle_iap_apple_repository.dart';
 import 'package:app_vida_longa/core/services/handle_iap_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
+import 'package:app_vida_longa/core/services/plans_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -22,6 +23,8 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
     ),
   );
 
+  final IPlansService _plansService = PlansServiceImpl.instance;
+
   final InAppPurchaseStoreKitPlatform iap =
       InAppPurchasePlatform.instance as InAppPurchaseStoreKitPlatform;
 
@@ -33,7 +36,7 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
   @override
   StreamSubscription<List<PurchaseDetails>> get subscription => _subscription;
 
-  Set<String> _kIds = {};
+  final Set<String> _kIds = {};
   @override
   Set<String> get kIds => _kIds;
 
@@ -49,11 +52,9 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
   }
 
   Future<void> _init() async {
-    _kIds = {
-      'app.vidalongaapp.assinaturamensal',
-      'app.vidalongaapp.assinaturamensal.test.40',
-      'app.vidalongaapp.assinaturasemanal.90',
-    };
+    for (var plan in _plansService.plans) {
+      _kIds.add(plan.applePlanId);
+    }
 
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         _inAppPurchase.purchaseStream;
