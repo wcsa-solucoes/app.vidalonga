@@ -1,3 +1,4 @@
+import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
@@ -43,23 +44,33 @@ class _ProfileViewState extends State<ProfileView> {
       listener: (context, state) {},
       builder: (context, state) {
         return CustomAppScaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            backgroundColor: AppColors.white,
-            title: const DefaultText(
-              "Perfil",
-              fontSize: 20,
-              fontWeight: FontWeight.w300,
+            appBar: AppBar(
+              centerTitle: true,
+              backgroundColor: AppColors.white,
+              title: const DefaultText(
+                "Perfil",
+                fontSize: 20,
+                fontWeight: FontWeight.w300,
+              ),
+              //back button syle
             ),
-            //back button syle
-          ),
-          hasSafeArea: true,
-          body: Builder(builder: (context) {
-            return _body();
-          }),
-          bottomNavigationBar: const CustomBottomNavigationBar(),
-          hasScrollView: true,
-        );
+            hasSafeArea: true,
+            body: Builder(builder: (context) {
+              return _body();
+            }),
+            bottomNavigationBar: const CustomBottomNavigationBar(),
+            hasScrollView: true,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                UserService.instance.updateSubscriberStatusFromRoles(
+                    UserService.instance.user.subscriptionLevel ==
+                            SubscriptionEnum.nonPaying
+                        ? SubscriptionEnum.paying
+                        : SubscriptionEnum.nonPaying,
+                    "google_play");
+              },
+              child: const Icon(Icons.edit),
+            ));
       },
     );
   }
@@ -207,6 +218,10 @@ class _ProfileViewState extends State<ProfileView> {
         initialData: UserService.instance.user,
         stream: UserService.instance.userStream,
         builder: (context, snapshot) {
+          PrintColoredHelper.printGreen(
+              "UserService.instance.user: ${UserService.instance.user.subscriptionLevel}");
+          PrintColoredHelper.printWhite(
+              "snapshot.data: ${snapshot.data!.subscriptionLevel}");
           return Padding(
             padding: const EdgeInsets.all(8),
             child: Row(

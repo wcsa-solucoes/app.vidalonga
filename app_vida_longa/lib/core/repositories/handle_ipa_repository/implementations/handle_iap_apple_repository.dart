@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:app_vida_longa/core/controllers/we_exception.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/handle_ipa_repository/interface/handle_iap_interface.dart';
@@ -9,17 +8,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 
-class HandleIAPRepositoryImpl implements IHandleIAPRepository {
+class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
   FirebaseFirestore firestore;
-  late final String platform;
 
-  HandleIAPRepositoryImpl({required this.firestore}) {
-    if (Platform.isIOS) {
-      platform = "appleInAppPurchases";
-    } else {
-      platform = "androidInAppPurchases";
-    }
-  }
+  HandleIAPAppleRepositoryImpl({required this.firestore});
 
   @override
   Future<ResponseStatusModel> savePurchase(
@@ -29,57 +21,53 @@ class HandleIAPRepositoryImpl implements IHandleIAPRepository {
     List<AppStorePurchaseDetails> appStorePurchases = [];
     AppStorePurchaseDetails? someAppStorePurchaseDetails;
 
-    if (Platform.isIOS) {
-      PrintColoredHelper.printWhite(
-          "purchasesDetails.length: ${purchasesDetails.length}");
+    PrintColoredHelper.printWhite(
+        "purchasesDetails.length: ${purchasesDetails.length}");
 
-      for (var element in purchasesDetails) {
-        if (element is AppStorePurchaseDetails) {
-          someAppStorePurchaseDetails = element;
-          break;
-        }
+    for (var element in purchasesDetails) {
+      if (element is AppStorePurchaseDetails) {
+        someAppStorePurchaseDetails = element;
+        break;
       }
-
-      if (someAppStorePurchaseDetails == null) {
-        throw UnimplementedError(
-            "No AppStorePurchaseDetails found in purchasesDetails");
-      }
-
-      for (var element in purchasesDetails) {
-        if (element is AppStorePurchaseDetails) {
-          appStorePurchases.add(element);
-        }
-      }
-
-      maps = appStorePurchases
-          .map((AppStorePurchaseDetails purchase) =>
-              PurchaseDetailsDto.toMapApple(purchase))
-          .toList();
-
-      await firestore
-          .collection(platform)
-          .doc(UserService.instance.user.id)
-          .set(
-        {
-          "userId": UserService.instance.user.id,
-          "lastCommonPurchaseIdentifier": someAppStorePurchaseDetails
-              .skPaymentTransaction.originalTransaction?.transactionIdentifier,
-        },
-        SetOptions(merge: true),
-      );
-
-      await firestore
-          .collection(platform)
-          .doc(UserService.instance.user.id)
-          .set({"purchases": maps}, SetOptions(merge: true))
-          .then((value) {})
-          .onError((error, stackTrace) {
-            PrintColoredHelper.printError("savePurchase ${error.toString()}");
-            responseStatusModel = WeException.handle(error);
-          });
-    } else {
-      throw UnimplementedError();
     }
+
+    if (someAppStorePurchaseDetails == null) {
+      throw UnimplementedError(
+          "No AppStorePurchaseDetails found in purchasesDetails");
+    }
+
+    for (var element in purchasesDetails) {
+      if (element is AppStorePurchaseDetails) {
+        appStorePurchases.add(element);
+      }
+    }
+
+    maps = appStorePurchases
+        .map((AppStorePurchaseDetails purchase) =>
+            PurchaseDetailsDto.toMapApple(purchase))
+        .toList();
+
+    await firestore
+        .collection("appleInAppPurchases")
+        .doc(UserService.instance.user.id)
+        .set(
+      {
+        "userId": UserService.instance.user.id,
+        "lastCommonPurchaseIdentifier": someAppStorePurchaseDetails
+            .skPaymentTransaction.originalTransaction?.transactionIdentifier,
+      },
+      SetOptions(merge: true),
+    );
+
+    await firestore
+        .collection("appleInAppPurchases")
+        .doc(UserService.instance.user.id)
+        .set({"purchases": maps}, SetOptions(merge: true))
+        .then((value) {})
+        .onError((error, stackTrace) {
+          PrintColoredHelper.printError("savePurchase ${error.toString()}");
+          responseStatusModel = WeException.handle(error);
+        });
 
     return responseStatusModel;
   }
@@ -94,7 +82,7 @@ class HandleIAPRepositoryImpl implements IHandleIAPRepository {
     final List<PurchaseDetails> purchaseDetails = [];
 
     await FirebaseFirestore.instance
-        .collection(platform)
+        .collection("appleInAppPurchases")
         .doc(UserService.instance.user.id)
         .get()
         .then((value) {

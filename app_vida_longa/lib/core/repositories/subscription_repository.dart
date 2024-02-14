@@ -23,7 +23,7 @@ class SubscriptionRepositoryImpl implements ISubscriptionRepository {
     await firestore.collection('users').doc(UserService.instance.user.id).set(
       {
         "roles": {"subscriptionType": subscriptionType.name},
-        "lastPlatformUpdate": platform
+        "lastSubscriptionPlatform": platform
       },
       SetOptions(merge: true),
     );

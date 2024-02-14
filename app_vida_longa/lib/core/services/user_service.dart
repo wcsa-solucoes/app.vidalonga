@@ -1,11 +1,13 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/helpers/field_format_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';
-import 'package:app_vida_longa/core/services/in_app_purchase_service.dart';
+import 'package:app_vida_longa/core/services/iap_service/iap_purchase_apple_service.dart';
+import 'package:app_vida_longa/core/services/iap_service/iap_purchase_google_service.dart';
+import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
 import 'package:app_vida_longa/core/services/subscription_service.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/custom_exceptions_codes_enum.dart';
@@ -42,6 +44,9 @@ class UserService {
   late bool _hasSentValidationEmail = false;
 
   static void init() {
+    _instance._userRepository.userStream.listen((event) {
+      _instance._setUser(event);
+    });
     if (!_hasInit) {
       _hasInit = true;
     }
@@ -75,10 +80,9 @@ class UserService {
     if (response.status == ResponseStatusEnum.failed) {
       if (response.code == WeExceptionCodesEnum.firebaseAuthUserNotFound) {
         _user = user.copyWith(
-            id: FirebaseAuth.instance.currentUser!.uid,
-            email: FirebaseAuth.instance.currentUser!.email!);
-        // user.id = FirebaseAuth.instance.currentUser!.uid;
-        // user.email = FirebaseAuth.instance.currentUser!.email!;
+          id: FirebaseAuth.instance.currentUser!.uid,
+          email: FirebaseAuth.instance.currentUser!.email!,
+        );
 
         unawaited(_handleSendEmail());
       }
@@ -165,9 +169,6 @@ class UserService {
   }
 
   Future<ResponseStatusModel> update(UserModel user) async {
-    // user.phone = FieldFormatHelper.phone(phone: user.phone);
-    // user.document = FieldFormatHelper.register(register: user.document);
-
     user = user.copyWith(
       phone: user.phone,
       document: user.document,
@@ -192,10 +193,14 @@ class UserService {
     IFavoritesService favoritesService = FavoritesServiceImpl.instance;
 
     favoritesService.init(favoritesRepository, user.id);
-    // HandleIAPService.instance.getPurchases();
 
-    final IInAppPurchaseService paymentService =
-        InAppPurchaseImplServices.instance;
+    late final IInAppPurchaseService paymentService;
+
+    if (Platform.isAndroid) {
+      paymentService = InAppPurchaseImplServiceGoogleImpl.instance;
+    } else {
+      paymentService = InAppPurchaseImplServicesAppleImpl.instance;
+    }
     paymentService.init(InAppPurchase.instance);
 
     NavigationController.to(routes.app.profile.path);
@@ -207,12 +212,9 @@ class UserService {
 
   Future<void> updateSubscriberStatusFromRoles(
       SubscriptionEnum subscriptionType, String platform) async {
-    await _subscriptionService.updateSubscriberStatusFromRoles(
-        subscriptionType, platform);
-    // _user.subscriptionLevel = subscriptionType;
     _user = _user.copyWith(subscriptionLevel: subscriptionType);
     _setUser(_user);
-
-    // _userController.sink.add(_user);
+    await _subscriptionService.updateSubscriberStatusFromRoles(
+        subscriptionType, platform);
   }
 }

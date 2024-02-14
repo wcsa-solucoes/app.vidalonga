@@ -1,3 +1,4 @@
+import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/enums/subscription_type.dart';
@@ -61,6 +62,8 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
         initialData: UserService.instance.user,
         stream: UserService.instance.userStream,
         builder: (context, snapshot) {
+          PrintColoredHelper.printGreen(
+              UserService.instance.user.subscriptionLevel.toString());
           if (snapshot.data == null) {
             return SizedBox(
               width: MediaQuery.of(context).size.width,
@@ -94,8 +97,19 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                 );
               }
 
-              if (state is SubscriptionPurchased) {
-                return const DefaultText('Assinatura adquirida');
+              if (state is SubscriptionPurchased &&
+                  snapshot.data!.subscriptionLevel == SubscriptionEnum.paying) {
+                return SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: const Center(
+                    child: DefaultText(
+                      'Assinatura adquirida!',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                );
               }
               if (state is ProductSelectedState) {
                 return Column(

@@ -3,7 +3,11 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
+import 'package:app_vida_longa/core/repositories/handle_ipa_repository/implementations/handle_iap_apple_repository.dart';
+import 'package:app_vida_longa/core/repositories/handle_ipa_repository/implementations/handle_iap_google_repository.dart';
 import 'package:app_vida_longa/core/services/handle_iap_service.dart';
+import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
@@ -12,38 +16,52 @@ import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 
-abstract class IInAppPurchaseService {
-  Future<List<ProductDetails>?> getProductsDetails(Set<String> productIds);
-  Future<bool> purchase(ProductDetails productDetails);
-  Future<bool> restorePurchase();
-  Future<void> init(InAppPurchase inAppPurchase);
-  late final StreamSubscription<List<PurchaseDetails>> _subscription;
-  // final List<model.ProductModel> _products = [];
-  // List<model.ProductModel> get products => _products;
-  final List<ProductDetails> _productDetails = [];
-  List<ProductDetails> get productDetails => _productDetails;
-  late final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition;
-  getTransactions();
-
-  late final Set<String> _kIds;
-
-  Set<String> get kIds => _kIds;
-}
-
 class InAppPurchaseImplServices extends IInAppPurchaseService {
-  InAppPurchaseImplServices._internal();
+  String _platform = '';
+
+  InAppPurchaseImplServices._internal() {
+    if (Platform.isIOS) {
+      _handleIAPService = HandleIAPService(
+        handleIAPRepository: HandleIAPAppleRepositoryImpl(
+          firestore: FirebaseFirestore.instance,
+        ),
+      );
+
+      _platform = "app_store";
+    } else {
+      _handleIAPService = HandleIAPService(
+        handleIAPRepository: HandleIAPGoogleRepositoryImpl(
+          firestore: FirebaseFirestore.instance,
+        ),
+      );
+
+      _platform = "google_play";
+    }
+  }
   static final InAppPurchaseImplServices _instance =
       InAppPurchaseImplServices._internal();
   static InAppPurchaseImplServices get instance => _instance;
 
-  final HandleIAPService _handleIAPService = HandleIAPService.instance;
+  late final HandleIAPService _handleIAPService;
+
+  late final InAppPurchaseStoreKitPlatformAddition _iosPlatformAddition;
 
   late final InAppPurchase _inAppPurchase;
 
   final InAppPurchaseStoreKitPlatform iap =
       InAppPurchasePlatform.instance as InAppPurchaseStoreKitPlatform;
 
-  // final SubscriptionService _subscriptionService = SubscriptionService();
+  late final StreamSubscription<List<PurchaseDetails>> _subscription;
+  @override
+  StreamSubscription<List<PurchaseDetails>> get subscription => _subscription;
+
+  Set<String> _kIds = {};
+  @override
+  Set<String> get kIds => _kIds;
+
+  late final List<ProductDetails> _productDetails = [];
+  @override
+  List<ProductDetails> get productDetails => _productDetails;
 
   @override
   Future<void> init(InAppPurchase inAppPurchase) async {
@@ -53,12 +71,12 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
   }
 
   Future<void> _init() async {
-    // await _handleIAPService.getPurchases();
     _kIds = {
       'app.vidalongaapp.assinaturamensal',
       'app.vidalongaapp.assinaturamensal.test.40',
       "com.vidalonga.assinaturamensal",
       "com.vidalonga.assinaturamensal.10",
+      "com.vidalonga.assinaturamensal.90"
     };
 
     final Stream<List<PurchaseDetails>> purchaseUpdated =
@@ -86,7 +104,7 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
           await _finishIncompleteIosTransactions();
         }
       }
-      if (purchaseDetails.verificationData.source == "app_store") {
+      if (purchaseDetails.verificationData.source == "_platform") {
         final AppStorePurchaseDetails applePurDet =
             purchaseDetails as AppStorePurchaseDetails;
         if (applePurDet.transactionDate != null) {
@@ -118,13 +136,7 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
               "pendingCompletePurchase :${purchaseDetails.pendingCompletePurchase}");
 
           if (purchaseDetails.status == PurchaseStatus.purchased) {
-            if (Platform.isIOS) {
-              await _handleIAPService.handlePurchase(
-                  purchaseDetails, 'applePurchases', 'app_store');
-            } else if (Platform.isAndroid) {
-              await _handleIAPService.handlePurchase(
-                  purchaseDetails, 'googlePurchases', 'google_play');
-            }
+            await _handleIAPService.handlePurchase(purchaseDetails, _platform);
             //red
             PrintColoredHelper.printError(
                 'handlePurchase purchaseID: ${purchaseDetails.purchaseID}');
@@ -152,12 +164,12 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
     if (isStoreAvailable == false) return [];
 
     if (Platform.isIOS) {
-      iosPlatformAddition = _inAppPurchase
+      _iosPlatformAddition = _inAppPurchase
           .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-      await iosPlatformAddition.setDelegate(_IosPaymentQueueDelegate());
+      await _iosPlatformAddition.setDelegate(_IosPaymentQueueDelegate());
     }
 
-    final response = await _inAppPurchase.queryProductDetails(_kIds);
+    final response = await _inAppPurchase.queryProductDetails(kIds);
 
     if (response.productDetails.isEmpty == true) return [];
 
@@ -168,8 +180,6 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
 
   void _setProductsDetails(List<ProductDetails> newItens) {
     _productDetails.clear();
-    // AppStorePurchaseDetails appStorePurchaseDetails;
-
     _productDetails.addAll(newItens);
   }
 
@@ -246,7 +256,7 @@ class InAppPurchaseImplServices extends IInAppPurchaseService {
   }
 
   @override
-  getTransactions() async {
+  Future<void> getTransactions() async {
     final transactions = await SKPaymentQueueWrapper().transactions();
     for (var element in transactions) {
       log('transaction: ${element.transactionState} ${element.transactionTimeStamp}');

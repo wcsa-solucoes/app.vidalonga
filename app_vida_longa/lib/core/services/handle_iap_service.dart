@@ -1,37 +1,30 @@
-import 'package:app_vida_longa/core/repositories/handle_iap_repository.dart';
+import 'package:app_vida_longa/core/repositories/handle_ipa_repository/interface/handle_iap_interface.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 class HandleIAPService {
-  HandleIAPService._internal();
-  static final HandleIAPService _instance = HandleIAPService._internal();
-  static HandleIAPService get instance => _instance;
-
   final List<PurchaseDetails> _purchases = [];
   List<PurchaseDetails> get purchases => _purchases;
+  final IHandleIAPRepository handleIAPRepository;
 
-  final IHandleIAPRepository _handleIAPRepository = HandleIAPRepositoryImpl(
-    firestore: FirebaseFirestore.instance,
-  );
+  HandleIAPService({required this.handleIAPRepository});
 
-  Future<void> handlePurchase(PurchaseDetails purchaseDetails,
-      String collection, String platform) async {
+  Future<void> handlePurchase(
+      PurchaseDetails purchaseDetails, String platform) async {
     await UserService.instance
         .updateSubscriberStatusFromRoles(SubscriptionEnum.paying, platform);
-    await savePurchase(purchaseDetails, collection);
+    await savePurchase(purchaseDetails);
   }
 
-  Future<void> savePurchase(
-      PurchaseDetails purchaseDetails, String collection) async {
+  Future<void> savePurchase(PurchaseDetails purchaseDetails) async {
     _purchases.add(purchaseDetails);
-    await _handleIAPRepository.savePurchase(_purchases, collection);
+    await handleIAPRepository.savePurchase(_purchases);
   }
 
   Future<void> getPurchases() async {
-    final result = await _handleIAPRepository.getPurchases();
+    final result = await handleIAPRepository.getPurchases();
     if (result.responseStatus.status == ResponseStatusEnum.success) {
       _setPurchases(result.purchasesDetails);
     }
