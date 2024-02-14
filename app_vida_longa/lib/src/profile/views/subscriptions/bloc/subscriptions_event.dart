@@ -42,3 +42,7 @@ class SomeErrorEvent extends SubscriptionsEvent {
 
   SomeErrorEvent(this.message);
 }
+
+class PendingEvent extends SubscriptionsEvent {
+  PendingEvent();
+}

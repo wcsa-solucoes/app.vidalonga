@@ -53,7 +53,7 @@ class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
         .set(
       {
         "userId": UserService.instance.user.id,
-        "lastCommonPurchaseIdentifier": someAppStorePurchaseDetails
+        "lastSignatureId": someAppStorePurchaseDetails
             .skPaymentTransaction.originalTransaction?.transactionIdentifier,
       },
       SetOptions(merge: true),

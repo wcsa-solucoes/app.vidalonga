@@ -59,7 +59,7 @@ class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
         .set(
       {
         "userId": UserService.instance.user.id,
-        "lastCommonPurchaseIdentifier":
+        "lastSignatureId":
             someGooglePlayurchaseDetails.billingClientPurchase.purchaseToken,
       },
       SetOptions(merge: true),

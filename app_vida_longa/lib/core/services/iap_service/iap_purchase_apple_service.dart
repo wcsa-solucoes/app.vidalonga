@@ -52,6 +52,7 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
     _kIds = {
       'app.vidalongaapp.assinaturamensal',
       'app.vidalongaapp.assinaturamensal.test.40',
+      'app.vidalongaapp.assinaturasemanal.90',
     };
 
     final Stream<List<PurchaseDetails>> purchaseUpdated =
@@ -74,7 +75,6 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
       }
 
       if (purchaseDetails.status == PurchaseStatus.pending) {
-        //
       } else {
         if (purchaseDetails.status == PurchaseStatus.error) {
         } else if (purchaseDetails.status == PurchaseStatus.purchased ||

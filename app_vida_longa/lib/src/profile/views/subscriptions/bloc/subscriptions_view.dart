@@ -80,7 +80,7 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                 height: MediaQuery.of(context).size.height * 0.7,
                 child: const Center(
                   child: DefaultText(
-                    'Parábens, você já é assinante',
+                    'Parábens, você é um assinante!',
                     fontSize: 20,
                     fontWeight: FontWeight.w300,
                   ),

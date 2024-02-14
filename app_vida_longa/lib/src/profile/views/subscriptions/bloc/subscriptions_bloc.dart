@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/iap_service/iap_purchase_apple_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/iap_purchase_google_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
@@ -45,6 +46,7 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
     on<RestorePurchasesEvent>(_handleOnRestorePurchases);
     on<RestoresTransactionsEvent>(_handleOnRestoresTransactions);
     on<SomeErrorEvent>(_handleOnError);
+    on<PendingEvent>(_handleOnPending);
 
     _userSubscription = _userService.userStream.listen((event) {
       if (event.subscriptionLevel != SubscriptionEnum.nonPaying) {
@@ -76,9 +78,13 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
     }
   }
 
+  late ProductDetails _productDetailsSelected;
+
   FutureOr<void> _handleOnProductSelected(
       SelectedProductEvent event, Emitter<SubscriptionsState> emit) {
-    paymentService.purchase(event.productDetails);
+    _productDetailsSelected = event.productDetails;
+    paymentService.purchase(_productDetailsSelected);
+
     emit(ProductSelectedState(event.productDetails));
   }
 
@@ -94,27 +100,31 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
     emit(ProductsLoadedState(event.productDetails));
   }
 
+  void _handleOnPending(PendingEvent event, Emitter<SubscriptionsState> emit) {
+    emit(ProductSelectedState(_productDetailsSelected));
+  }
+
   void _handlePurchases(purchaseDetailsList) {
     var lastPurchase = purchaseDetailsList.last;
+    PrintColoredHelper.printPink(lastPurchase.status.toString());
+    switch (lastPurchase.status) {
+      case PurchaseStatus.error:
+        add(ProductsLoadedEvent(paymentService.productDetails));
 
-    if (lastPurchase.status == PurchaseStatus.error) {
-      add(ProductsLoadedEvent(paymentService.productDetails));
-      return;
-    }
+      case PurchaseStatus.canceled:
+        add(ProductsLoadedEvent(paymentService.productDetails));
+        break;
+      case PurchaseStatus.purchased:
+        add(PurchasedSubscriptionEvent(lastPurchase));
+        break;
+      case PurchaseStatus.pending:
+        add(PendingEvent());
+        break;
+      default:
+        add(ProductsLoadedEvent(paymentService.productDetails));
 
-    if (lastPurchase.status == PurchaseStatus.purchased) {
-      add(PurchasedSubscriptionEvent(lastPurchase));
+        break;
     }
-
-    if (lastPurchase.status == PurchaseStatus.canceled) {
-      add(ProductsLoadedEvent(paymentService.productDetails));
-    }
-    //  if (lastPurchase.status == PurchaseStatus.error) {
-    //   add(SubscriptionsErrorEvent(lastPurchase.error.toString()));
-    // }
-    // if (lastPurchase.status == PurchaseStatus.pending) {
-    //   add(SubscriptionsErrorEvent(lastPurchase.error.toString()));
-    // }
   }
 
   FutureOr<void> _handleOnRestorePurchases(
