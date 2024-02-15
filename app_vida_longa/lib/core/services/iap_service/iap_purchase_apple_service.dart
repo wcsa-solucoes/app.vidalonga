@@ -4,6 +4,7 @@ import 'package:app_vida_longa/core/repositories/handle_ipa_repository/implement
 import 'package:app_vida_longa/core/services/handle_iap_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
 import 'package:app_vida_longa/core/services/plans_service.dart';
+import 'package:app_vida_longa/domain/models/plan_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -51,6 +52,9 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
     await _init();
   }
 
+  @override
+  PlanModel get defaultPlan => _plansService.defaultPlan;
+
   Future<void> _init() async {
     for (var plan in _plansService.plans) {
       _kIds.add(plan.applePlanId);
@@ -58,6 +62,8 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
 
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         _inAppPurchase.purchaseStream;
+
+    getProductsDetails(_kIds);
 
     _subscription = purchaseUpdated.listen(
       (purchaseDetailsList) {

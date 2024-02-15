@@ -1,10 +1,15 @@
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
+import 'package:app_vida_longa/core/services/plans_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/enums/subscription_type.dart';
+import 'package:app_vida_longa/domain/models/coupon_model.dart';
+import 'package:app_vida_longa/domain/models/plan_model.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
+import 'package:app_vida_longa/shared/widgets/flat_button.dart';
 import 'package:app_vida_longa/src/profile/views/subscriptions/bloc/subscriptions_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,9 +27,13 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
   // PaymentService paymentService = PaymentService.instance;
 
   final SubscriptionsBloc _subscriptionsBloc = SubscriptionsBloc();
+  final TextEditingController _couponTxtEdtCtrl = TextEditingController();
+
+  final IPlansService _plansService = PlansServiceImpl.instance;
 
   @override
   void initState() {
+    _couponTxtEdtCtrl.text = 'CUPOM1';
     super.initState();
   }
 
@@ -114,50 +123,47 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
               if (state is ProductSelectedState) {
                 return Column(
                   children: [
-                    DefaultText('${state.productDetails.title} selecionado'),
-                    const DefaultText('Aguarde a confirmação da compra'),
+                    DefaultText(
+                      '${state.productDetails.title} selecionado',
+                      fontSize: 20,
+                    ),
+                    const DefaultText(
+                      'Aguarde a confirmação da compra',
+                      fontSize: 20,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     const CircularProgressIndicator(),
                   ],
                 );
               }
 
+              if (state is CouponAddedState) {
+                return _couponPresentation(state.productDetails, state.coupon);
+              }
+
               if (state is ProductsLoadedState) {
                 return Column(
                   children: [
-                    const DefaultText(
-                      'Escolha um plano',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w300,
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // paymentService.restorePurchase();
-                        _subscriptionsBloc.add(RestorePurchasesEvent());
-                      },
-                      child: const DefaultText('restorePurchase'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // paymentService.getTransactions();
-                        _subscriptionsBloc.add(RestoresTransactionsEvent());
-                      },
-                      child: const DefaultText('getTransactions'),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: state.products.length,
-                      itemBuilder: (context, index) {
-                        final ProductDetails prod = state.products[index];
-                        return ListTile(
-                          title: Text(prod.title),
-                          trailing: Text(prod.price.toString()),
-                          onTap: () async {
-                            _subscriptionsBloc.add(SelectedProductEvent(prod));
-                            // paymentService.purchase(prod);
-                          },
-                        );
-                      },
-                    ),
+                    //
+                    productPresentation(
+                        state.defaultProductDetails, _plansService.defaultPlan),
+                    // ListView.builder(
+                    //   shrinkWrap: true,
+                    //   itemCount: state.products.length,
+                    //   itemBuilder: (context, index) {
+                    //     final ProductDetails prod = state.products[index];
+                    //     return ListTile(
+                    //       title: Text(prod.title),
+                    //       trailing: Text(prod.price.toString()),
+                    //       onTap: () async {
+                    //         _subscriptionsBloc.add(SelectedProductEvent(prod));
+                    //         // paymentService.purchase(prod);
+                    //       },
+                    //     );
+                    //   },
+                    // ),
                   ],
                 );
               }
@@ -166,5 +172,112 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
             },
           );
         });
+  }
+
+  Widget productPresentation(ProductDetails productDetails, PlanModel plan) {
+    return Container(
+      // color: AppColors.redError,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.7,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const DefaultText(
+            "Torne-se um membro",
+            fontSize: 20,
+            fontWeight: FontWeight.w300,
+            color: AppColors.secondary,
+          ),
+          const DefaultText(
+            'Para acessar todo o nosso conteúdo ilimitado, assine agora.',
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+          ),
+          DefaultText(
+            'R\$ ${productDetails.rawPrice}/mês',
+            fontSize: 20,
+            fontWeight: FontWeight.w300,
+          ),
+          FlatButton(
+            onPressed: () {
+              _subscriptionsBloc.add(SelectedProductEvent(productDetails));
+            },
+            textLabel: 'Assinar',
+          ),
+          const SizedBox(
+            height: 80,
+          ),
+          const DefaultText(
+            'Possui cupom para plano com desconto?',
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+          ),
+          DecoratedTextFieldWidget(
+            controller: _couponTxtEdtCtrl,
+            labelText: 'Cupom',
+            hintText: 'Digite o cupom',
+          ),
+          TextButton(
+            onPressed: () {
+              _subscriptionsBloc.add(AddedCouponEvent(_couponTxtEdtCtrl.text));
+            },
+            child: FlatButton(
+              onPressed: () {
+                _subscriptionsBloc
+                    .add(AddedCouponEvent(_couponTxtEdtCtrl.text));
+              },
+              textLabel: 'Buscar plano!',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _couponPresentation(
+      ProductDetails productDetails, CouponModel coupon) {
+    final int discountAdded = (100 -
+            (productDetails.rawPrice / _plansService.defaultPlan.price) * 100)
+        .truncate();
+    return Container(
+      // color: AppColors.white,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.7,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            DefaultText(
+              '${coupon.name} adicionado!',
+              color: AppColors.secondary,
+              fontSize: 20,
+            ),
+            DefaultText(
+              'Desconto de ${(discountAdded)}%',
+              fontSize: 20,
+              fontWeight: FontWeight.w300,
+            ),
+            DefaultText(
+              'R\$ ${productDetails.rawPrice}/mês',
+              fontSize: 20,
+              fontWeight: FontWeight.w300,
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            FlatButton(
+              onPressed: () {
+                _subscriptionsBloc.add(SelectedProductEvent(productDetails));
+              },
+              textLabel: 'Assinar',
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

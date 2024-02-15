@@ -9,8 +9,13 @@ final class SubscriptionsLoading extends SubscriptionsState {}
 
 final class ProductsLoadedState extends SubscriptionsState {
   final List<ProductDetails> products;
-
-  ProductsLoadedState(this.products);
+  final ProductDetails defaultProductDetails;
+  final PlanModel plan;
+  ProductsLoadedState(
+    this.products,
+    this.defaultProductDetails,
+    this.plan,
+  );
 }
 
 final class SubscriptionsErrorState extends SubscriptionsState {
@@ -31,6 +36,13 @@ final class SubscriptionsRestoredError extends SubscriptionsState {
   final String message;
 
   SubscriptionsRestoredError(this.message);
+}
+
+final class CouponAddedState extends SubscriptionsState {
+  final CouponModel coupon;
+  final ProductDetails productDetails;
+
+  CouponAddedState({required this.coupon, required this.productDetails});
 }
 
 final class SubscriptionPurchasedError extends SubscriptionsState {

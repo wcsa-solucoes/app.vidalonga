@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 abstract class IPlansService {
   Future<void> getPlans();
   List<PlanModel> get plans;
+
+  late final PlanModel defaultPlan;
 }
 
 class PlansServiceImpl implements IPlansService {
@@ -14,6 +16,14 @@ class PlansServiceImpl implements IPlansService {
   static PlansServiceImpl get instance => _instance;
   final IPlansRepository _plansRepository =
       PlansRepositoryImpl(FirebaseFirestore.instance);
+
+  @override
+  PlanModel defaultPlan = PlanModel(
+    applePlanId: 'app.vidalongaapp.assinaturamensal',
+    googlePlanId: 'com.vidalonga.assinaturamensal',
+    name: "Premium",
+    price: 29.90,
+  );
 
   final List<PlanModel> _plans = [];
 

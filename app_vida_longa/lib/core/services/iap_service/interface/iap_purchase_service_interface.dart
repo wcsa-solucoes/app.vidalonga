@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_vida_longa/domain/models/plan_model.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 abstract class IInAppPurchaseService {
@@ -13,4 +14,6 @@ abstract class IInAppPurchaseService {
 
   List<ProductDetails> get productDetails;
   Set<String> get kIds;
+
+  PlanModel get defaultPlan;
 }

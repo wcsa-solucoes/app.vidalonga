@@ -1,12 +1,18 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
+import 'package:app_vida_longa/core/services/coupons_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/iap_purchase_apple_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/iap_purchase_google_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
+import 'package:app_vida_longa/core/services/plans_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/enums/subscription_type.dart';
+import 'package:app_vida_longa/domain/models/coupon_model.dart';
+import 'package:app_vida_longa/domain/models/plan_model.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:meta/meta.dart';
@@ -17,9 +23,18 @@ part 'subscriptions_state.dart';
 class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
   late final IInAppPurchaseService paymentService;
   final UserService _userService = UserService.instance;
+  final ICouponsService _couponsService = CouponsServiceImpl.instance;
+  final IPlansService _plansService = PlansServiceImpl.instance;
 
   late StreamSubscription<List<PurchaseDetails>> _subscription;
   late final StreamSubscription<UserModel> _userSubscription;
+
+  late ProductDetails _productDetailsSelected;
+
+  late final PlanModel defaultPlan;
+  ProductDetails? _defaultProductDetails;
+
+  ProductDetails? _productWithCoupon;
 
   SubscriptionsBloc() : super(SubscriptionsLoading()) {
     if (Platform.isAndroid) {
@@ -27,6 +42,14 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
     } else {
       paymentService = InAppPurchaseImplServicesAppleImpl.instance;
     }
+    defaultPlan = _plansService.defaultPlan;
+
+    _defaultProductDetails = paymentService.productDetails.firstWhereOrNull(
+      (element) {
+        return element.id == defaultPlan.applePlanId ||
+            element.id == defaultPlan.googlePlanId;
+      },
+    )!;
 
     on<FetchProductsEvent>(_handleOnFetchProducts);
 
@@ -47,6 +70,7 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
     on<RestoresTransactionsEvent>(_handleOnRestoresTransactions);
     on<SomeErrorEvent>(_handleOnError);
     on<PendingEvent>(_handleOnPending);
+    on<AddedCouponEvent>(_handleOnCouponAdded);
 
     _userSubscription = _userService.userStream.listen((event) {
       if (event.subscriptionLevel != SubscriptionEnum.nonPaying) {
@@ -78,7 +102,45 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
     }
   }
 
-  late ProductDetails _productDetailsSelected;
+  void _handleOnCouponAdded(
+      AddedCouponEvent event, Emitter<SubscriptionsState> emit) async {
+    final int index = _couponsService.coupons.indexWhere((element) {
+      final res = element.name.toUpperCase() == event.couponName.toUpperCase();
+      return res;
+    });
+    if (index != -1) {
+      var coupon = _couponsService.coupons[index];
+
+      _productWithCoupon = paymentService.productDetails.firstWhereOrNull(
+        (ProductDetails element) {
+          PrintColoredHelper.printWhite(
+              "el: ${element.id} a: ${coupon.applePlanId} g: ${coupon.googlePlanId}");
+
+          PrintColoredHelper.printPink((element.id == coupon.applePlanId ||
+                  element.id == coupon.googlePlanId)
+              .toString());
+
+          return element.id == coupon.applePlanId ||
+              element.id == coupon.googlePlanId;
+        },
+      );
+
+      if (_productWithCoupon == null) {
+        AppHelper.displayAlertError('Cupom inválido');
+        return;
+      }
+
+      emit(
+        CouponAddedState(
+          coupon: _couponsService.coupons[index],
+          productDetails: _productWithCoupon!,
+        ),
+      );
+      return;
+    }
+
+    AppHelper.displayAlertError('Cupom inválido');
+  }
 
   FutureOr<void> _handleOnProductSelected(
       SelectedProductEvent event, Emitter<SubscriptionsState> emit) {
@@ -96,8 +158,23 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
   }
 
   FutureOr<void> _handleOnProductsLoaded(
-      ProductsLoadedEvent event, Emitter<SubscriptionsState> emit) {
-    emit(ProductsLoadedState(event.productDetails));
+      ProductsLoadedEvent event, Emitter<SubscriptionsState> emit) async {
+    _defaultProductDetails ??= paymentService.productDetails.firstWhereOrNull(
+      (element) {
+        return element.id == defaultPlan.applePlanId ||
+            element.id == defaultPlan.googlePlanId;
+      },
+    );
+    if (_defaultProductDetails == null) {
+      add(LoadingViewEvent());
+      return;
+    }
+
+    emit(ProductsLoadedState(
+      event.productDetails,
+      _defaultProductDetails!,
+      paymentService.defaultPlan,
+    ));
   }
 
   void _handleOnPending(PendingEvent event, Emitter<SubscriptionsState> emit) {

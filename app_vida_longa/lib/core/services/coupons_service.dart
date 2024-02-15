@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/coupons_repository.dart';
 import 'package:app_vida_longa/domain/models/coupon_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
@@ -50,7 +48,6 @@ class CouponsServiceImpl implements ICouponsService {
   }
 
   void _setCoupons(List<CouponModel> coupons) {
-    PrintColoredHelper.printPink('CouponsServiceImpl._setCoupons');
     _coupons.clear();
     _coupons.addAll(coupons);
   }
