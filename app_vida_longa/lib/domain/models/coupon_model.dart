@@ -52,4 +52,31 @@ class CouponModel {
       'usageQuantity': coupon.usageQuantity,
     };
   }
+
+  //copyWith
+  CouponModel copyWith({
+    String? activationDate,
+    String? createdAt,
+    String? expiryDate,
+    bool? haveUsageLimit,
+    int? limit,
+    String? name,
+    String? applePlanId,
+    String? googlePlanId,
+    String? uuid,
+    int? usageQuantity,
+  }) {
+    return CouponModel(
+      activationDate: activationDate ?? this.activationDate,
+      createdAt: createdAt ?? this.createdAt,
+      expiryDate: expiryDate ?? this.expiryDate,
+      haveUsageLimit: haveUsageLimit ?? this.haveUsageLimit,
+      limit: limit ?? this.limit,
+      name: name ?? this.name,
+      applePlanId: applePlanId ?? this.applePlanId,
+      googlePlanId: googlePlanId ?? this.googlePlanId,
+      uuid: uuid ?? this.uuid,
+      usageQuantity: usageQuantity ?? this.usageQuantity,
+    );
+  }
 }

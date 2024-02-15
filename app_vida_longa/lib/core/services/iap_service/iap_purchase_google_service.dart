@@ -5,6 +5,7 @@ import 'package:app_vida_longa/core/repositories/handle_ipa_repository/implement
 import 'package:app_vida_longa/core/services/handle_iap_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
 import 'package:app_vida_longa/core/services/plans_service.dart';
+import 'package:app_vida_longa/domain/models/coupon_model.dart';
 import 'package:app_vida_longa/domain/models/plan_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -43,6 +44,10 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
   @override
   List<ProductDetails> get productDetails => _productDetails;
 
+  CouponModel? _couponAdded;
+  @override
+  CouponModel? get couponAdded => _couponAdded;
+
   @override
   Future<void> init(InAppPurchase inAppPurchase) async {
     _inAppPurchase = inAppPurchase;
@@ -78,7 +83,10 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
             purchaseDetails.status == PurchaseStatus.restored) {
           if (purchaseDetails.status == PurchaseStatus.purchased) {
             await _handleIAPService.handlePurchase(
-                purchaseDetails, 'google_play');
+              purchaseDetails,
+              'google_play',
+              couponAdded: _couponAdded,
+            );
           }
         }
       }
@@ -112,13 +120,14 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
 
   @override
   Future<void> getTransactions() {
-    // TODO: implement getTransactions
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> purchase(ProductDetails productDetails) async {
+  Future<bool> purchase(ProductDetails productDetails,
+      {CouponModel? coupon}) async {
     PurchaseParam? purchaseParam;
+    _couponAdded = coupon;
 
     try {
       GooglePlayPurchaseDetails? oldSubscription;

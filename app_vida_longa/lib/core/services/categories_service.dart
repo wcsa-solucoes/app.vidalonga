@@ -1,4 +1,3 @@
-import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/categories_repository.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
@@ -64,7 +63,6 @@ class CategoriesService {
       for (var sc in article.subCategories) {
         if (sc.uuid == subCategory.uuid) {
           _articlesFromSubcategories.add(article);
-          PrintColoredHelper.printGreen(article.title);
         }
       }
     }

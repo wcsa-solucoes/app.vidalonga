@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/domain/models/coupon_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,7 +10,7 @@ abstract class ICouponsRepository {
       subscription;
   Future<({ResponseStatusModel response, List<CouponModel> coupons})>
       getCoupons();
-  Future<void> updateCoupon(CouponModel coupon);
+  Future<ResponseStatusModel> incrementCouponUsageQuantity(CouponModel coupon);
 
   Stream<List<CouponModel>> get couponsStream;
 
@@ -96,18 +97,38 @@ class CouponsRepositoryImpl implements ICouponsRepository {
   }
 
   @override
-  Future<void> updateCoupon(CouponModel coupon) async {
+  Future<ResponseStatusModel> incrementCouponUsageQuantity(
+      CouponModel coupon) async {
     late ResponseStatusModel response = ResponseStatusModel();
+
+    final index = _coupons.indexWhere((element) => element.uuid == coupon.uuid);
+
+    if (index == -1) {
+      PrintColoredHelper.printError('>>>>>>>>>>>>Cupom não encontrado');
+      response.status = ResponseStatusEnum.error;
+      response.message = 'Cupom não encontrado';
+      return response;
+    }
+    CouponModel couponFound = _coupons[index];
+    couponFound =
+        couponFound.copyWith(usageQuantity: couponFound.usageQuantity + 1);
+
     await firestore
         .collection('coupons')
-        .doc(coupon.uuid)
-        .update(CouponModel.toMap(coupon))
+        .doc(couponFound.uuid)
+        .update(CouponModel.toMap(couponFound))
         .then((value) {
       response.status = ResponseStatusEnum.success;
-    }).catchError((error) {
-      response.status = ResponseStatusEnum.error;
-      response.message = error.toString();
-    });
+    }).onError(
+      (obj, error) {
+        PrintColoredHelper.printError('>>>>>>>>>>>>Error ${error.toString()}');
+
+        response.status = ResponseStatusEnum.error;
+        response.message = error.toString();
+      },
+    );
+
+    return response;
   }
 
   @override

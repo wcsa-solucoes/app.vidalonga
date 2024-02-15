@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
-import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/coupons_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/iap_purchase_apple_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/iap_purchase_google_service.dart';
@@ -113,13 +112,6 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
 
       _productWithCoupon = paymentService.productDetails.firstWhereOrNull(
         (ProductDetails element) {
-          PrintColoredHelper.printWhite(
-              "el: ${element.id} a: ${coupon.applePlanId} g: ${coupon.googlePlanId}");
-
-          PrintColoredHelper.printPink((element.id == coupon.applePlanId ||
-                  element.id == coupon.googlePlanId)
-              .toString());
-
           return element.id == coupon.applePlanId ||
               element.id == coupon.googlePlanId;
         },
@@ -145,7 +137,7 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
   FutureOr<void> _handleOnProductSelected(
       SelectedProductEvent event, Emitter<SubscriptionsState> emit) {
     _productDetailsSelected = event.productDetails;
-    paymentService.purchase(_productDetailsSelected);
+    paymentService.purchase(_productDetailsSelected, coupon: event.couponAdded);
 
     emit(ProductSelectedState(event.productDetails));
   }
@@ -183,7 +175,6 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
 
   void _handlePurchases(purchaseDetailsList) {
     var lastPurchase = purchaseDetailsList.last;
-    PrintColoredHelper.printPink(lastPurchase.status.toString());
     switch (lastPurchase.status) {
       case PurchaseStatus.error:
         add(ProductsLoadedEvent(paymentService.productDetails));

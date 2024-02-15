@@ -7,8 +7,12 @@ class FetchProductsEvent extends SubscriptionsEvent {}
 
 class SelectedProductEvent extends SubscriptionsEvent {
   final ProductDetails productDetails;
+  final CouponModel? couponAdded;
 
-  SelectedProductEvent(this.productDetails);
+  SelectedProductEvent(
+    this.productDetails, {
+    this.couponAdded,
+  });
 }
 
 class AddedCouponEvent extends SubscriptionsEvent {

@@ -9,6 +9,8 @@ abstract class ICouponsService {
   List<CouponModel> get coupons;
 
   Stream<List<CouponModel>> get couponsStream;
+  Future<ResponseStatusModel> incrementUsageQuantityOfCoupon(
+      CouponModel coupon);
 }
 
 class CouponsServiceImpl implements ICouponsService {
@@ -58,4 +60,11 @@ class CouponsServiceImpl implements ICouponsService {
   @override
   Stream<List<CouponModel>> get couponsStream =>
       _couponsRepository.couponsStream;
+
+  @override
+  Future<ResponseStatusModel> incrementUsageQuantityOfCoupon(
+      CouponModel coupon) async {
+    final res = await _couponsRepository.incrementCouponUsageQuantity(coupon);
+    return res;
+  }
 }

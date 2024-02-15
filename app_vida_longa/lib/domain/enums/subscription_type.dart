@@ -1,7 +1,8 @@
 enum SubscriptionEnum {
-  paying("paying"),
-  nonPaying("nonPaying");
+  paying("paying", "Premium"),
+  nonPaying("nonPaying", "Comum");
 
   final String name;
-  const SubscriptionEnum(this.name);
+  final String value;
+  const SubscriptionEnum(this.name, this.value);
 }

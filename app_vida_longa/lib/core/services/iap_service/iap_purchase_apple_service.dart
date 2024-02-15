@@ -4,6 +4,7 @@ import 'package:app_vida_longa/core/repositories/handle_ipa_repository/implement
 import 'package:app_vida_longa/core/services/handle_iap_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
 import 'package:app_vida_longa/core/services/plans_service.dart';
+import 'package:app_vida_longa/domain/models/coupon_model.dart';
 import 'package:app_vida_longa/domain/models/plan_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -45,6 +46,11 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
   @override
   List<ProductDetails> get productDetails => _productDetails;
 
+  CouponModel? _couponAdded;
+
+  @override
+  CouponModel? get couponAdded => _couponAdded;
+
   @override
   Future<void> init(InAppPurchase inAppPurchase) async {
     _inAppPurchase = inAppPurchase;
@@ -76,24 +82,30 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
 
   void _handlePurchaseUpdatesFromApples(
       List<PurchaseDetails> purchaseDetailsList) async {
-    for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
-      if (purchaseDetails.status == PurchaseStatus.canceled) {
-        await _finishIncompleteIosTransactions();
-      }
+    final PurchaseDetails purchaseDetails = purchaseDetailsList.last;
 
-      if (purchaseDetails.status == PurchaseStatus.pending) {
-      } else {
-        if (purchaseDetails.status == PurchaseStatus.error) {
-        } else if (purchaseDetails.status == PurchaseStatus.purchased ||
-            purchaseDetails.status == PurchaseStatus.restored) {
-          if (purchaseDetails.status == PurchaseStatus.purchased) {
-            await _handleIAPService.handlePurchase(
-                purchaseDetails, 'app_store');
-          }
+    if (purchaseDetails.status == PurchaseStatus.canceled) {
+      await _finishIncompleteIosTransactions();
+    }
 
-          if (purchaseDetails.pendingCompletePurchase) {
-            await _inAppPurchase.completePurchase(purchaseDetails);
-          }
+    if (purchaseDetails.status == PurchaseStatus.pending) {
+    } else {
+      if (purchaseDetails.status == PurchaseStatus.error) {
+      } else if (purchaseDetails.status == PurchaseStatus.purchased ||
+          purchaseDetails.status == PurchaseStatus.restored) {
+        if (purchaseDetails.status == PurchaseStatus.purchased) {
+          await _handleIAPService.handlePurchase(
+            purchaseDetails,
+            'app_store',
+            couponAdded: _couponAdded,
+          );
+        }
+        _couponAdded = null;
+
+        if (purchaseDetails.pendingCompletePurchase) {
+          PrintColoredHelper.printPink(
+              'pendingCompletePurchase ${purchaseDetails.pendingCompletePurchase}');
+          await _inAppPurchase.completePurchase(purchaseDetails);
         }
       }
     }
@@ -134,8 +146,11 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
   }
 
   @override
-  Future<bool> purchase(ProductDetails productDetails) async {
+  Future<bool> purchase(ProductDetails productDetails,
+      {CouponModel? coupon}) async {
     PurchaseParam? purchaseParam;
+
+    _couponAdded = coupon;
 
     try {
       purchaseParam = PurchaseParam(productDetails: productDetails);
