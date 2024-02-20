@@ -57,7 +57,8 @@
             "name": "All",
             "configurations": [
                 "Gprod",
-                "Aprod"
+                "Aprod",
+                "dev"
             ]
         }
     ]
