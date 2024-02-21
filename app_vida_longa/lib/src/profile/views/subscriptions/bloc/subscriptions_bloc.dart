@@ -48,7 +48,7 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
         return element.id == defaultPlan.applePlanId ||
             element.id == defaultPlan.googlePlanId;
       },
-    )!;
+    );
 
     on<FetchProductsEvent>(_handleOnFetchProducts);
 
@@ -158,7 +158,7 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
       },
     );
     if (_defaultProductDetails == null) {
-      add(LoadingViewEvent());
+      emit(SubscriptionsErrorState('Erro ao carregar a assinatura!'));
       return;
     }
 

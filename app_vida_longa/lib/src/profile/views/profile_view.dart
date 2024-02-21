@@ -82,7 +82,7 @@ class _ProfileViewState extends State<ProfileView> {
         ),
 
         OpenPageButtonWiget(
-          "Editar perfil",
+          "Meu perfil",
           onPressed: () =>
               NavigationController.push(routes.app.profile.edit.path),
         ), //

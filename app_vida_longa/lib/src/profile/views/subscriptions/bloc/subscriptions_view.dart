@@ -9,6 +9,8 @@ import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/shared/widgets/flat_button.dart';
+import 'package:app_vida_longa/shared/widgets/policy_widget.dart';
+import 'package:app_vida_longa/shared/widgets/terms_widget.dart';
 import 'package:app_vida_longa/src/profile/views/subscriptions/bloc/subscriptions_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -162,7 +164,7 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                 );
               }
               return const Center(
-                  child: DefaultText('Erro ao carregar os produtos'));
+                  child: DefaultText('Erro ao carregar as assinaturas!'));
             },
           );
         });
@@ -174,7 +176,7 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
       child: SizedBox(
         // color: AppColors.redError,
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.7,
+        height: MediaQuery.of(context).size.height * 0.9,
 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -264,6 +266,32 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                     )
                   ],
                 ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 10,
+              ),
+              child: Column(
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => const PolicyWidget());
+                    },
+                    child: const Text("Política de Privacidade"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => const TermsWiget());
+                    },
+                    child: const Text("Termos e condições"),
+                  ),
+                ],
               ),
             ),
           ],
