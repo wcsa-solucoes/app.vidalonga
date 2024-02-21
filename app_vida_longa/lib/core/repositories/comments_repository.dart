@@ -36,11 +36,11 @@ class CommentsRestRepository implements ICommentsRepository {
 
     await FirebaseFirestore.instance.collection('comments').doc(docId).set({
       "comment": comment.toJson(),
-      "user_id": UserService.instance.user.id,
+      "userId": UserService.instance.user.id,
       "email": UserService.instance.user.email,
-      "created_at": DateTime.now().millisecondsSinceEpoch,
-      "doc_id": docId,
-      "article_id": ArticleService.currentlyArticleId,
+      "createdAt": DateTime.now().millisecondsSinceEpoch,
+      "docId": docId,
+      "articleId": ArticleService.currentlyArticleId,
     }).onError((error, stackTrace) {
       response = WeException.handle(error);
     });
