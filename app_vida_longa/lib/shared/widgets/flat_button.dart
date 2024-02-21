@@ -6,11 +6,13 @@ class FlatButton extends StatefulWidget {
   final String textLabel;
   final void Function()? onPressed;
   final bool isWithContrastColor;
+  final bool isDangerButton;
   const FlatButton({
     this.isWithContrastColor = false,
     super.key,
     required this.textLabel,
     this.onPressed,
+    this.isDangerButton = false,
   });
 
   @override
@@ -27,7 +29,9 @@ class _FlatButtonState extends State<FlatButton> {
           borderRadius: BorderRadius.circular(30.0),
           color: widget.isWithContrastColor
               ? AppColors.secondary
-              : AppColors.white,
+              : widget.isDangerButton
+                  ? AppColors.redError
+                  : AppColors.white,
         ),
         width: MediaQuery.of(context).size.width * 0.5,
         height: 50.0,
@@ -35,7 +39,9 @@ class _FlatButtonState extends State<FlatButton> {
           child: DefaultText(
             widget.textLabel,
             fontWeight: FontWeight.bold,
-            color: widget.isWithContrastColor ? AppColors.white : null,
+            color: widget.isWithContrastColor || widget.isDangerButton
+                ? AppColors.white
+                : null,
           ),
         ),
       ),

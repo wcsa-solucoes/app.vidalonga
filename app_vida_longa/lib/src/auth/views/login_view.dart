@@ -160,10 +160,16 @@ class _LoginViewState extends State<LoginView>
         const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Seja bem vindo!",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-            Text("Preencha as informações para logar no aplicativo.",
-                style: TextStyle(fontSize: 16)),
+            DefaultText(
+              "Seja bem vindo!",
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
+            ),
+            DefaultText(
+              "Preencha as informações para logar no aplicativo.",
+              fontSize: 16,
+              maxLines: 2,
+            ),
           ],
         ),
         const SizedBox(
@@ -174,7 +180,6 @@ class _LoginViewState extends State<LoginView>
           labelText: "Email",
           hintText: "Email",
         ),
-
         const SizedBox(
           height: 10,
         ),
@@ -184,25 +189,17 @@ class _LoginViewState extends State<LoginView>
           labelText: "Senha",
           hintText: "Email",
         ),
-
         const SizedBox(
           height: 10,
         ),
-        Card(
-          elevation: 1,
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: FlatButton(
-              onPressed: () {
-                _authBloc.add(AuthSignInEvent(
-                  email: _emailLoginController.text,
-                  password: _passwordLoginController.text,
-                ));
-              },
-              textLabel: "Entrar"),
-        ),
+        FlatButton(
+            onPressed: () {
+              _authBloc.add(AuthSignInEvent(
+                email: _emailLoginController.text,
+                password: _passwordLoginController.text,
+              ));
+            },
+            textLabel: "Entrar"),
         TextButton(
           onPressed: () {
             _authBloc.add(AuthRecoveryPasswordEvent(
@@ -211,7 +208,6 @@ class _LoginViewState extends State<LoginView>
           },
           child: const Text("Esqueceu a senha?"),
         ),
-
         TextButton(
           onPressed: () {
             showDialog(
@@ -239,10 +235,13 @@ class _LoginViewState extends State<LoginView>
           const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Crie a sua conta",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-              Text("Preencha as informações para criar a sua conta",
-                  style: TextStyle(fontSize: 16)),
+              DefaultText("Crie a sua conta",
+                  fontSize: 22, fontWeight: FontWeight.w600),
+              DefaultText(
+                "Preencha as informações para criar a sua conta.",
+                fontSize: 16,
+                maxLines: 2,
+              ),
             ],
           ),
           const SizedBox(
@@ -285,60 +284,30 @@ class _LoginViewState extends State<LoginView>
           const SizedBox(
             height: padding,
           ),
-          Card(
-            color: Colors.blueAccent,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: InkWell(
-                onTap: () {
-                  if (_passwordRegisterController.text ==
-                      _passwordConfirmRegisterController.text) {
-                    final String cpfData = _cpfRegisterController.text
-                        .replaceAll(".", "")
-                        .replaceAll("-", "");
-                    final String phoneData = _phoneRegisterController.text
-                        .replaceAll("(", "")
-                        .replaceAll(")", "")
-                        .replaceAll(" ", "")
-                        .replaceAll("-", "");
+          FlatButton(
+            textLabel: "Cadastrar-se",
+            onPressed: () {
+              if (_passwordRegisterController.text ==
+                  _passwordConfirmRegisterController.text) {
+                final String cpfData = _cpfRegisterController.text
+                    .replaceAll(".", "")
+                    .replaceAll("-", "");
+                final String phoneData = _phoneRegisterController.text
+                    .replaceAll("(", "")
+                    .replaceAll(")", "")
+                    .replaceAll(" ", "")
+                    .replaceAll("-", "");
 
-                    _authBloc.add(AuthSignUpEvent(
-                      name: _nameRegisterController.text,
-                      phone: phoneData,
-                      cpf: cpfData,
-                      email: _emailRegisterController.text,
-                      password: _passwordRegisterController.text,
-                    ));
-                  }
-                },
-                // style: ButtonStyle(
-                //   backgroundColor: MaterialStateProperty.all(Colors.blueAccent),
-                // ),
-                child: const Text("Cadastrar-se",
-                    style: TextStyle(color: Colors.white)),
-              ),
-            ),
+                _authBloc.add(AuthSignUpEvent(
+                  name: _nameRegisterController.text,
+                  phone: phoneData,
+                  cpf: cpfData,
+                  email: _emailRegisterController.text,
+                  password: _passwordRegisterController.text,
+                ));
+              }
+            },
           ),
-          //   Card(
-          //   shape:
-          //       RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          //   child: FlatButton(
-          //     onPressed: () {
-          //       if (_passwordRegisterController.text ==
-          //           _passwordConfirmRegisterController.text) {
-          //         _authBloc.add(AuthSignUpEvent(
-          //           name: _nameRegisterController.text,
-          //           phone: _phoneRegisterController.text,
-          //           cpf: _cpfRegisterController.text,
-          //           email: _emailRegisterController.text,
-          //           password: _passwordRegisterController.text,
-          //         ));
-          //       }
-          //     },
-          //     textLabel: "Cadastrar-se",
-          //   ),
           // ),
         ],
       ),

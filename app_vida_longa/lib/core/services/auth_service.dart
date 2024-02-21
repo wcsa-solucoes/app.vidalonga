@@ -114,6 +114,35 @@ class AuthService {
     NavigationController.to(routes.app.auth.login.path);
   }
 
+  Future<void> deleteAccount() async {
+    final User? user = _auth.currentUser;
+
+    if (user == null) {
+      return;
+    }
+
+    try {
+      await user.delete();
+      var message = "Conta deletada.";
+      AppHelper.displayAlertSuccess(message);
+      return;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        var message = "Faça login novamente para deletar a conta.";
+        AppHelper.displayAlertError(message);
+        return;
+      }
+    } catch (e) {
+      var message = "Não foi possível deletar a conta.";
+      AppHelper.displayAlertError(message);
+      return;
+    }
+
+    var message = "Não foi possível deletar a conta!";
+    AppHelper.displayAlertError(message);
+    return;
+  }
+
   Future<bool> changePassword(String password) async {
     final User? user = _auth.currentUser;
 
