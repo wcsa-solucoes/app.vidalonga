@@ -28,8 +28,7 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> {
   final AuthBloc _authBloc = AuthBloc();
   late final ProfileBloc _profileBloc;
-  final String _userEmail = UserService.instance.user.email;
-  final String _userName = UserService.instance.user.name;
+
   @override
   void initState() {
     _profileBloc = context.read<ProfileBloc>();
@@ -77,8 +76,6 @@ class _ProfileViewState extends State<ProfileView> {
   Widget _body() {
     return Column(
       children: [
-        _userInfos(),
-
         _userCard(),
         const SizedBox(
           height: 10,
@@ -138,7 +135,7 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget _userInfos() {
+  Widget _userInfos(String name, String email) {
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(20.0, 15.0, 20.0, 0.0),
       child: Row(
@@ -182,7 +179,7 @@ class _ProfileViewState extends State<ProfileView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _userName,
+                    name,
                     style: const TextStyle(
                       fontFamily: 'Lexend Deca',
                       color: AppColors.blackCard,
@@ -194,7 +191,7 @@ class _ProfileViewState extends State<ProfileView> {
                     padding: const EdgeInsetsDirectional.fromSTEB(
                         0.0, 4.0, 0.0, 0.0),
                     child: Text(
-                      _userEmail,
+                      email,
                       style: const TextStyle(
                         fontFamily: 'Lexend Deca',
                         color: AppColors.blackCard,
@@ -217,108 +214,114 @@ class _ProfileViewState extends State<ProfileView> {
         initialData: UserService.instance.user,
         stream: UserService.instance.userStream,
         builder: (context, snapshot) {
-          return Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: MediaQuery.sizeOf(context).width * 0.88,
-                  decoration: BoxDecoration(
-                    boxShadow: const [
-                      BoxShadow(
-                        blurRadius: 6.0,
-                        color: Color(0x4B1A1F24),
-                        offset: Offset(0.0, 2.0),
-                      )
-                    ],
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.white,
-                        snapshot.data!.subscriptionLevel ==
-                                SubscriptionEnum.paying
-                            ? const Color(0xBB0F65D8)
-                            : Colors.orange,
-                      ],
-                      stops: const [0.0, 1.0],
-                      begin: const AlignmentDirectional(0.94, -1.0),
-                      end: const AlignmentDirectional(-0.94, 1.0),
-                    ),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Row(
+          return Column(
+            children: [
+              _userInfos(snapshot.data?.name ?? "Nome",
+                  snapshot.data?.email ?? "email"),
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: MediaQuery.sizeOf(context).width * 0.88,
+                      decoration: BoxDecoration(
+                        boxShadow: const [
+                          BoxShadow(
+                            blurRadius: 6.0,
+                            color: Color(0x4B1A1F24),
+                            offset: Offset(0.0, 2.0),
+                          )
+                        ],
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white,
+                            snapshot.data!.subscriptionLevel ==
+                                    SubscriptionEnum.paying
+                                ? const Color(0xBB0F65D8)
+                                : Colors.orange,
+                          ],
+                          stops: const [0.0, 1.0],
+                          begin: const AlignmentDirectional(0.94, -1.0),
+                          end: const AlignmentDirectional(-0.94, 1.0),
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Image.asset(
-                            'assets/images/thumbnail_vidalonga4.png',
-                            width: 206.0,
-                            height: 80.0,
-                            fit: BoxFit.cover,
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Image.asset(
+                                'assets/images/thumbnail_vidalonga4.png',
+                                width: 206.0,
+                                height: 80.0,
+                                fit: BoxFit.cover,
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20.0, 0, 20.0, 0.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 30.0, 0.0, 0.0),
+                                  child: Text(
+                                    snapshot.data?.name ?? "name",
+                                    style: GoogleFonts.getFont(
+                                      'Roboto Mono',
+                                      color: AppColors.blackCard,
+                                      fontSize: 22.0,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20.0, 12.0, 20.0, 16.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  snapshot.data!.subscriptionLevel.value,
+                                  style: GoogleFonts.getFont(
+                                    'Roboto Mono',
+                                    color: AppColors
+                                        .blackCard, //const Color.fromRGBO(87, 99, 108, 1),
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                                Text(
+                                  DateFormat('dd/MM/yy').format(DateTime.now()
+                                      .add(const Duration(days: 30))),
+                                  style: GoogleFonts.getFont(
+                                    'Roboto Mono',
+                                    color: AppColors
+                                        .blackCard, //const Color.fromRGBO(87, 99, 108, 1),
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                            20.0, 0, 20.0, 0.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  0.0, 30.0, 0.0, 0.0),
-                              child: Text(
-                                _userName,
-                                style: GoogleFonts.getFont(
-                                  'Roboto Mono',
-                                  color: AppColors.blackCard,
-                                  fontSize: 22.0,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                            20.0, 12.0, 20.0, 16.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              snapshot.data!.subscriptionLevel.value,
-                              style: GoogleFonts.getFont(
-                                'Roboto Mono',
-                                color: AppColors
-                                    .blackCard, //const Color.fromRGBO(87, 99, 108, 1),
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            Text(
-                              DateFormat('dd/MM/yy').format(
-                                  DateTime.now().add(const Duration(days: 30))),
-                              style: GoogleFonts.getFont(
-                                'Roboto Mono',
-                                color: AppColors
-                                    .blackCard, //const Color.fromRGBO(87, 99, 108, 1),
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         });
   }
