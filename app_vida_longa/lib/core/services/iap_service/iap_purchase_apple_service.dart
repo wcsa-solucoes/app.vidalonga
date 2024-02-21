@@ -51,8 +51,14 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
   @override
   CouponModel? get couponAdded => _couponAdded;
 
+  bool _hasInit = false;
+
   @override
   Future<void> init(InAppPurchase inAppPurchase) async {
+    if (_hasInit) {
+      return;
+    }
+    _hasInit = true;
     _inAppPurchase = inAppPurchase;
 
     await _init();

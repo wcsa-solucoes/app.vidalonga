@@ -19,6 +19,8 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
       InAppPurchaseImplServiceGoogleImpl._internal();
   static InAppPurchaseImplServiceGoogleImpl get instance => _instance;
 
+  bool _hasInit = false;
+
   final HandleIAPService _handleIAPService = HandleIAPService(
     handleIAPRepository: HandleIAPGoogleRepositoryImpl(
       firestore: FirebaseFirestore.instance,
@@ -50,6 +52,11 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
 
   @override
   Future<void> init(InAppPurchase inAppPurchase) async {
+    if (_hasInit) {
+      return;
+    }
+
+    _hasInit = true;
     _inAppPurchase = inAppPurchase;
 
     await _init();
