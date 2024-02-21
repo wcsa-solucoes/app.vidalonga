@@ -59,7 +59,7 @@ class TermsWiget extends StatelessWidget {
       SelectableText.rich(
         TextSpan(
           text:
-              'Os seguintes termos e condições regem a relação entre você como cliente e nossa empresa enquanto interage através de nosso site https://vidalonga2.goodbarber.app e/ou em nosso aplicativo Vida Longa.',
+              'Os seguintes termos e condições regem a relação entre você como cliente e nossa empresa enquanto interage através de nossos sites (https://vidalongaapp.com/ e https://vidalongaapp.com/), e/ou em nosso aplicativo Vida Longa.',
           style: getDefaultFont(
             fontSize: paragraphSize,
           ),
