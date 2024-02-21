@@ -9,7 +9,6 @@ class UserModel {
   final String name;
   final String email;
   final String phone;
-  final String document;
   @JsonKey(name: "photo_url")
   final String photoUrl;
   @JsonKey(
@@ -21,7 +20,6 @@ class UserModel {
     this.name = "",
     this.email = "",
     this.phone = "",
-    this.document = "",
     this.photoUrl = "",
     this.subscriptionLevel = SubscriptionEnum.nonPaying,
   });
@@ -32,7 +30,6 @@ class UserModel {
       name: "",
       email: "",
       phone: "",
-      document: "",
       photoUrl: "",
       subscriptionLevel: SubscriptionEnum.nonPaying,
     );
@@ -60,7 +57,6 @@ class UserModel {
     String? name,
     String? email,
     String? phone,
-    String? document,
     String? photoUrl,
     SubscriptionEnum? subscriptionLevel,
   }) {
@@ -69,7 +65,6 @@ class UserModel {
       name: name ?? this.name,
       email: email ?? this.email,
       phone: phone ?? this.phone,
-      document: document ?? this.document,
       photoUrl: photoUrl ?? this.photoUrl,
       subscriptionLevel: subscriptionLevel ?? this.subscriptionLevel,
     );

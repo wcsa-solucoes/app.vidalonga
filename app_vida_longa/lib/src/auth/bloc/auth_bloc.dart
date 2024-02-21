@@ -54,20 +54,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       AuthSignUpEvent event, Emitter<AuthState> emit) async {
     add(AuthLoadingEvent()); // _setLoading();
 
-    final ResponseStatusModel hasRegister =
-        await _userService.validateRegister(event.cpf);
-
-    if (hasRegister.status == ResponseStatusEnum.failed) {
-      emit(AuthInitial(newUser: UserModel.empty()));
-      return;
-    }
-
     _user = _userService.user;
 
     _user = _user.copyWith(
       name: event.name,
       phone: FieldFormatHelper.phone(phone: event.phone),
-      document: FieldFormatHelper.register(register: event.cpf),
+      // document: FieldFormatHelper.register(register: event.cpf),
       email: event.email,
     );
 

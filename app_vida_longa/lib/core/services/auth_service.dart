@@ -75,7 +75,7 @@ class AuthService {
         await _authRepository.register(user, password, name);
 
     if (response.status == ResponseStatusEnum.success) {
-      unawaited(_userService.create(user));
+      await _userService.create(user);
     } else {
       NotificationController.alert(response: response);
     }

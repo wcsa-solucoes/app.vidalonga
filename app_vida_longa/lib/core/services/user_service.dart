@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
-import 'package:app_vida_longa/core/helpers/field_format_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';
@@ -132,18 +131,6 @@ class UserService {
     _handleRedirectStatus();
   }
 
-  Future<ResponseStatusModel> validateRegister(String register) async {
-    final Tuple2<ResponseStatusModel, bool> data = await _userRepository
-        .verifyRegister(FieldFormatHelper.register(register: register));
-
-    if (data.item2) {
-      data.item1.status = ResponseStatusEnum.failed;
-      AppHelper.displayAlertError("CPF já cadastrado");
-    }
-
-    return data.item1;
-  }
-
   Future<void> _handleSendEmail() async {
     if (!_hasSentValidationEmail) {
       _hasSentValidationEmail = true;
@@ -172,7 +159,6 @@ class UserService {
   Future<ResponseStatusModel> update(UserModel user) async {
     user = user.copyWith(
       phone: user.phone,
-      document: user.document,
     );
 
     final ResponseStatusModel response = await _userRepository.update(user);
