@@ -31,7 +31,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     add(AuthLoadingEvent());
 
     if (!_isEnabled) {
-      // _handleWaitSnackBar();//aguarde
       return;
     }
     _isEnabled = false;
@@ -47,7 +46,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else {
       _isEnabled = true;
     }
-    emit(AuthInitial(newUser: _user));
+    emit(AuthSuccess(
+      newUser: _user,
+      canPop: event.canPop,
+    ));
   }
 
   FutureOr<void> _register(

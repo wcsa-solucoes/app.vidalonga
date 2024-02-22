@@ -31,8 +31,12 @@ class ArticleService {
     }
   }
 
-  static void setCurrentlyArticleId(String value) {
+  static ArticleModel? _currentlyArticle;
+  static ArticleModel get currentlyArticle => _currentlyArticle!;
+
+  static void setCurrentlyArticleId(String value, ArticleModel article) {
     _currentlyArticleId = value;
+    _currentlyArticle = article;
   }
 
   final ArticlesRepository _repository = ArticlesRepository();

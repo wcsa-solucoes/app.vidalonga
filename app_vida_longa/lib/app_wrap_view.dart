@@ -39,17 +39,4 @@ class _AppWrapViewState extends State<AppWrapView> {
       ],
     );
   }
-
-  int handleIndex(String path) {
-    late int index = 0;
-    for (final element in Modular.to.navigateHistory) {
-      if (element.name.split("/").contains("navigation")) {
-        index = 0;
-      } else if (element.name.split("/").contains("auth")) {
-        index = 1;
-      }
-    }
-
-    return index;
-  }
 }

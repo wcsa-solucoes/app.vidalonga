@@ -22,45 +22,48 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       stream: NavigationController.routeStream,
       initialData: Modular.to.path,
       builder: (context, snapshot) {
-        return BottomNavigationBar(
-            currentIndex: handleIndex(snapshot.data!),
-            unselectedItemColor: Colors.grey,
-            selectedItemColor: AppColors.unselectedTextStyleColor,
-            unselectedLabelStyle: const TextStyle(color: Colors.grey),
-            selectedLabelStyle: const TextStyle(color: Colors.orange),
-            showUnselectedLabels: true,
-            onTap: (value) {
-              setState(() {
-                switch (value) {
-                  case 0:
-                    NavigationController.to(routes.app.home.path);
-                    break;
-                  case 1:
-                    NavigationController.to(routes.app.categories.path);
-                    break;
-                  case 2:
-                    if (UserService.instance.status ==
-                        UserServiceStatusEnum.loggedOut) {
-                      NavigationController.to(routes.app.auth.login.path);
-                    } else {
-                      NavigationController.to(routes.app.profile.path);
+        return Modular.to.navigateHistory.length < 3
+            ? BottomNavigationBar(
+                currentIndex: handleIndex(snapshot.data!),
+                unselectedItemColor: Colors.grey,
+                selectedItemColor: AppColors.unselectedTextStyleColor,
+                unselectedLabelStyle: const TextStyle(color: Colors.grey),
+                selectedLabelStyle: const TextStyle(color: Colors.orange),
+                showUnselectedLabels: true,
+                onTap: (value) {
+                  setState(() {
+                    switch (value) {
+                      case 0:
+                        NavigationController.to(routes.app.home.path);
+                        break;
+                      case 1:
+                        NavigationController.to(routes.app.categories.path);
+                        break;
+                      case 2:
+                        if (UserService.instance.status ==
+                            UserServiceStatusEnum.loggedOut) {
+                          NavigationController.to(routes.app.auth.login.path);
+                        } else {
+                          NavigationController.to(routes.app.profile.path);
+                        }
+                        break;
                     }
-                    break;
-                }
-              });
-            },
-            items: const [
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.favorite), label: "Início"),
-              BottomNavigationBarItem(
-                  icon: FaIcon(
-                    FontAwesomeIcons.layerGroup,
-                    size: 20,
-                  ),
-                  label: "Categorias"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.account_circle_rounded), label: "Conta"),
-            ]);
+                  });
+                },
+                items: const [
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.favorite), label: "Início"),
+                    BottomNavigationBarItem(
+                        icon: FaIcon(
+                          FontAwesomeIcons.layerGroup,
+                          size: 20,
+                        ),
+                        label: "Categorias"),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.account_circle_rounded),
+                        label: "Conta"),
+                  ])
+            : const SizedBox.shrink();
       },
     );
   }

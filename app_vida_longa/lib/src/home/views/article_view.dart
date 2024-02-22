@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
+import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
@@ -15,8 +16,8 @@ import 'package:flutter_html_iframe/flutter_html_iframe.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ArticleView extends StatefulWidget {
-  final ArticleModel article;
-  const ArticleView({super.key, required this.article});
+  final ArticleModel? article;
+  const ArticleView({super.key, this.article});
 
   @override
   State<ArticleView> createState() => _ArticleViewState();
@@ -29,6 +30,7 @@ class _ArticleViewState extends State<ArticleView> {
 
   final StreamController<double> _streamControllerFontSize =
       StreamController.broadcast();
+  late ArticleModel _currentlyArticle;
 
   @override
   void dispose() {
@@ -40,9 +42,15 @@ class _ArticleViewState extends State<ArticleView> {
 
   @override
   void initState() {
-    isFavorited = _favoritesService.favoritesIds.contains(widget.article.uuid);
+    if (widget.article != null) {
+      _currentlyArticle = widget.article!;
+    } else {
+      _currentlyArticle = ArticleService.currentlyArticle;
+    }
+    isFavorited =
+        _favoritesService.favoritesIds.contains(_currentlyArticle.uuid);
 
-    for (var item in widget.article.contents) {
+    for (var item in _currentlyArticle.contents) {
       if (item.type == "text") {
         widgets.add(
           StreamBuilder<double>(
@@ -143,9 +151,9 @@ class _ArticleViewState extends State<ArticleView> {
                         ),
                   onPressed: () {
                     if (isFavorited) {
-                      _favoritesService.remove(widget.article.uuid);
+                      _favoritesService.remove(_currentlyArticle.uuid);
                     } else {
-                      _favoritesService.add(widget.article.uuid);
+                      _favoritesService.add(_currentlyArticle.uuid);
                     }
                     setState(() {
                       isFavorited = !isFavorited;

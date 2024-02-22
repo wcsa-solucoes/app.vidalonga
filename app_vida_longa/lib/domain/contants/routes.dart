@@ -14,7 +14,11 @@ const routes = (
         comments: (path: "/app/home/article/comments"),
       ),
     ),
-    profile: (path: "/app/profile", edit: (path: "/app/profile/edit")),
+    profile: (
+      path: "/app/profile",
+      edit: (path: "/app/profile/edit"),
+      subscriptions: (path: "/app/profile/subscriptions",),
+    ),
     categories: (
       path: "/app/categories",
       subCategories: (

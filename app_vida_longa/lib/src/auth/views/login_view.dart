@@ -1,5 +1,7 @@
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
+import 'package:app_vida_longa/domain/contants/routes.dart';
+import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
@@ -9,6 +11,7 @@ import 'package:app_vida_longa/shared/widgets/terms_widget.dart';
 import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class LoginView extends StatefulWidget {
@@ -56,6 +59,9 @@ class _LoginViewState extends State<LoginView>
     _passwordConfirmRegisterController.text = "123456";
     _nameRegisterController.text = "Lucas Teste";
 
+    _emailLoginController.text = "f6gameplay@gmail.com";
+    _passwordLoginController.text = "12345678";
+
     super.initState();
   }
 
@@ -63,11 +69,30 @@ class _LoginViewState extends State<LoginView>
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) {
-        _authBloc = context.read<AuthBloc>();
+        _authBloc = ReadContext(context).read<AuthBloc>();
         return _authBloc;
       },
       child: BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is AuthSuccess) {
+            if (state.canPop!) {
+              if (UserService.instance.user.subscriptionLevel ==
+                  SubscriptionEnum.nonPaying) {
+                Modular.to.pushNamedAndRemoveUntil(
+                  routes.app.profile.subscriptions.path,
+                  (routeIterated) =>
+                      routeIterated.settings.name?.contains("home") ?? false,
+                );
+                return;
+              }
+              Modular.to.pushNamedAndRemoveUntil(
+                routes.app.home.article.path,
+                (routeIterated) =>
+                    routeIterated.settings.name?.contains("home") ?? false,
+              );
+            }
+          }
+        },
         builder: (context, state) {
           UserService.instance;
           if (state is AuthLoading) {
@@ -85,6 +110,15 @@ class _LoginViewState extends State<LoginView>
               ),
             );
           }
+
+          if (state is AuthSuccess) {
+            return const Center(
+              child: DefaultText(
+                "Login realizado com sucesso! Clique na seta para voltar.",
+              ),
+            );
+          }
+
           return CustomAppScaffold(
             isWithAppBar: false,
             hasScrollView: true,
@@ -194,10 +228,19 @@ class _LoginViewState extends State<LoginView>
         ),
         FlatButton(
             onPressed: () {
-              _authBloc.add(AuthSignInEvent(
-                email: _emailLoginController.text,
-                password: _passwordLoginController.text,
-              ));
+              bool canPop = false;
+              for (var element in Modular.to.navigateHistory) {
+                if (element.name.contains(routes.app.home.path)) {
+                  canPop = true;
+                }
+              }
+              _authBloc.add(
+                AuthSignInEvent(
+                  email: _emailLoginController.text,
+                  password: _passwordLoginController.text,
+                  canPop: canPop,
+                ),
+              );
             },
             textLabel: "Entrar"),
         TextButton(

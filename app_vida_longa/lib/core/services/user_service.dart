@@ -192,6 +192,12 @@ class UserService {
     PlansServiceImpl.instance.getPlans().then((value) {
       paymentService.init(InAppPurchase.instance);
     });
+    //verify if path contains routes.app.home
+    for (var element in Modular.to.navigateHistory) {
+      if (element.name.contains(routes.app.home.path)) {
+        return;
+      }
+    }
 
     NavigationController.to(routes.app.profile.path);
   }

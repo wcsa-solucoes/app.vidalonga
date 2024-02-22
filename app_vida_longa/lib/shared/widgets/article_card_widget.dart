@@ -1,7 +1,11 @@
 import 'package:app_vida_longa/core/services/articles_service.dart';
+import 'package:app_vida_longa/core/services/auth_service.dart';
+import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
+import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
+import 'package:app_vida_longa/domain/models/user_model.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -34,49 +38,90 @@ class ArticleCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Expanded(
-              child: Tooltip(
-                message: article.title,
-                preferBelow: false,
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text(
-                      article.title,
-                      maxLines: 1,
-                      style: GoogleFonts.getFont(
-                        'Poppins',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20.0,
-                        color: AppColors.titleColor,
+            Row(
+              children: [
+                article.subscriptionType == SubscriptionTypeArticleEnum.paid
+                    ? const CircleAvatar(
+                        backgroundColor: Colors.amber,
+                        radius: 12,
+                        child: Icon(
+                          Icons.lock_outlined,
+                          color: Colors.white,
+                          size: 16.0,
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+                Expanded(
+                  child: Tooltip(
+                    message: article.title,
+                    preferBelow: false,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Text(
+                          article.title,
+                          maxLines: 1,
+                          style: GoogleFonts.getFont(
+                            'Poppins',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20.0,
+                            color: AppColors.titleColor,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-            InkWell(
-              onTap: () {
-                ArticleService.setCurrentlyArticleId(article.uuid);
-                var path2 = routes.app.home.article.path;
-                NavigationController.push(path2,
-                    arguments: {"articleId": article.uuid, "article": article});
-              },
-              child: Container(
-                height: 190,
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10),
+            StreamBuilder<UserModel>(
+                initialData: UserService.instance.user,
+                stream: UserService.instance.userStream,
+                builder: (context, AsyncSnapshot<UserModel> snapshot) {
+                  return InkWell(
+                    onTap: () {
+                      var user = AuthService.instance.getCurrentUser;
+
+                      ArticleService.setCurrentlyArticleId(
+                        article.uuid,
+                        article,
+                      );
+
+                      if (user == null) {
+                        NavigationController.push(routes.app.auth.login.path);
+                        return;
+                      }
+                      if (article.subscriptionType ==
+                              SubscriptionTypeArticleEnum.paid &&
+                          snapshot.data?.subscriptionLevel !=
+                              SubscriptionEnum.paying) {
+                        NavigationController.push(
+                            routes.app.profile.subscriptions.path);
+                        return;
+                      }
+
+                      var path = routes.app.home.article.path;
+                      NavigationController.push(path, arguments: {
+                        "articleId": article.uuid,
+                        "article": article
+                      });
+                    },
+                    child: Container(
+                      height: 190,
+                      decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                          ),
+                          color: AppColors.white,
+                          image: DecorationImage(
+                              image: CachedNetworkImageProvider(article.image),
+                              fit: BoxFit.fill)),
+                      width: MediaQuery.of(context).size.width,
                     ),
-                    color: AppColors.white,
-                    image: DecorationImage(
-                        image: CachedNetworkImageProvider(article.image),
-                        fit: BoxFit.fill)),
-                width: MediaQuery.of(context).size.width,
-              ),
-            ),
+                  );
+                }),
           ],
         ),
       ),

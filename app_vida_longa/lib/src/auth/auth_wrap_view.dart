@@ -1,5 +1,3 @@
-import 'package:app_vida_longa/core/services/user_service.dart';
-import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
@@ -26,18 +24,13 @@ class _AuthWrapViewState extends State<AuthWrapView> {
         listener: (context, state) {},
         builder: (context, state) {
           return CustomAppScaffold(
-              appBar: UserService.instance.status ==
-                          UserServiceStatusEnum.accountedCreated ||
-                      UserService.instance.status == UserServiceStatusEnum.valid
-                  ? AppBar(
-                      title: const Text("Minha conta"),
-                    )
-                  : null,
-              bottomNavigationBar: const CustomBottomNavigationBar(),
-              body: SizedBox(
-                  width: MediaQuery.sizeOf(context).width,
-                  height: MediaQuery.sizeOf(context).height,
-                  child: const RouterOutlet()));
+            bottomNavigationBar: const CustomBottomNavigationBar(),
+            body: SizedBox(
+              width: MediaQuery.sizeOf(context).width,
+              height: MediaQuery.sizeOf(context).height,
+              child: const RouterOutlet(),
+            ),
+          );
         },
       ),
     );
