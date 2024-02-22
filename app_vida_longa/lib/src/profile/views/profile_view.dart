@@ -10,12 +10,14 @@ import 'package:app_vida_longa/shared/widgets/open_button_page.dart';
 import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/profile/bloc/profile_bloc.dart';
+import 'package:app_vida_longa/src/profile/views/doubts_and_sugestions_view.dart';
 import 'package:app_vida_longa/src/profile/views/favorites_articles.dart';
 import 'package:app_vida_longa/src/profile/views/qr_code_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -102,6 +104,32 @@ class _ProfileViewState extends State<ProfileView> {
             NavigationController.push(routes.app.profile.subscriptions.path);
           },
         ),
+        OpenPageButtonWiget(
+          "Dúvidas e sugestões",
+          onPressed: () {
+            final Uri url = Uri.parse(
+                'mailto:contato@vidalongaapp.com?subject=Dúvidas e Sugestões');
+            _launchUrl(url);
+            // Navigator.of(context).push(MaterialPageRoute(
+            //   builder: (context) => const DoubtsAndSugestions(),
+            // ));
+          },
+        ),
+
+        OpenPageButtonWiget(
+          "Contate o suporte",
+          onPressed: () {
+            final Uri url = Uri.parse(
+                'mailto:contato@vidalongaapp.com?subject=Support Vida Longa&body=Preencha abaixo os detalhes da sua solicitação:%0D%0A%0D%0A');
+            _launchUrl(url);
+          },
+        ),
+        // OpenPageButtonWiget(
+        //   "Recomendar o app",
+        //   onPressed: () {
+
+        //   },
+        // ),
         const SizedBox(
           height: 10,
         ),
@@ -111,6 +139,13 @@ class _ProfileViewState extends State<ProfileView> {
         ),
       ],
     );
+  }
+
+  Future<void> _launchUrl(Uri uri) async {
+    if (!await launchUrl(uri)) {
+      throw Exception('Could not launch $uri');
+    }
+    return;
   }
 
   Widget logout() {
