@@ -142,24 +142,8 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
               if (state is ProductsLoadedState) {
                 return Column(
                   children: [
-                    //
                     productPresentation(
                         state.defaultProductDetails, _plansService.defaultPlan),
-                    // ListView.builder(
-                    //   shrinkWrap: true,
-                    //   itemCount: state.products.length,
-                    //   itemBuilder: (context, index) {
-                    //     final ProductDetails prod = state.products[index];
-                    //     return ListTile(
-                    //       title: Text(prod.title),
-                    //       trailing: Text(prod.price.toString()),
-                    //       onTap: () async {
-                    //         _subscriptionsBloc.add(SelectedProductEvent(prod));
-                    //         // paymentService.purchase(prod);
-                    //       },
-                    //     );
-                    //   },
-                    // ),
                   ],
                 );
               }
@@ -174,10 +158,8 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: SizedBox(
-        // color: AppColors.redError,
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.9,
-
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -224,7 +206,28 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
               ),
             ),
             const SizedBox(
-              height: 80,
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  //restore purchases
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: FlatButton(
+                      isWithContrastColor: true,
+                      onPressed: () {
+                        _subscriptionsBloc.add(RestorePurchasesEvent());
+                      },
+                      textLabel: 'Restaurar compras',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
             ),
             Container(
               decoration: BoxDecoration(

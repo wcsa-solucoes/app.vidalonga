@@ -173,7 +173,12 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
     emit(ProductSelectedState(_productDetailsSelected));
   }
 
-  void _handlePurchases(purchaseDetailsList) {
+  void _handlePurchases(List<PurchaseDetails> purchaseDetailsList) {
+    if (purchaseDetailsList.isEmpty) {
+      AppHelper.displayAlertInfo('Nenhuma compra encontrada');
+      return;
+    }
+
     var lastPurchase = purchaseDetailsList.last;
     switch (lastPurchase.status) {
       case PurchaseStatus.error:

@@ -108,9 +108,14 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
         }
         _couponAdded = null;
 
+        if (purchaseDetails.status == PurchaseStatus.restored) {
+          await _handleIAPService.handlePurchase(
+            purchaseDetails,
+            'app_store',
+          );
+        }
+
         if (purchaseDetails.pendingCompletePurchase) {
-          PrintColoredHelper.printPink(
-              'pendingCompletePurchase ${purchaseDetails.pendingCompletePurchase}');
           await _inAppPurchase.completePurchase(purchaseDetails);
         }
       }

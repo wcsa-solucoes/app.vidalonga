@@ -82,19 +82,34 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
   }
 
   void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetailsList) async {
-    for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
-      if (purchaseDetails.status == PurchaseStatus.pending) {
-      } else {
-        if (purchaseDetails.status == PurchaseStatus.error) {
-        } else if (purchaseDetails.status == PurchaseStatus.purchased ||
-            purchaseDetails.status == PurchaseStatus.restored) {
-          if (purchaseDetails.status == PurchaseStatus.purchased) {
-            await _handleIAPService.handlePurchase(
-              purchaseDetails,
-              'google_play',
-              couponAdded: _couponAdded,
-            );
-          }
+    if (purchaseDetailsList.isEmpty) return;
+
+    PrintColoredHelper.printPink(purchaseDetailsList.toString());
+    final PurchaseDetails purchaseDetails = purchaseDetailsList.last;
+
+    if (purchaseDetails.status == PurchaseStatus.pending) {
+    } else {
+      if (purchaseDetails.status == PurchaseStatus.error) {
+      } else if (purchaseDetails.status == PurchaseStatus.purchased ||
+          purchaseDetails.status == PurchaseStatus.restored) {
+        if (purchaseDetails.status == PurchaseStatus.purchased) {
+          await _handleIAPService.handlePurchase(
+            purchaseDetails,
+            'google_play',
+            couponAdded: _couponAdded,
+          );
+        }
+        _couponAdded = null;
+
+        if (purchaseDetails.status == PurchaseStatus.restored) {
+          await _handleIAPService.handlePurchase(
+            purchaseDetails,
+            'google_play',
+          );
+        }
+
+        if (purchaseDetails.pendingCompletePurchase) {
+          await _inAppPurchase.completePurchase(purchaseDetails);
         }
       }
     }
