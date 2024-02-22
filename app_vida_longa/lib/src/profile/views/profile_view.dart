@@ -44,33 +44,34 @@ class _ProfileViewState extends State<ProfileView> {
       listener: (context, state) {},
       builder: (context, state) {
         return CustomAppScaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              backgroundColor: AppColors.white,
-              title: const DefaultText(
-                "Perfil",
-                fontSize: 20,
-                fontWeight: FontWeight.w300,
-              ),
-              //back button syle
+          appBar: AppBar(
+            centerTitle: true,
+            backgroundColor: AppColors.white,
+            title: const DefaultText(
+              "Perfil",
+              fontSize: 20,
+              fontWeight: FontWeight.w300,
             ),
-            hasSafeArea: true,
-            body: Builder(builder: (context) {
-              return _body();
-            }),
-            bottomNavigationBar: const CustomBottomNavigationBar(),
-            hasScrollView: true,
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                UserService.instance.updateSubscriberStatusFromRoles(
-                    UserService.instance.user.subscriptionLevel ==
-                            SubscriptionEnum.nonPaying
-                        ? SubscriptionEnum.paying
-                        : SubscriptionEnum.nonPaying,
-                    "google_play");
-              },
-              child: const Icon(Icons.workspace_premium),
-            ));
+            //back button syle
+          ),
+          hasSafeArea: true,
+          body: Builder(builder: (context) {
+            return _body();
+          }),
+          bottomNavigationBar: const CustomBottomNavigationBar(),
+          hasScrollView: true,
+          // floatingActionButton: FloatingActionButton(
+          //   onPressed: () {
+          //     UserService.instance.updateSubscriberStatusFromRoles(
+          //         UserService.instance.user.subscriptionLevel ==
+          //                 SubscriptionEnum.nonPaying
+          //             ? SubscriptionEnum.paying
+          //             : SubscriptionEnum.nonPaying,
+          //         "google_play");
+          //   },
+          //   child: const Icon(Icons.workspace_premium),
+          // ),
+        );
       },
     );
   }

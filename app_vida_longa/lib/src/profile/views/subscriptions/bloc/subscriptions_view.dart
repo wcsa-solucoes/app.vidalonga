@@ -31,7 +31,7 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
 
   @override
   void initState() {
-    _couponTxtEdtCtrl.text = 'CUPOM1';
+    // _couponTxtEdtCtrl.text = 'CUPOM1';
     super.initState();
   }
 

@@ -54,14 +54,6 @@ class _LoginViewState extends State<LoginView>
 
   @override
   void initState() {
-    _emailRegisterController.text = "outro2@gmail.com";
-    _passwordRegisterController.text = "123456";
-    _passwordConfirmRegisterController.text = "123456";
-    _nameRegisterController.text = "Lucas Teste";
-
-    _emailLoginController.text = "f6gameplay@gmail.com";
-    _passwordLoginController.text = "12345678";
-
     super.initState();
   }
 
