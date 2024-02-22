@@ -15,7 +15,7 @@ class HomeModule extends Module {
     r.child("/", child: (context) => const HomePage());
     r.child(
       '/article',
-      child: (context) => ArticleView(),
+      child: (context) => const ArticleView(),
     );
     r.module("/comments", module: CommentsModule());
   }

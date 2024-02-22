@@ -10,13 +10,14 @@ import 'package:app_vida_longa/shared/widgets/open_button_page.dart';
 import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/profile/bloc/profile_bloc.dart';
-import 'package:app_vida_longa/src/profile/views/doubts_and_sugestions_view.dart';
+import 'package:app_vida_longa/src/profile/views/contacts_view.dart';
 import 'package:app_vida_longa/src/profile/views/favorites_articles.dart';
 import 'package:app_vida_longa/src/profile/views/qr_code_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfileView extends StatefulWidget {
@@ -87,21 +88,31 @@ class _ProfileViewState extends State<ProfileView> {
           onPressed: () =>
               NavigationController.push(routes.app.profile.edit.path),
         ), //
-
-        OpenPageButtonWiget("Meus favoritos", onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const FavoritesArticlesView()));
-        }),
-
-        OpenPageButtonWiget("Abrir QRCode", onPressed: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const QrCodeView()));
-        }),
-
         OpenPageButtonWiget(
           "Assinaturas",
           onPressed: () {
             NavigationController.push(routes.app.profile.subscriptions.path);
+          },
+        ),
+        OpenPageButtonWiget("Meus favoritos", onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const FavoritesArticlesView()));
+        }),
+        OpenPageButtonWiget("Contatos", onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const ContactsView(),
+            ),
+          );
+        }),
+        OpenPageButtonWiget(
+          "Abrir QRCode",
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const QrCodeView(),
+              ),
+            );
           },
         ),
         OpenPageButtonWiget(
@@ -110,9 +121,6 @@ class _ProfileViewState extends State<ProfileView> {
             final Uri url = Uri.parse(
                 'mailto:contato@vidalongaapp.com?subject=Dúvidas e Sugestões');
             _launchUrl(url);
-            // Navigator.of(context).push(MaterialPageRoute(
-            //   builder: (context) => const DoubtsAndSugestions(),
-            // ));
           },
         ),
 
@@ -124,12 +132,10 @@ class _ProfileViewState extends State<ProfileView> {
             _launchUrl(url);
           },
         ),
-        // OpenPageButtonWiget(
-        //   "Recomendar o app",
-        //   onPressed: () {
-
-        //   },
-        // ),
+        OpenPageButtonWiget(
+          "Recomendar o app",
+          onPressed: () => Share.share('app.vidalongaapp.com'),
+        ),
         const SizedBox(
           height: 10,
         ),

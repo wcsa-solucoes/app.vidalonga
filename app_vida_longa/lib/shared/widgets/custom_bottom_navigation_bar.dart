@@ -22,7 +22,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       stream: NavigationController.routeStream,
       initialData: Modular.to.path,
       builder: (context, snapshot) {
-        return Modular.to.navigateHistory.length < 3
+        return !(Modular.to.navigateHistory.length > 3)
             ? BottomNavigationBar(
                 currentIndex: handleIndex(snapshot.data!),
                 unselectedItemColor: Colors.grey,
