@@ -26,5 +26,6 @@ const routes = (
         articles: (path: "/app/categories/subCategories/articles"),
       ),
     ),
+    qa: (path: "/app/questionsAndAnswers",),
   )
 );

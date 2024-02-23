@@ -4,6 +4,7 @@ import 'package:app_vida_longa/src/categories/categories_module.dart';
 import 'package:app_vida_longa/src/home/home_module.dart';
 import 'package:app_vida_longa/src/navigation/navigation_module.dart';
 import 'package:app_vida_longa/src/profile/profile_module.dart';
+import 'package:app_vida_longa/src/questions_and_answers/questions_and_ansswers_module.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class AppModule extends Module {
@@ -18,6 +19,7 @@ class AppModule extends Module {
       ModuleRoute("/home", module: HomeModule()),
       ModuleRoute("/profile", module: ProfileModule()),
       ModuleRoute("/categories", module: CategoriesModule()),
+      ModuleRoute("/questionsAndAnswers", module: QuestionAndAnswersModule()),
     ]);
   }
 }

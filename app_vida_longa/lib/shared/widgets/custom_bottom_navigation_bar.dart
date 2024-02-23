@@ -47,6 +47,9 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                           NavigationController.to(routes.app.profile.path);
                         }
                         break;
+                      case 3:
+                        NavigationController.to(routes.app.qa.path);
+                        break;
                     }
                   });
                 },
@@ -62,6 +65,9 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                     BottomNavigationBarItem(
                         icon: Icon(Icons.account_circle_rounded),
                         label: "Conta"),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.question_answer_rounded),
+                        label: "Perguntas"),
                   ])
             : const SizedBox.shrink();
       },
@@ -78,6 +84,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       } else if (element.name.split("/").contains("auth") ||
           element.name.split("/").contains("profile")) {
         index = 2;
+      } else if (element.name.split("/").contains("questionsAndAnswers")) {
+        index = 3;
       }
     }
 

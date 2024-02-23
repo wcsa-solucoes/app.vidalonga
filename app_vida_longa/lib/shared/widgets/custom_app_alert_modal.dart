@@ -137,10 +137,6 @@ class _CustomAppAlertModalState extends State<CustomAppAlertModal> {
     );
   }
 
-  // Widget _buildIcon(ResponseStatusEnum status) {
-  //   return const Icon(Icons.close);
-  // }
-
   void notificationExpired(ResponseStatusModel response, int duration) {
     Future.delayed(Duration(seconds: duration), () {
       notifications.remove(response);

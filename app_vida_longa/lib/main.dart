@@ -1,10 +1,13 @@
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
+import 'package:app_vida_longa/core/repositories/questions_and_answers.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/categories_service.dart';
 import 'package:app_vida_longa/core/services/coupons_service.dart';
+import 'package:app_vida_longa/core/services/questions_and_answers_service.dart';
 import 'package:app_vida_longa/main_module.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -60,6 +63,7 @@ void startServices() async {
       },
     ),
     CouponsServiceImpl.instance.init(),
+    QAServiceImpl.instance.init(QARepositoryImpl(FirebaseFirestore.instance))
   ]);
 
   await SystemChrome.setPreferredOrientations(
