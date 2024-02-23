@@ -60,17 +60,17 @@ class _ProfileViewState extends State<ProfileView> {
           }),
           bottomNavigationBar: const CustomBottomNavigationBar(),
           hasScrollView: true,
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              UserService.instance.updateSubscriberStatusFromRoles(
-                  UserService.instance.user.subscriptionLevel ==
-                          SubscriptionEnum.nonPaying
-                      ? SubscriptionEnum.paying
-                      : SubscriptionEnum.nonPaying,
-                  "google_play");
-            },
-            child: const Icon(Icons.workspace_premium),
-          ),
+          // floatingActionButton: FloatingActionButton(
+          //   onPressed: () {
+          //     UserService.instance.updateSubscriberStatusFromRoles(
+          //         UserService.instance.user.subscriptionLevel ==
+          //                 SubscriptionEnum.nonPaying
+          //             ? SubscriptionEnum.paying
+          //             : SubscriptionEnum.nonPaying,
+          //         "google_play");
+          //   },
+          //   child: const Icon(Icons.workspace_premium),
+          // ),
         );
       },
     );
