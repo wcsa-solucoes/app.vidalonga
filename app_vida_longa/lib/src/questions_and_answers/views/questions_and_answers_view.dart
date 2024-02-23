@@ -11,6 +11,7 @@ import 'package:app_vida_longa/src/questions_and_answers/views/some_question_vie
 import 'package:app_vida_longa/src/questions_and_answers/views/new_question_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class QuestionsAndAnswersView extends StatefulWidget {
@@ -72,6 +73,7 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
         body: body(),
         bottomNavigationBar: const CustomBottomNavigationBar(),
         floatingActionButton: FloatingActionButton(
+          backgroundColor: AppColors.white,
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(
@@ -82,7 +84,11 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
               ),
             );
           },
-          child: const Icon(Icons.add),
+          child: const FaIcon(
+            FontAwesomeIcons.plus,
+            color: AppColors.selectedColor,
+            size: 20,
+          ),
         ));
   }
 
