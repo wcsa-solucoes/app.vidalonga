@@ -48,6 +48,7 @@ class _DecoratedTextFieldWidgetState extends State<DecoratedTextFieldWidget> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      maxLines: null,
       controller: widget.controller,
       obscureText: isPasswordInvisible,
       keyboardType: widget.keyboardType,

@@ -4,21 +4,23 @@ class QuestionAnswerModel {
   final bool isAnonymous;
   final bool alreadyAnswered;
   final String userId;
-  final String uuid;
+  final String? uuid;
   final String question;
   final String createdAt;
-  final String answeredAt;
+  final String? answeredAt;
   final List<AnswerModel> answers;
+  final int createdAtMillisecondsSinceEpoch;
 
   QuestionAnswerModel({
     required this.isAnonymous,
     required this.alreadyAnswered,
     required this.userId,
-    required this.uuid,
+    this.uuid,
     required this.question,
     required this.createdAt,
-    required this.answeredAt,
+    this.answeredAt,
     required this.answers,
+    required this.createdAtMillisecondsSinceEpoch,
   });
 
   factory QuestionAnswerModel.fromMap(Map<String, dynamic> json) {
@@ -29,25 +31,43 @@ class QuestionAnswerModel {
       uuid: json['uuid'],
       question: json['question'],
       createdAt: json['createdAt'],
-      answeredAt: json['AnsweredAt'],
-      // content: ContentModel.fromMap(json['answers']),
+      answeredAt: json['answeredAt'],
       answers: (json['answers'] as List<dynamic>)
           .map((e) => AnswerModel.fromMap(e as Map<String, dynamic>))
           .toList(),
-      // content: json['answers'].map((e) => ContentModel.fromMap(e)).toList(),
+      createdAtMillisecondsSinceEpoch: json['createdAtMillisecondsSinceEpoch'],
     );
   }
 
-  Map<String, dynamic> toMap() {
+  factory QuestionAnswerModel.newQuestion({
+    required bool isAnonymous,
+    required String createdAt,
+    required String userId,
+    required String question,
+  }) {
+    return QuestionAnswerModel(
+      isAnonymous: isAnonymous,
+      alreadyAnswered: false,
+      userId: userId,
+      question: question,
+      createdAt: createdAt,
+      answeredAt: null,
+      answers: [],
+      createdAtMillisecondsSinceEpoch: DateTime.now().millisecondsSinceEpoch,
+    );
+  }
+
+  Map<String, dynamic> newQuestionToMap(String docId) {
     return {
       'isAnonymous': isAnonymous,
       'alreadyAnswered': alreadyAnswered,
       'userId': userId,
-      'uuid': uuid,
+      'uuid': docId,
       'question': question,
       'createdAt': createdAt,
-      'AnsweredAt': answeredAt,
-      'answers': answers.map((e) => e.toMap()).toList()
+      'answeredAt': null,
+      'answers': answers.map((e) => e.toMap()).toList(),
+      'createdAtMillisecondsSinceEpoch': createdAtMillisecondsSinceEpoch,
     };
   }
 }

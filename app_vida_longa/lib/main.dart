@@ -1,5 +1,5 @@
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
-import 'package:app_vida_longa/core/repositories/questions_and_answers.dart';
+import 'package:app_vida_longa/core/repositories/questions_and_answers_repository.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/categories_service.dart';

@@ -43,13 +43,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     if (response.status == ResponseStatusEnum.failed) {
       _displaySnackBar(response);
+      emit(AuthInitial());
     } else {
       _isEnabled = true;
+      emit(AuthSuccess(
+        newUser: _user,
+        canPop: event.canPop,
+      ));
     }
-    emit(AuthSuccess(
-      newUser: _user,
-      canPop: event.canPop,
-    ));
   }
 
   FutureOr<void> _register(

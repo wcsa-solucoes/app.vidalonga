@@ -1,4 +1,8 @@
-import 'package:app_vida_longa/core/repositories/questions_and_answers.dart';
+import 'dart:async';
+
+import 'package:app_vida_longa/core/helpers/time_format_helper.dart';
+import 'package:app_vida_longa/core/repositories/questions_and_answers_repository.dart';
+import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/models/question_answer_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 
@@ -6,6 +10,7 @@ abstract class IQAService {
   Future<ResponseStatusModel> getAll();
   Future<void> init(IQARepository qaRepository);
   List<QuestionAnswerModel> get qaList;
+  Future<ResponseStatusModel> addQuestion(String question, bool isAnonymous);
 }
 
 class QAServiceImpl extends IQAService {
@@ -46,6 +51,28 @@ class QAServiceImpl extends IQAService {
     _qaList.addAll(qaList);
   }
 
+  void _addQuestion(QuestionAnswerModel question) {
+    _qaList.insert(0, question);
+  }
+
   @override
   List<QuestionAnswerModel> get qaList => _qaList;
+
+  @override
+  Future<ResponseStatusModel> addQuestion(
+      String question, bool isAnonymous) async {
+    final QuestionAnswerModel newQuestion = QuestionAnswerModel.newQuestion(
+      question: question,
+      isAnonymous: isAnonymous,
+      createdAt: TimeHelper.dateTimeNowToDDMMYYHHMMSS(),
+      userId: UserService.instance.user.id,
+    );
+
+    final response = await _qaRepository.addQuestion(newQuestion);
+
+    if (response.status == ResponseStatusEnum.success) {
+      _addQuestion(newQuestion);
+    }
+    return response;
+  }
 }

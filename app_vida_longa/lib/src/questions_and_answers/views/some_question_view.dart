@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/models/question_answer_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
@@ -19,7 +17,7 @@ class SomeQuestionView extends StatefulWidget {
 
 class _SomeQuestionViewState extends State<SomeQuestionView> {
   double fontSize = 16.0;
-  List<Widget> widgets = [];
+  List<Widget> answers = [];
 
   final StreamController<double> _streamControllerFontSize =
       StreamController.broadcast();
@@ -28,7 +26,7 @@ class _SomeQuestionViewState extends State<SomeQuestionView> {
     super.initState();
     for (var item in widget.question.answers) {
       if (item.type == "text") {
-        widgets.add(
+        answers.add(
           StreamBuilder<double>(
             initialData: fontSize,
             stream: _streamControllerFontSize.stream,
@@ -41,7 +39,7 @@ class _SomeQuestionViewState extends State<SomeQuestionView> {
           ),
         );
       } else {
-        widgets.add(
+        answers.add(
           Html(extensions: const [
             IframeHtmlExtension(),
           ], data: item.answer),
@@ -63,49 +61,38 @@ class _SomeQuestionViewState extends State<SomeQuestionView> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Column(
-        children: [
-          DefaultText(
-            widget.question.question,
-            fontSize: 20,
-            fontWeight: FontWeight.w300,
-          ),
-          const SizedBox(height: 16),
-          ...widgets,
-        ],
-      ),
+      body: body(),
     );
   }
 
   Widget body() {
-    PrintColoredHelper.printPink(widget.question.answers.length.toString());
-    return Container(
-      padding: const EdgeInsets.all(16),
-      color: Colors.amber,
-      child: Column(
-        children: [
-          DefaultText(
-            widget.question.question,
-            fontSize: 20,
-            fontWeight: FontWeight.w300,
-          ),
-          const SizedBox(height: 16),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: widget.question.answers.length,
-            itemBuilder: (context, index) {
-              PrintColoredHelper.printPink(
-                  widget.question.answers.length.toString());
-              return Text(widget.question.answers[index].answer);
-            },
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        DefaultText(
+          widget.question.question,
+          fontSize: 20,
+          fontWeight: FontWeight.w300,
+        ),
+        const SizedBox(height: 16),
+        _handleAnswers(),
+      ],
+    );
+  }
+
+  Widget _handleAnswers() {
+    if (answers.isEmpty) {
+      return const DefaultText(
+        "Essa pergunta ainda não foi respondida.",
+        fontSize: 16,
+        fontWeight: FontWeight.w300,
+      );
+    }
+
+    return Column(
+      children: answers,
     );
   }
 }

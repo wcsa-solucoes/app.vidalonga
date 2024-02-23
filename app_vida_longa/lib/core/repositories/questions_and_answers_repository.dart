@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 abstract class IQARepository {
   Future<({ResponseStatusModel response, List<QuestionAnswerModel> qaList})>
       getAll();
+  Future<ResponseStatusModel> addQuestion(QuestionAnswerModel question);
 }
 
 class QARepositoryImpl extends IQARepository {
@@ -18,7 +19,14 @@ class QARepositoryImpl extends IQARepository {
     ResponseStatusModel response = ResponseStatusModel();
     List<QuestionAnswerModel> qaList = [];
 
-    await firestore.collection('questions').get().then((value) {
+    await firestore
+        .collection('questions')
+        .orderBy(
+          'createdAtMillisecondsSinceEpoch',
+          descending: true,
+        )
+        .get()
+        .then((value) {
       if (value.docs.isEmpty) {
         return;
       }
@@ -33,5 +41,23 @@ class QARepositoryImpl extends IQARepository {
       );
     });
     return (response: response, qaList: qaList);
+  }
+
+  @override
+  Future<ResponseStatusModel> addQuestion(QuestionAnswerModel question) async {
+    final ResponseStatusModel response = ResponseStatusModel();
+    var newDoc = firestore.collection('questions').doc();
+
+    await newDoc
+        .set(question.newQuestionToMap(newDoc.id))
+        .then((value) => null)
+        .onError(
+      (Object? object, StackTrace error) {
+        response.status = ResponseStatusEnum.error;
+        response.message = 'Erro ao adicionar a pergunta';
+      },
+    );
+
+    return response;
   }
 }

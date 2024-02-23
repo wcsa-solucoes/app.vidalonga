@@ -3,12 +3,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 class QuestionAndAnswersModule extends Module {
   @override
-  void binds(Injector i) {
-    // i.add(QaBloc.new);
-    super.binds(i);
-  }
-
-  @override
   void routes(r) {
     r.child("/", child: (context) => const QuestionsAndAnswersView());
   }

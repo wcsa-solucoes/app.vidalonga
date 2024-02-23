@@ -18,3 +18,9 @@ class LoadingQuestionsEvent extends QAEvent {
 class LoadedQuestionsEvent extends QAEvent {
   LoadedQuestionsEvent();
 }
+
+class AddQuestionEvent extends QAEvent {
+  final String question;
+  final bool isAnonymous;
+  AddQuestionEvent(this.question, this.isAnonymous);
+}

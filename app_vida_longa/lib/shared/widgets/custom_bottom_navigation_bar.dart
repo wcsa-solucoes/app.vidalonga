@@ -63,10 +63,10 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                         ),
                         label: "Categorias"),
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.account_circle_rounded),
+                        icon: FaIcon(Icons.account_circle_rounded),
                         label: "Conta"),
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.question_answer_rounded),
+                        icon: FaIcon(FontAwesomeIcons.comment),
                         label: "Perguntas"),
                   ])
             : const SizedBox.shrink();

@@ -9,6 +9,7 @@ class DefaultText extends StatelessWidget {
   final Color? color;
   final TextAlign? textAlign;
   final int? maxLines;
+  final TextDecoration? decoration;
 
   const DefaultText(
     this.text, {
@@ -18,6 +19,7 @@ class DefaultText extends StatelessWidget {
     this.color,
     super.key,
     this.maxLines,
+    this.decoration,
   });
 
   @override
@@ -37,6 +39,7 @@ class DefaultText extends StatelessWidget {
         fontSize: fontSize,
         color: color ?? AppColors.blackCard,
         overflow: TextOverflow.ellipsis,
+        decoration: decoration,
       ),
       // AppTextStyles.white14w400.copyWith(
       //   fontWeight: fontWeight,

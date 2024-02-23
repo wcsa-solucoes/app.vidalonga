@@ -9,8 +9,12 @@ final class QALoading extends QAState {}
 
 final class QALoaded extends QAState {
   final List<QuestionAnswerModel> questions;
+  final List<QuestionAnswerModel> myQuestions;
 
-  QALoaded(this.questions);
+  QALoaded({
+    required this.questions,
+    required this.myQuestions,
+  });
 }
 
 final class QAError extends QAState {
@@ -18,3 +22,5 @@ final class QAError extends QAState {
 
   QAError(this.message);
 }
+
+final class QuestionAdded extends QAState {}
