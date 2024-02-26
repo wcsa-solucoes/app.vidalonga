@@ -5,7 +5,7 @@ import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/domain/models/question_answer_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
-import 'package:bloc/bloc.dart';
+import "package:flutter_bloc/flutter_bloc.dart";
 import 'package:meta/meta.dart';
 
 part 'qa_event.dart';
@@ -23,11 +23,6 @@ class QABloc extends Bloc<QAEvent, QAState> {
     } else {
       add(LoadedQuestionsEvent());
     }
-  }
-
-  void _setQaList(List<QuestionAnswerModel> qaList) {
-    _qaService.qaList.clear();
-    _qaService.qaList.addAll(qaList);
   }
 
   final List<QuestionAnswerModel> myQuestions = [];

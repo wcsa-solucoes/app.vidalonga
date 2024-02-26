@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/articles_repository.dart';
 import 'package:app_vida_longa/core/repositories/categories_repository.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
@@ -47,15 +48,16 @@ class ArticleService {
   final List<List<ArticleModel>> _articlesByCategories = <List<ArticleModel>>[];
   List<List<ArticleModel>> get articlesByCategories =>
       _instance._articlesByCategories;
-  List<CategoryModel?> get categoriesCollection =>
-      _instance._categoriesCollection;
 
   final List<CategoryModel?> _categoriesCollection = <CategoryModel?>[];
+
+  List<CategoryModel?> get categoriesCollection =>
+      _instance._categoriesCollection;
 
   Future<void> _init() async {
     await getCategories();
 
-    await getAll();
+    await getAllArticles();
   }
 
   Future<void> getCategories() async {
@@ -68,15 +70,22 @@ class ArticleService {
 
     if (result.response.status == ResponseStatusEnum.success) {
       _categoriesCollection.addAll(result.categories);
+      for (var element in result.categories) {
+        PrintColoredHelper.printPink(
+            "Category: ${element.name} - uuid: ${element.uuid}");
+      }
     }
   }
 
-  Future<Tuple2<ResponseStatusModel, List<ArticleModel>>> getAll() async {
+  Future<Tuple2<ResponseStatusModel, List<ArticleModel>>>
+      getAllArticles() async {
     final Tuple2<ResponseStatusModel, List<ArticleModel>> data =
         await _repository.getAll();
 
-    _updateArticles(data.item2);
-    _updateArticlesByCategories(data.item2);
+    if (data.item1.status == ResponseStatusEnum.success) {
+      _updateArticles(data.item2);
+      _updateArticlesByCategories(data.item2);
+    }
 
     return data;
   }
@@ -110,9 +119,10 @@ class ArticleService {
       }
       return previousValue;
     });
-    if (articleAgrouped.isNotEmpty) articles.clear();
-    _articlesByCategories.clear();
 
+    if (articleAgrouped.isNotEmpty) articles.clear();
+
+    _articlesByCategories.clear();
     _articlesByCategories.addAll(articleAgrouped);
   }
 }

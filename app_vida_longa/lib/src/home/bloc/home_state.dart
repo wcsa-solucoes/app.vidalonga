@@ -1,14 +1,33 @@
 part of 'home_bloc.dart';
 
-class ChipCategorie {
-  late String label;
-  late bool selected;
-  late String uuid;
-  ChipCategorie({
+class ChipCategorie extends Equatable {
+  final String label;
+  final bool selected;
+  final String uuid;
+  const ChipCategorie({
     this.label = "",
     this.selected = false,
     this.uuid = "",
   });
+
+  @override
+  List<Object?> get props => [
+        label,
+        selected,
+        uuid,
+      ];
+
+  ChipCategorie copyWith({
+    String? label,
+    bool? selected,
+    String? uuid,
+  }) {
+    return ChipCategorie(
+      label: label ?? this.label,
+      selected: selected ?? this.selected,
+      uuid: uuid ?? this.uuid,
+    );
+  }
 }
 
 class HomeState {

@@ -128,7 +128,8 @@ class _HomeViewState extends State<HomeView> {
             isSelected: chipsCategorie[index].selected,
             label: chipsCategorie[index].label,
             onSelected: (bool selected) {
-              chipsCategorie[index].selected = selected;
+              chipsCategorie[index] =
+                  chipsCategorie[index].copyWith(selected: selected);
 
               var selectedChips =
                   chipsCategorie.where((chip) => chip.selected).toList();
@@ -161,6 +162,18 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _handleArticles(List<List<ArticleModel>> articlesByCategory) {
+    if (articlesByCategory.isEmpty) {
+      return SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.8,
+          child: const Center(
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 100),
+              child: DefaultText("Nenhum artigo encontrado :("),
+            ),
+          ));
+    }
+
     return ListView.separated(
       physics:
           const NeverScrollableScrollPhysics(), // Add this to keep the ListView from scrolling
@@ -170,6 +183,7 @@ class _HomeViewState extends State<HomeView> {
 
       itemBuilder: (BuildContext context, int categoryIndex) {
         final categoryArticles = articlesByCategory[categoryIndex];
+
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(2),
