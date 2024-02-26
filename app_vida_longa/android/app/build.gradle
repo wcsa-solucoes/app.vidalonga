@@ -90,10 +90,12 @@ android {
         dev{
             dimension "app"
             applicationId "com.appvidalonga.dev"
+            resValue "string", "app_name", "Dev Vida Longa"
         }
         prod{
             dimension "app"
             applicationId "com.vidalongaapp.app"
+            resValue "string", "app_name", "Vida Longa"
         }
     }
 }
