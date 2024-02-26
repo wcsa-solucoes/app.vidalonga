@@ -1,5 +1,6 @@
 import "dart:async";
 import "dart:developer";
+import "package:flutter/material.dart";
 import "package:flutter_modular/flutter_modular.dart";
 
 abstract class NavigationController {
@@ -21,6 +22,15 @@ abstract class NavigationController {
     }
 
     _pushNamed(route, arguments: arguments);
+  }
+
+  static void pushNamedAndRemoveUntil(
+      String route, bool Function(Route<dynamic>) predicate,
+      {dynamic arguments}) {
+    if (route == Modular.to.path) {
+      return;
+    }
+    _pushNamedAndRemoveUntil(route, predicate, arguments: arguments);
   }
 
   static void pop() {
@@ -74,6 +84,17 @@ abstract class NavigationController {
 
   static void _to(String route, {dynamic arguments}) {
     Modular.to.navigate(route, arguments: arguments);
+    _routeController.sink.add(route);
+  }
+
+  static void _pushNamedAndRemoveUntil(
+      String route, bool Function(Route<dynamic>) predicate,
+      {dynamic arguments}) {
+    unawaited(
+      Modular.to
+          .pushNamedAndRemoveUntil(route, predicate, arguments: arguments),
+    );
+
     _routeController.sink.add(route);
   }
 }

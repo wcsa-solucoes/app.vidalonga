@@ -1,13 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';
-import 'package:app_vida_longa/core/services/iap_service/iap_purchase_apple_service.dart';
-import 'package:app_vida_longa/core/services/iap_service/iap_purchase_google_service.dart';
-import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
-import 'package:app_vida_longa/core/services/plans_service.dart';
 import 'package:app_vida_longa/core/services/subscription_service.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/custom_exceptions_codes_enum.dart';
@@ -19,7 +14,6 @@ import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:tuple/tuple.dart';
 
 class UserService {
@@ -181,25 +175,14 @@ class UserService {
 
     favoritesService.init(favoritesRepository, user.id);
 
-    late final IInAppPurchaseService paymentService;
-
-    if (Platform.isAndroid) {
-      paymentService = InAppPurchaseImplServiceGoogleImpl.instance;
-    } else {
-      paymentService = InAppPurchaseImplServicesAppleImpl.instance;
-    }
-
-    PlansServiceImpl.instance.getPlans().then((value) {
-      paymentService.init(InAppPurchase.instance);
-    });
-    //verify if path contains routes.app.home
-    for (var element in Modular.to.navigateHistory) {
-      if (element.name.contains(routes.app.home.path)) {
+    for (var route in Modular.to.navigateHistory) {
+      if (route.name.contains(routes.app.home.path)) {
         return;
       }
     }
+    await Future.delayed(const Duration(milliseconds: 500));
 
-    NavigationController.to(routes.app.profile.path);
+    NavigationController.to(routes.app.home.path);
   }
 
   void _handleRecentUserRegister() {

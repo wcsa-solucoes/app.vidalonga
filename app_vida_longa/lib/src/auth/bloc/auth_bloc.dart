@@ -46,10 +46,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthInitial());
     } else {
       _isEnabled = true;
-      emit(AuthSuccess(
-        newUser: _user,
-        canPop: event.canPop,
-      ));
+      emit(AuthSuccess(newUser: _user, canPop: event.canPop));
     }
   }
 

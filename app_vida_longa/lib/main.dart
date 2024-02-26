@@ -1,10 +1,16 @@
+import 'dart:io';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/questions_and_answers_repository.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/categories_service.dart';
 import 'package:app_vida_longa/core/services/coupons_service.dart';
+import 'package:app_vida_longa/core/services/iap_service/iap_purchase_apple_service.dart';
+import 'package:app_vida_longa/core/services/iap_service/iap_purchase_google_service.dart';
+import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
+import 'package:app_vida_longa/core/services/plans_service.dart';
 import 'package:app_vida_longa/core/services/questions_and_answers_service.dart';
+import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/main_module.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'firebase_options.dart';
 
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
@@ -50,6 +57,14 @@ void startControllers() {
 }
 
 void startServices() async {
+  late final IInAppPurchaseService paymentService;
+
+  if (Platform.isAndroid) {
+    paymentService = InAppPurchaseImplServiceGoogleImpl.instance;
+  } else {
+    paymentService = InAppPurchaseImplServicesAppleImpl.instance;
+  }
+
   Future.wait([
     AuthService.init(),
     ArticleService.init().then(
@@ -58,7 +73,10 @@ void startServices() async {
       },
     ),
     CouponsServiceImpl.instance.init(),
-    QAServiceImpl.instance.init(QARepositoryImpl(FirebaseFirestore.instance))
+    QAServiceImpl.instance.init(QARepositoryImpl(FirebaseFirestore.instance)),
+    PlansServiceImpl.instance.getPlans().then((value) {
+      paymentService.init(InAppPurchase.instance);
+    })
   ]);
 
   await SystemChrome.setPreferredOrientations(
@@ -75,7 +93,7 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   @override
   void initState() {
-    Modular.setInitialRoute("/app/auth/login");
+    Modular.setInitialRoute(routes.app.home.path);
     super.initState();
   }
 

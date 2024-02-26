@@ -89,7 +89,7 @@ class ArticleCard extends StatelessWidget {
                       );
 
                       if (user == null) {
-                        NavigationController.push(routes.app.auth.login.path);
+                        NavigationController.to(routes.app.auth.login.path);
                         return;
                       }
                       if (article.subscriptionType ==
