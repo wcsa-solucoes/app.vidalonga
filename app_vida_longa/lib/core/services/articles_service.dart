@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/articles_repository.dart';
 import 'package:app_vida_longa/core/repositories/categories_repository.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
@@ -70,10 +68,6 @@ class ArticleService {
 
     if (result.response.status == ResponseStatusEnum.success) {
       _categoriesCollection.addAll(result.categories);
-      for (var element in result.categories) {
-        PrintColoredHelper.printPink(
-            "Category: ${element.name} - uuid: ${element.uuid}");
-      }
     }
   }
 

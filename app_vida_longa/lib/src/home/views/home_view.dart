@@ -4,6 +4,7 @@ import 'package:app_vida_longa/shared/widgets/article_card_widget.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_chip.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/src/home/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,8 @@ class _HomeViewState extends State<HomeView> {
     _homeBloc = Modular.get<HomeBloc>();
     super.initState();
   }
+
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +53,7 @@ class _HomeViewState extends State<HomeView> {
                 initial: () => Container(),
                 loading: _loadingState,
                 loaded: _loadedState,
+                articlesSearched: _searchedState,
                 error: (state) => _errorState(),
                 categoriesSelected: _categoriesSelectedState,
               );
@@ -61,6 +65,40 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
+  Widget _searchedState(ArticlesSearchedState state) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _handleSearch(),
+          _handleArticles(state.articlesByCategory!),
+        ],
+      ),
+    );
+  }
+
+  Widget _handleSearch() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: DecoratedTextFieldWidget(
+        controller: _searchController,
+        hintText: "Buscar por título...",
+        labelText: "Buscar por título...",
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.close, color: AppColors.dimGray),
+          onPressed: _onRestart,
+        ),
+        textInputAction: TextInputAction.search,
+        onSubmitted: (value) {
+          if (value.isEmpty) {
+            _homeBloc.add(RestartHomeEvent());
+          } else {
+            _homeBloc.add(HomeSearchEvent(searchTerm: value));
+          }
+        },
+      ),
+    );
+  }
+
   Widget _loadingState(HomeLoadingState state) {
     return const Center(
       child: CircularProgressIndicator(),
@@ -69,17 +107,12 @@ class _HomeViewState extends State<HomeView> {
 
   Widget _loadedState(HomeLoadedState state) {
     if (state.articlesByCategory!.isEmpty) {
-      return const SizedBox(
-          child: Center(
-              child: Padding(
-        padding: EdgeInsets.only(bottom: 100),
-        child: DefaultText("Nenhum artigo encontrado :("),
-      )));
+      return _handleEmptyArticles();
     }
     return SingleChildScrollView(
       child: Column(
         children: [
-          // search(),
+          _handleSearch(),
           SizedBox(
               height: 50,
               width: MediaQuery.of(context).size.width,
@@ -88,6 +121,35 @@ class _HomeViewState extends State<HomeView> {
           _handleArticles(state.articlesByCategory!),
         ],
       ),
+    );
+  }
+
+  void _onRestart() {
+    _searchController.clear();
+    _homeBloc.add(RestartHomeEvent());
+  }
+
+  Widget _handleEmptyArticles() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.9,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 100),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const DefaultText("Nenhum artigo encontrado :("),
+            _handleReload(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _handleReload() {
+    return TextButton(
+      onPressed: _onRestart,
+      child: const Text("Recarregar"),
     );
   }
 
@@ -101,14 +163,14 @@ class _HomeViewState extends State<HomeView> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // search(),
           SizedBox(
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              child: _handleChips(
-                state.chipsCategorie!,
-                state.articlesByCategory!,
-              )),
+            height: 50,
+            width: MediaQuery.of(context).size.width,
+            child: _handleChips(
+              state.chipsCategorie!,
+              state.articlesByCategory!,
+            ),
+          ),
           _handleArticles(state.articlesByCategorySelected!),
         ],
       ),
@@ -163,15 +225,7 @@ class _HomeViewState extends State<HomeView> {
 
   Widget _handleArticles(List<List<ArticleModel>> articlesByCategory) {
     if (articlesByCategory.isEmpty) {
-      return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.8,
-          child: const Center(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 100),
-              child: DefaultText("Nenhum artigo encontrado :("),
-            ),
-          ));
+      return _handleEmptyArticles();
     }
 
     return ListView.separated(
@@ -231,55 +285,6 @@ class _HomeViewState extends State<HomeView> {
           color: AppColors.dimGray,
         );
       },
-    );
-  }
-
-  Widget search() {
-    return TextFormField(
-      controller: TextEditingController(),
-      autofocus: false,
-      obscureText: false,
-      decoration: InputDecoration(
-        labelText: 'Buscar aqui...',
-        // labelStyle: FlutterFlowTheme.of(context).labelMedium,
-        // hintStyle: FlutterFlowTheme.of(context).labelMedium,
-        enabledBorder: UnderlineInputBorder(
-          borderSide: const BorderSide(
-            // color: FlutterFlowTheme.of(context).alternate,
-            width: 4.0,
-          ),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: const BorderSide(
-            // color: FlutterFlowTheme.of(context).primary,
-            width: 4.0,
-          ),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        errorBorder: UnderlineInputBorder(
-          borderSide: const BorderSide(
-            // color: FlutterFlowTheme.of(context).error,
-            width: 4.0,
-          ),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        focusedErrorBorder: UnderlineInputBorder(
-          borderSide: const BorderSide(
-            // color: FlutterFlowTheme.of(context).error,
-            width: 4.0,
-          ),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        prefixIcon: const Icon(
-          Icons.search,
-          size: 15.0,
-        ),
-        suffixIcon: const Icon(
-          Icons.close,
-        ),
-      ),
-      // style: FlutterFlowTheme.of(context).bodyMedium,
     );
   }
 }

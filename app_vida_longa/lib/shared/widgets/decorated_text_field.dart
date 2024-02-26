@@ -4,16 +4,17 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DecoratedTextFieldWidget extends StatefulWidget {
-  const DecoratedTextFieldWidget({
-    super.key,
-    required this.controller,
-    required this.labelText,
-    required this.hintText,
-    this.textInputAction = TextInputAction.next,
-    this.inputFormatters,
-    this.keyboardType,
-    this.isPassword = false,
-  });
+  const DecoratedTextFieldWidget(
+      {super.key,
+      required this.controller,
+      required this.labelText,
+      required this.hintText,
+      this.textInputAction = TextInputAction.next,
+      this.inputFormatters,
+      this.keyboardType,
+      this.isPassword = false,
+      this.onSubmitted,
+      this.suffixIcon});
 
   final TextEditingController controller;
   final String labelText;
@@ -22,6 +23,8 @@ class DecoratedTextFieldWidget extends StatefulWidget {
   final bool isPassword;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
+  final Function? onSubmitted;
+  final Widget? suffixIcon;
 
   @override
   State<DecoratedTextFieldWidget> createState() =>
@@ -50,6 +53,11 @@ class _DecoratedTextFieldWidgetState extends State<DecoratedTextFieldWidget> {
     return TextField(
       maxLines: widget.isPassword ? 1 : null,
       controller: widget.controller,
+      onSubmitted: (value) {
+        if (widget.onSubmitted != null) {
+          widget.onSubmitted!(value);
+        }
+      },
       obscureText: isPasswordInvisible,
       keyboardType: widget.keyboardType,
       inputFormatters: widget.inputFormatters,
@@ -90,6 +98,8 @@ class _DecoratedTextFieldWidgetState extends State<DecoratedTextFieldWidget> {
   Widget? _handleSuffixIcon() {
     if (widget.isPassword) {
       return _handleWidgetPassword();
+    } else if (widget.suffixIcon != null) {
+      return widget.suffixIcon;
     } else {
       return null;
     }

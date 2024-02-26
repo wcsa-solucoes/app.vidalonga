@@ -15,6 +15,18 @@ class HomeLoadingEvent extends HomeEvent {
   HomeLoadingEvent();
 }
 
+class HomeSearchEvent extends HomeEvent {
+  final String searchTerm;
+
+  HomeSearchEvent({
+    required this.searchTerm,
+  });
+}
+
+class RestartHomeEvent extends HomeEvent {
+  RestartHomeEvent();
+}
+
 class HomeLoadedEvent extends HomeEvent {
   final List<List<ArticleModel>>? articles;
   final List<ChipCategorie>? chipsCategorie;

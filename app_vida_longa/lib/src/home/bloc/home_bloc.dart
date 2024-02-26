@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:app_vida_longa/core/helpers/app_helper.dart';
+import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
 import 'package:collection/collection.dart';
@@ -16,6 +18,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeLoadedEvent>(_handleLoaded);
     on<HomeLoadingEvent>(_handleLoading);
     on<HomeCategoriesSelectedEvent>(_handleCategoriesSelected);
+    on<HomeSearchEvent>(_handleSearchFromTitle);
+    on<RestartHomeEvent>(_handleRestartHome);
 
     for (var element in _articleService.categoriesCollection) {
       _allCategoriesChips.add(
@@ -29,6 +33,45 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     add(HomeLoadedEvent(
         articles: _articles, chipsCategorie: _allCategoriesChips));
+  }
+
+  _handleRestartHome(RestartHomeEvent event, Emitter<HomeState> emit) {
+    _allCategoriesChips =
+        _allCategoriesChips.map((e) => e.copyWith(selected: false)).toList();
+
+    emit(HomeLoadedState(
+      articlesByCategory: _articles,
+      chipsCategorie: _allCategoriesChips,
+    ));
+  }
+
+  Future<void> _handleSearchFromTitle(
+      HomeSearchEvent event, Emitter<HomeState> emit) async {
+    emit(HomeLoadingState());
+    await Future.delayed(const Duration(seconds: 1));
+    final List<List<ArticleModel>> tempArticles = [];
+    for (var element in _articles) {
+      final List<ArticleModel> temp = element
+          .where((element) => element.title
+              .toLowerCase()
+              .contains(event.searchTerm.toLowerCase()))
+          .toList();
+      if (temp.isNotEmpty) {
+        tempArticles.add(temp);
+      }
+    }
+
+    PrintColoredHelper.printGreen(tempArticles.length.toString());
+    if (tempArticles.isEmpty) {
+      AppHelper.displayAlertInfo(
+          "Nenhum artigo encontrado com o título pesquisado.");
+    }
+    emit(
+      ArticlesSearchedState(
+        articlesByCategory: tempArticles,
+        chipsCategorie: _allCategoriesChips,
+      ),
+    );
   }
 
   FutureOr<void> _handleCategoriesSelected(
@@ -55,21 +98,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   List<List<ArticleModel>> get _articles => _articleService.articles
           .fold<List<List<ArticleModel>>>(<List<ArticleModel>>[],
               (previousValue, element) {
-        // Procurar por uma lista existente que tenha um artigo da mesma categoria.
         final List<ArticleModel>? foundList = previousValue.firstWhereOrNull(
           (list) => list.first.categoryUuid == element.categoryUuid,
         );
 
         if (foundList != null) {
-          // Se encontrou, adiciona o elemento nesta lista.
           foundList.add(element);
         } else {
-          // Se não encontrou, cria uma nova lista para esta categoria.
           previousValue.add(<ArticleModel>[element]);
         }
         return previousValue;
       });
 
-//get all chips from  articles with selected false
-  final List<ChipCategorie> _allCategoriesChips = [];
+  List<ChipCategorie> _allCategoriesChips = [];
 }
