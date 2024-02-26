@@ -139,6 +139,7 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                           onPressed: () async {
                             if (_newQuestionTxtEdtCtrl.text.isEmpty) {
                               AppHelper.displayAlertInfo("Preencha a pergunta");
+                              return;
                             }
                             _qaBloc.add(
                               AddQuestionEvent(

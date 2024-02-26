@@ -319,47 +319,85 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.25,
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    DefaultText(
-                      '${coupon.name} adicionado!',
-                      color: AppColors.secondary,
-                      fontSize: 20,
-                    ),
-                    DefaultText(
-                      'Desconto de ${(discountAdded)}%',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w300,
-                    ),
-                    DefaultText(
-                      'R\$ ${productDetails.rawPrice}/mês',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w300,
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    FlatButton(
-                      isWithContrastColor: true,
-                      onPressed: () {
-                        _subscriptionsBloc.add(
-                          SelectedProductEvent(
-                            productDetails,
-                            couponAdded: coupon,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.25,
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  DefaultText(
+                    '${coupon.name} adicionado!',
+                    color: AppColors.secondary,
+                    fontSize: 20,
+                  ),
+                  DefaultText(
+                    'Desconto de ${(discountAdded)}%',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w300,
+                  ),
+                  DefaultText(
+                    'R\$ ${productDetails.rawPrice}/mês',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w300,
+                  ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  FlatButton(
+                    isWithContrastColor: true,
+                    onPressed: () {
+                      _subscriptionsBloc.add(
+                        SelectedProductEvent(
+                          productDetails,
+                          couponAdded: coupon,
+                        ),
+                      );
+                    },
+                    textLabel: 'Assinar',
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    child: Material(
+                      child: InkWell(
+                        splashColor: AppColors.secondary.withOpacity(0.2),
+                        // hoverColor: AppColors.secondary.withOpacity(0.2),
+                        overlayColor: MaterialStateProperty.all(
+                          AppColors.secondary.withOpacity(0.2),
+                        ),
+                        // focusColor: Colors.blue,
+                        // highlightColor: AppColors.secondary.withOpacity(0.2),
+                        onTap: () {
+                          _subscriptionsBloc.add(RestartEvent());
+                        },
+                        customBorder: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: AppColors.gray600.withOpacity(0.8),
+                              width: 0.5,
+                            ),
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                        );
-                      },
-                      textLabel: 'Assinar',
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: DefaultText(
+                              'Voltar',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ],
-                )),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

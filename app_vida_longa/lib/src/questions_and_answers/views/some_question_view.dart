@@ -32,7 +32,12 @@ class _SomeQuestionViewState extends State<SomeQuestionView> {
             stream: _streamControllerFontSize.stream,
             builder: ((context, snapshot) {
               return Html(
-                style: {"body": Style(fontSize: FontSize(snapshot.data!))},
+                style: {
+                  "body": Style(
+                    fontSize: FontSize(snapshot.data!),
+                    color: AppColors.selectedTextStyleColor,
+                  ),
+                },
                 data: item.answer,
               );
             }),
@@ -71,10 +76,14 @@ class _SomeQuestionViewState extends State<SomeQuestionView> {
   Widget body() {
     return Column(
       children: [
-        DefaultText(
-          widget.question.question,
-          fontSize: 20,
-          fontWeight: FontWeight.w300,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: DefaultText(
+            widget.question.question,
+            fontSize: 20,
+            fontWeight: FontWeight.w900,
+            maxLines: 3,
+          ),
         ),
         const SizedBox(height: 16),
         _handleAnswers(),

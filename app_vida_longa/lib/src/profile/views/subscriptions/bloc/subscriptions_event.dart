@@ -56,3 +56,7 @@ class SomeErrorEvent extends SubscriptionsEvent {
 class PendingEvent extends SubscriptionsEvent {
   PendingEvent();
 }
+
+class RestartEvent extends SubscriptionsEvent {
+  RestartEvent();
+}

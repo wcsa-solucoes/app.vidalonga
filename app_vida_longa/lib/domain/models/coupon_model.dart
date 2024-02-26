@@ -5,8 +5,8 @@ class CouponModel {
   final bool haveUsageLimit;
   final int limit;
   final String name;
-  final String applePlanId;
-  final String googlePlanId;
+  final String? applePlanId;
+  final String? googlePlanId;
   final String uuid;
   final int usageQuantity;
 
@@ -17,8 +17,8 @@ class CouponModel {
     required this.haveUsageLimit,
     required this.limit,
     required this.name,
-    required this.applePlanId,
-    required this.googlePlanId,
+    this.applePlanId,
+    this.googlePlanId,
     required this.uuid,
     this.usageQuantity = 0,
   });

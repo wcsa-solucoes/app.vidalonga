@@ -70,6 +70,7 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
     on<SomeErrorEvent>(_handleOnError);
     on<PendingEvent>(_handleOnPending);
     on<AddedCouponEvent>(_handleOnCouponAdded);
+    on<RestartEvent>(_handleOnRestart);
 
     _userSubscription = _userService.userStream.listen((event) {
       if (event.subscriptionLevel != SubscriptionEnum.nonPaying) {
@@ -214,5 +215,9 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
     _subscription.cancel();
     _userSubscription.cancel();
     super.close();
+  }
+
+  void _handleOnRestart(RestartEvent event, Emitter<SubscriptionsState> emit) {
+    add(ProductsLoadedEvent(paymentService.productDetails));
   }
 }
