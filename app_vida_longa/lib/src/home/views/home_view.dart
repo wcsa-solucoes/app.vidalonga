@@ -27,6 +27,12 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _homeBloc.close();
+    super.dispose();
+  }
+
   final TextEditingController _searchController = TextEditingController();
 
   @override

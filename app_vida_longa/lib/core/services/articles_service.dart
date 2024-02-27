@@ -43,10 +43,6 @@ class ArticleService {
   final List<ArticleModel> _articles = <ArticleModel>[];
   List<ArticleModel> get articles => _instance._articles;
 
-  final List<List<ArticleModel>> _articlesByCategories = <List<ArticleModel>>[];
-  List<List<ArticleModel>> get articlesByCategories =>
-      _instance._articlesByCategories;
-
   final List<CategoryModel?> _categoriesCollection = <CategoryModel?>[];
 
   List<CategoryModel?> get categoriesCollection =>
@@ -62,13 +58,20 @@ class ArticleService {
     _categoriesRepository =
         CategoriesRepository(firestore: FirebaseFirestore.instance);
 
-    _categoriesCollection.clear();
-
     final result = await _categoriesRepository.getAll();
 
     if (result.response.status == ResponseStatusEnum.success) {
+      _categoriesCollection.clear();
+
       _categoriesCollection.addAll(result.categories);
+      _setCategories(result.categories);
     }
+  }
+
+  void _setCategories(List<CategoryModel> categories) {
+    _categories.clear();
+    _categories.addAll(categories);
+    _articlesStreamController.sink.add((_articles, _categories));
   }
 
   Future<Tuple2<ResponseStatusModel, List<ArticleModel>>>
@@ -77,14 +80,13 @@ class ArticleService {
         await _repository.getAll();
 
     if (data.item1.status == ResponseStatusEnum.success) {
-      _updateArticles(data.item2);
-      _updateArticlesByCategories(data.item2);
+      _setArticles(data.item2);
     }
 
     return data;
   }
 
-  void _updateArticles(List<ArticleModel> articles) {
+  void _setArticles(List<ArticleModel> articles) {
     for (var article in articles) {
       article.categoryTitle = _categoriesCollection
               .firstWhereOrNull(
@@ -95,28 +97,13 @@ class ArticleService {
 
     _articles.clear();
     _articles.addAll(articles);
+    _articlesStreamController.sink.add((_articles, _categories));
   }
 
-  void _updateArticlesByCategories(List<ArticleModel> articles) {
-    List<List<ArticleModel>> articleAgrouped = _articles
-        .fold<List<List<ArticleModel>>>(<List<ArticleModel>>[],
-            (previousValue, element) {
-      if (previousValue.isEmpty) {
-        previousValue.add(<ArticleModel>[element]);
-      } else {
-        final List<ArticleModel> lastList = previousValue.last;
-        if (lastList.first.categoryUuid == element.categoryUuid) {
-          lastList.add(element);
-        } else {
-          previousValue.add(<ArticleModel>[element]);
-        }
-      }
-      return previousValue;
-    });
+  final StreamController<(List<ArticleModel>, List<CategoryModel>)>
+      _articlesStreamController =
+      StreamController<(List<ArticleModel>, List<CategoryModel>)>.broadcast();
 
-    if (articleAgrouped.isNotEmpty) articles.clear();
-
-    _articlesByCategories.clear();
-    _articlesByCategories.addAll(articleAgrouped);
-  }
+  Stream<(List<ArticleModel>, List<CategoryModel>)> get articlesStream =>
+      _articlesStreamController.stream;
 }

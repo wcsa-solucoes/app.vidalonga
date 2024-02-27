@@ -49,8 +49,6 @@ class _CategoriesViewState extends State<CategoriesView> {
                 categorie.name,
                 onPressed: () {
                   CategoriesService.setCurrentlyCategory(categories[index]);
-                  // CategoriesService.instance
-                  //     .selectSubcategoriesFromCategory(categories[index]);
 
                   NavigationController.push(
                       routes.app.categories.subCategories.path);

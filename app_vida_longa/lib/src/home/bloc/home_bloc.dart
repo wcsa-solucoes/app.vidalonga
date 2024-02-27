@@ -3,6 +3,7 @@ import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
+import 'package:app_vida_longa/domain/models/category_model.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,14 @@ part 'home_state.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final ArticleService _articleService = ArticleService.instance;
 
+  late final StreamSubscription<(List<ArticleModel>, List<CategoryModel>)>
+      _subscription;
+  @override
+  Future<void> close() {
+    _subscription.cancel();
+    return super.close();
+  }
+
   HomeBloc() : super(HomeLoadingState()) {
     on<HomeLoadedEvent>(_handleLoaded);
     on<HomeLoadingEvent>(_handleLoading);
@@ -21,28 +30,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeSearchEvent>(_handleSearchFromTitle);
     on<RestartHomeEvent>(_handleRestartHome);
 
-    for (var element in _articleService.categoriesCollection) {
-      _allCategoriesChips.add(
-        ChipCategorie(
-          label: element!.name,
-          selected: false,
-          uuid: element.uuid,
-        ),
-      );
-    }
+    _subscription = _articleService.articlesStream.listen((event) {
+      if (event.$1.isEmpty || event.$2.isEmpty) {
+        return;
+      }
 
-    add(HomeLoadedEvent(
-        articles: _articles, chipsCategorie: _allCategoriesChips));
+      add(HomeLoadedEvent(
+          articles: _articles, chipsCategorie: _allCategoriesChips));
+    });
+
+    if (_articleService.articles.isNotEmpty) {
+      add(HomeLoadedEvent(
+          articles: _articles, chipsCategorie: _allCategoriesChips));
+    }
   }
 
   _handleRestartHome(RestartHomeEvent event, Emitter<HomeState> emit) {
-    _allCategoriesChips =
-        _allCategoriesChips.map((e) => e.copyWith(selected: false)).toList();
-
     emit(HomeLoadedState(
-      articlesByCategory: _articles,
-      chipsCategorie: _allCategoriesChips,
-    ));
+        articlesByCategory: _articles, chipsCategorie: _allCategoriesChips));
   }
 
   Future<void> _handleSearchFromTitle(
@@ -110,5 +115,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         return previousValue;
       });
 
-  List<ChipCategorie> _allCategoriesChips = [];
+  List<ChipCategorie> get _allCategoriesChips {
+    return _articleService.categories
+        .map(
+          (e) => ChipCategorie(
+            label: e.name,
+            selected: false,
+            uuid: e.uuid,
+          ),
+        )
+        .toList();
+  }
 }

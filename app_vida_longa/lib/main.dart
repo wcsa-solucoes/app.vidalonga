@@ -46,7 +46,7 @@ void main() async {
   Bloc.observer = MyBlocObserver();
   InAppPurchaseStoreKitPlatform.registerPlatform();
 
-  startServices();
+  await startServices();
   startControllers();
 
   runApp(ModularApp(module: MainModule(), child: const MainApp()));
@@ -56,7 +56,7 @@ void startControllers() {
   NavigationController.init();
 }
 
-void startServices() async {
+Future<void> startServices() async {
   late final IInAppPurchaseService paymentService;
 
   if (Platform.isAndroid) {
