@@ -234,7 +234,7 @@ class _HomeViewState extends State<HomeView> {
       return _handleEmptyArticles();
     }
 
-    return ListView.separated(
+    return ListView.builder(
       physics:
           const NeverScrollableScrollPhysics(), // Add this to keep the ListView from scrolling
       shrinkWrap: true,
@@ -247,13 +247,13 @@ class _HomeViewState extends State<HomeView> {
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(2),
-            color: AppColors.white,
+            color: Colors.transparent,
           ),
           child: Column(
             // crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.all(4.0),
+                padding: const EdgeInsets.only(top: 20),
                 child: Text(
                   categoryArticles.first.categoryTitle.toUpperCase(),
                   style: GoogleFonts.getFont(
@@ -265,7 +265,7 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               Container(
-                color: AppColors.white,
+                color: Colors.transparent,
                 height: 250,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
@@ -275,7 +275,7 @@ class _HomeViewState extends State<HomeView> {
                     final article = categoryArticles[articleIndex];
                     return Padding(
                       padding: const EdgeInsets.only(
-                          left: 10, top: 0, bottom: 0, right: 15),
+                          left: 10, top: 4, bottom: 0, right: 15),
                       child: ArticleCard(article: article),
                     );
                   },
@@ -283,12 +283,6 @@ class _HomeViewState extends State<HomeView> {
               ),
             ],
           ),
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return const Divider(
-          thickness: 0,
-          color: AppColors.dimGray,
         );
       },
     );

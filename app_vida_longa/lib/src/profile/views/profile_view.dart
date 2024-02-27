@@ -338,8 +338,11 @@ class _ProfileViewState extends State<ProfileView> {
                                   snapshot.data!.subscriptionLevel.value,
                                   style: GoogleFonts.getFont(
                                     'Roboto Mono',
-                                    color: AppColors
-                                        .blackCard, //const Color.fromRGBO(87, 99, 108, 1),
+                                    color: snapshot.data!.subscriptionLevel ==
+                                            SubscriptionEnum.paying
+                                        ? AppColors.blackCard
+                                        : Colors
+                                            .red, //const Color.fromRGBO(87, 99, 108, 1),
                                     fontSize: 14.0,
                                     fontWeight: FontWeight.normal,
                                   ),

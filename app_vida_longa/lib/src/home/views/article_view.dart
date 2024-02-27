@@ -94,7 +94,16 @@ class _ArticleViewState extends State<ArticleView> {
       ),
       hasScrollView: true,
       body: Column(
-        children: widgets,
+        children: [
+          DefaultText(
+            _currentlyArticle.title,
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            maxLines: 4,
+            textAlign: TextAlign.center,
+          ),
+          ...widgets
+        ],
       ),
       bottomNavigationBar: optionsBottomBar(),
     );
