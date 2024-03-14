@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
-import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
+import 'package:app_vida_longa/domain/models/categorie_chip_model.dart';
 import 'package:app_vida_longa/domain/models/category_model.dart';
 import 'package:collection/collection.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -45,6 +44,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
+  FutureOr<void> _handleLoading(
+      HomeLoadingEvent event, Emitter<HomeState> emit) {
+    emit(HomeLoadingState());
+  }
+
+  FutureOr<void> _handleLoaded(HomeLoadedEvent event, Emitter<HomeState> emit) {
+    emit(HomeLoadedState(
+      articlesByCategory: _articles,
+      chipsCategorie: _allCategoriesChips,
+    ));
+  }
+
   _handleRestartHome(RestartHomeEvent event, Emitter<HomeState> emit) {
     emit(HomeLoadedState(
         articlesByCategory: _articles, chipsCategorie: _allCategoriesChips));
@@ -66,7 +77,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       }
     }
 
-    PrintColoredHelper.printGreen(tempArticles.length.toString());
     if (tempArticles.isEmpty) {
       AppHelper.displayAlertInfo(
           "Nenhum artigo encontrado com o título pesquisado.");
@@ -88,18 +98,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ));
   }
 
-  FutureOr<void> _handleLoading(
-      HomeLoadingEvent event, Emitter<HomeState> emit) {
-    emit(HomeLoadingState());
-  }
-
-  FutureOr<void> _handleLoaded(HomeLoadedEvent event, Emitter<HomeState> emit) {
-    emit(HomeLoadedState(
-      articlesByCategory: _articles,
-      chipsCategorie: _allCategoriesChips,
-    ));
-  }
-
   List<List<ArticleModel>> get _articles => _articleService.articles
           .fold<List<List<ArticleModel>>>(<List<ArticleModel>>[],
               (previousValue, element) {
@@ -115,10 +113,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         return previousValue;
       });
 
-  List<ChipCategorie> get _allCategoriesChips {
+  List<ChipCategorieModel> get _allCategoriesChips {
     return _articleService.categories
         .map(
-          (e) => ChipCategorie(
+          (e) => ChipCategorieModel(
             label: e.name,
             selected: false,
             uuid: e.uuid,

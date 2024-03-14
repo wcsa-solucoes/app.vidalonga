@@ -1,5 +1,6 @@
 import 'package:app_vida_longa/app_wrap_view.dart';
 import 'package:app_vida_longa/src/auth/auth_module.dart';
+import 'package:app_vida_longa/src/benefits/benefits_module.dart';
 import 'package:app_vida_longa/src/categories/categories_module.dart';
 import 'package:app_vida_longa/src/home/home_module.dart';
 import 'package:app_vida_longa/src/navigation/navigation_module.dart';
@@ -20,6 +21,7 @@ class AppModule extends Module {
       ModuleRoute("/home", module: HomeModule()),
       ModuleRoute("/categories", module: CategoriesModule()),
       ModuleRoute("/questionsAndAnswers", module: QuestionAndAnswersModule()),
+      ModuleRoute("/benefits", module: BenefitsModule()),
     ]);
   }
 }

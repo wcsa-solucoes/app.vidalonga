@@ -1,6 +1,6 @@
 class AnswerModel {
-  late String type = "";
-  late String answer = "";
+  final String type;
+  final String? answer;
 
   AnswerModel({
     this.type = "",
@@ -10,7 +10,7 @@ class AnswerModel {
   factory AnswerModel.fromMap(Map<String, dynamic> map) {
     return AnswerModel(
       type: map['type'] as String,
-      answer: map['answer'] as String,
+      answer: map['answer'] ?? "",
     );
   }
 

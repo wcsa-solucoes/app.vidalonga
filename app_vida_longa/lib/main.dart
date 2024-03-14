@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:app_vida_longa/core/services/benefits_service.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/questions_and_answers_repository.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
@@ -67,6 +68,7 @@ Future<void> startServices() async {
 
   Future.wait([
     AuthService.init(),
+    BenefitisServiceImpl.instance.init(),
     ArticleService.init().then(
       (value) {
         CategoriesService.init(ArticleService.instance);

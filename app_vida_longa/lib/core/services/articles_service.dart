@@ -23,20 +23,8 @@ class ArticleService {
   List<CategoryModel> get categories => _instance._categories;
   late final CategoriesRepository _categoriesRepository;
 
-  static Future<void> init() async {
-    if (!_hasInit) {
-      _hasInit = true;
-      await instance._init();
-    }
-  }
-
   static ArticleModel? _currentlyArticle;
   static ArticleModel get currentlyArticle => _currentlyArticle!;
-
-  static void setCurrentlyArticleId(String value, ArticleModel article) {
-    _currentlyArticleId = value;
-    _currentlyArticle = article;
-  }
 
   final ArticlesRepository _repository = ArticlesRepository();
 
@@ -48,10 +36,22 @@ class ArticleService {
   List<CategoryModel?> get categoriesCollection =>
       _instance._categoriesCollection;
 
+  static Future<void> init() async {
+    if (!_hasInit) {
+      _hasInit = true;
+      await instance._init();
+    }
+  }
+
   Future<void> _init() async {
     await getCategories();
 
     await getAllArticles();
+  }
+
+  static void setCurrentlyArticleId(String value, ArticleModel article) {
+    _currentlyArticleId = value;
+    _currentlyArticle = article;
   }
 
   Future<void> getCategories() async {

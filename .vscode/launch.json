@@ -37,7 +37,7 @@
                 "--dart-define=MODE=prod",
             ],
             "program": "app_vida_longa/lib/main.dart",
-            "deviceId": "4e30a6a2"
+            "deviceId": "emulator-5554" //"4e30a6a2"
         },
         {
             "name": "Aprod",
@@ -49,7 +49,7 @@
                 "--dart-define=MODE=prod",
             ],
             "program": "app_vida_longa/lib/main.dart",
-            "deviceId": "00008030-0004188A0E68802E"
+            "deviceId": "6DC52216-A38A-467D-9AB4-4BAB02F7882F"
         },
     ],
     "compounds": [
@@ -58,7 +58,7 @@
             "configurations": [
                 "Gprod",
                 "Aprod",
-                "dev"
+                // "dev"
             ]
         }
     ]

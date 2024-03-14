@@ -29,7 +29,7 @@ class RestartHomeEvent extends HomeEvent {
 
 class HomeLoadedEvent extends HomeEvent {
   final List<List<ArticleModel>>? articles;
-  final List<ChipCategorie>? chipsCategorie;
+  final List<ChipCategorieModel>? chipsCategorie;
 
   HomeLoadedEvent({
     this.articles,
@@ -39,7 +39,7 @@ class HomeLoadedEvent extends HomeEvent {
 
 class HomeCategoriesSelectedEvent extends HomeEvent {
   final List<List<ArticleModel>>? articles;
-  final List<ChipCategorie>? chipsCategorie;
+  final List<ChipCategorieModel>? chipsCategorie;
 
   HomeCategoriesSelectedEvent({this.articles, this.chipsCategorie});
 }
