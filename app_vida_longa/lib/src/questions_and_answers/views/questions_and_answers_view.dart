@@ -1,3 +1,4 @@
+import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
@@ -42,54 +43,57 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: AppColors.white,
-          title: const DefaultText(
-            "Perguntas e Respostas",
-            fontSize: 20,
-            fontWeight: FontWeight.w300,
-          ),
-          bottom: TabBar(
-              indicatorColor: AppColors.selectedColor,
-              labelColor: AppColors.selectedColor,
-              unselectedLabelColor: AppColors.primaryText,
-              labelStyle: GoogleFonts.getFont(
-                'Urbanist',
-                color: AppColors.dimGray,
-                fontWeight: FontWeight.w500,
-                fontSize: 14.0,
-              ),
-              tabs: const [
-                Tab(
-                  text: "Todas perguntas",
-                ),
-                Tab(
-                  text: "Minhas perguntas",
-                )
-              ],
-              controller: _tabController),
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: AppColors.white,
+        title: const DefaultText(
+          "Perguntas e Respostas",
+          fontSize: 20,
+          fontWeight: FontWeight.w300,
         ),
-        body: body(),
-        bottomNavigationBar: const CustomBottomNavigationBar(),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: AppColors.white,
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => BlocProvider.value(
-                  value: _qaBloc,
-                  child: const NewQuestionView(),
-                ),
+        bottom: TabBar(
+            indicatorColor: AppColors.selectedColor,
+            labelColor: AppColors.selectedColor,
+            unselectedLabelColor: AppColors.primaryText,
+            labelStyle: GoogleFonts.getFont(
+              'Urbanist',
+              color: AppColors.dimGray,
+              fontWeight: FontWeight.w500,
+              fontSize: 14.0,
+            ),
+            tabs: const [
+              Tab(
+                text: "Todas perguntas",
               ),
-            );
-          },
-          child: const FaIcon(
-            FontAwesomeIcons.plus,
-            color: AppColors.selectedColor,
-            size: 20,
-          ),
-        ));
+              Tab(
+                text: "Minhas perguntas",
+              )
+            ],
+            controller: _tabController),
+      ),
+      body: body(),
+      bottomNavigationBar: const CustomBottomNavigationBar(),
+      floatingActionButton: AuthService.instance.getCurrentUser != null
+          ? FloatingActionButton(
+              backgroundColor: AppColors.white,
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => BlocProvider.value(
+                      value: _qaBloc,
+                      child: const NewQuestionView(),
+                    ),
+                  ),
+                );
+              },
+              child: const FaIcon(
+                FontAwesomeIcons.plus,
+                color: AppColors.selectedColor,
+                size: 20,
+              ),
+            )
+          : null,
+    );
   }
 
   Widget body() {

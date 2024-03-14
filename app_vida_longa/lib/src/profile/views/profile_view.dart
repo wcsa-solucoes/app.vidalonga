@@ -106,16 +106,16 @@ class _ProfileViewState extends State<ProfileView> {
             ),
           );
         }),
-        OpenPageButtonWiget(
-          "Abrir QRCode",
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const QrCodeView(),
-              ),
-            );
-          },
-        ),
+        // OpenPageButtonWiget(
+        //   "Abrir QRCode",
+        //   onPressed: () {
+        //     Navigator.of(context).push(
+        //       MaterialPageRoute(
+        //         builder: (context) => const QrCodeView(),
+        //       ),
+        //     );
+        //   },
+        // ),
         OpenPageButtonWiget(
           "Dúvidas e sugestões",
           onPressed: () {

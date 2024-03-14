@@ -284,13 +284,10 @@ class ListBenefitsWidget extends StatelessWidget {
       itemCount: _benefitsFromSelectedPartner.length,
       itemBuilder: (context, index) {
         final benefit = _benefitsFromSelectedPartner[index];
-        return Container(
-          color: AppColors.selectedColor,
-          child: DefaultText(
-            benefit.name,
-            fontSize: 18,
-            maxLines: 2,
-          ),
+        return DefaultText(
+          benefit.name,
+          fontSize: 18,
+          maxLines: 2,
         );
       },
     );

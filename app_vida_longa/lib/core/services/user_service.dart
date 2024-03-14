@@ -114,10 +114,10 @@ class UserService {
     }
     _status = UserServiceStatusEnum.valid;
 
-    if (!FirebaseAuth.instance.currentUser!.emailVerified) {
-      AppHelper.displayAlertInfo("Verifique seu e-mail para ativar sua conta");
-      return;
-    }
+    // if (!FirebaseAuth.instance.currentUser!.emailVerified) {
+    //   AppHelper.displayAlertInfo("Verifique seu e-mail para ativar sua conta");
+    //   return;
+    // }
   }
 
   Future<void> _handleValidate() async {
