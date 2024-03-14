@@ -64,8 +64,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _handleSearchFromTitle(
       HomeSearchEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoadingState());
-    await Future.delayed(const Duration(seconds: 1));
+
     final List<List<ArticleModel>> tempArticles = [];
+
     for (var element in _articles) {
       final List<ArticleModel> temp = element
           .where((element) => element.title

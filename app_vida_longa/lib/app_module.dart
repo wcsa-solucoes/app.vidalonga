@@ -1,9 +1,9 @@
 import 'package:app_vida_longa/app_wrap_view.dart';
 import 'package:app_vida_longa/src/auth/auth_module.dart';
-import 'package:app_vida_longa/src/benefits/benefits_module.dart';
 import 'package:app_vida_longa/src/categories/categories_module.dart';
 import 'package:app_vida_longa/src/home/home_module.dart';
 import 'package:app_vida_longa/src/navigation/navigation_module.dart';
+import 'package:app_vida_longa/src/partners/partners_module.dart';
 import 'package:app_vida_longa/src/profile/profile_module.dart';
 import 'package:app_vida_longa/src/questions_and_answers/questions_and_ansswers_module.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -21,7 +21,8 @@ class AppModule extends Module {
       ModuleRoute("/home", module: HomeModule()),
       ModuleRoute("/categories", module: CategoriesModule()),
       ModuleRoute("/questionsAndAnswers", module: QuestionAndAnswersModule()),
-      ModuleRoute("/benefits", module: BenefitsModule()),
+      // ModuleRoute("/benefits", module: BenefitsModule()),
+      ModuleRoute("/partners", module: PartnersModule()),
     ]);
   }
 }

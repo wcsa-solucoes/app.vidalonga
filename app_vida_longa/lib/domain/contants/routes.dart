@@ -27,6 +27,9 @@ const routes = (
       ),
     ),
     qa: (path: "/app/questionsAndAnswers/",),
-    benefits: (path: "/app/benefits/",),
+    partners: (
+      path: "/app/partners/",
+      benefitDetails: (path: "/app/partners/benefitDetails"),
+    )
   )
 );

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
@@ -16,7 +17,6 @@ import 'package:app_vida_longa/src/profile/views/qr_code_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -133,10 +133,15 @@ class _ProfileViewState extends State<ProfileView> {
             _launchUrl(url);
           },
         ),
-        OpenPageButtonWiget(
-          "Recomendar o app",
-          onPressed: () => Share.share('app.vidalongaapp.com'),
-        ),
+        OpenPageButtonWiget("Recomendar o app", onPressed: () {
+          if (Platform.isAndroid) {
+            Share.share(
+                'https://play.google.com/store/apps/details?id=com.vidalongaapp.app&pcampaignid=web_share');
+          } else {
+            Share.share(
+                'https://apps.apple.com/br/app/vida-longa/id6446136437?l');
+          }
+        }),
         const SizedBox(
           height: 10,
         ),

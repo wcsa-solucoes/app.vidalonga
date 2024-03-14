@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:app_vida_longa/core/services/benefits_service.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/questions_and_answers_repository.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
@@ -9,6 +8,8 @@ import 'package:app_vida_longa/core/services/coupons_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/iap_purchase_apple_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/iap_purchase_google_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
+import 'package:app_vida_longa/core/services/partners_and_benefits/branchs_service.dart';
+import 'package:app_vida_longa/core/services/partners_and_benefits/partners_service.dart';
 import 'package:app_vida_longa/core/services/plans_service.dart';
 import 'package:app_vida_longa/core/services/questions_and_answers_service.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
@@ -68,7 +69,6 @@ Future<void> startServices() async {
 
   Future.wait([
     AuthService.init(),
-    BenefitisServiceImpl.instance.init(),
     ArticleService.init().then(
       (value) {
         CategoriesService.init(ArticleService.instance);
@@ -78,7 +78,9 @@ Future<void> startServices() async {
     QAServiceImpl.instance.init(QARepositoryImpl(FirebaseFirestore.instance)),
     PlansServiceImpl.instance.getPlans().then((value) {
       paymentService.init(InAppPurchase.instance);
-    })
+    }),
+    BranchsServiceImpl.instance.init(),
+    PartnerServiceImpl.instance.init(),
   ]);
 
   await SystemChrome.setPreferredOrientations(

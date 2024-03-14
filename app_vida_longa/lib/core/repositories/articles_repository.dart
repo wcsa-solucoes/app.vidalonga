@@ -11,6 +11,7 @@ class ArticlesRepository {
 
     await FirebaseFirestore.instance
         .collection('articles')
+        .orderBy('createdAt', descending: true)
         .get()
         .then((snpashot) {
       final tempArticles = snpashot.docs

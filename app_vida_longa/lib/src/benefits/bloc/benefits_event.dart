@@ -1,40 +1,40 @@
-part of 'benefits_bloc.dart';
+// part of 'benefits_bloc.dart';
 
-@immutable
-sealed class BenefitsEvent {}
+// @immutable
+// sealed class BenefitsEvent {}
 
-class BenefitCategorieSelectedEvent extends BenefitsEvent {
-  final List<List<BenefitModel>> benefits;
-  final List<ChipCategorieModel> chipsCategorie;
+// class BenefitCategorieSelectedEvent extends BenefitsEvent {
+//   final List<List<BenefitModel>> benefits;
+//   final List<ChipCategorieModel> chipsCategorie;
 
-  BenefitCategorieSelectedEvent({
-    required this.benefits,
-    required this.chipsCategorie,
-  });
-}
+//   BenefitCategorieSelectedEvent({
+//     required this.benefits,
+//     required this.chipsCategorie,
+//   });
+// }
 
-class BenefitsLoadingEvent extends BenefitsEvent {
-  BenefitsLoadingEvent();
-}
+// class BenefitsLoadingEvent extends BenefitsEvent {
+//   BenefitsLoadingEvent();
+// }
 
-class BenefitsLoadedEvent extends BenefitsEvent {
-  final List<List<BenefitModel>> benefits;
-  final List<ChipCategorieModel> chipsCategorie;
+// class BenefitsLoadedEvent extends BenefitsEvent {
+//   final List<List<BenefitModel>> benefits;
+//   final List<ChipCategorieModel> chipsCategorie;
 
-  BenefitsLoadedEvent({
-    required this.benefits,
-    required this.chipsCategorie,
-  });
-}
+//   BenefitsLoadedEvent({
+//     required this.benefits,
+//     required this.chipsCategorie,
+//   });
+// }
 
-class RestartBenefitsEvent extends BenefitsEvent {
-  RestartBenefitsEvent();
-}
+// class RestartBenefitsEvent extends BenefitsEvent {
+//   RestartBenefitsEvent();
+// }
 
-class BenefitsSearchEvent extends BenefitsEvent {
-  final String searchTerm;
+// class BenefitsSearchEvent extends BenefitsEvent {
+//   final String searchTerm;
 
-  BenefitsSearchEvent({
-    required this.searchTerm,
-  });
-}
+//   BenefitsSearchEvent({
+//     required this.searchTerm,
+//   });
+// }

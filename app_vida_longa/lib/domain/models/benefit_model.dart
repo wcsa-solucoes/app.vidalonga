@@ -1,49 +1,42 @@
 class BenefitModel {
-  final String title;
+  final String name;
   final String id;
-  final String description;
-  final String imageUrl;
-  final String categoryId;
-  final String categoryTitle;
+  final bool isHighlighted;
+  final int createdAtUnixTimestamp;
+  final String createdAt;
 
   BenefitModel({
-    required this.title,
+    required this.name,
     required this.id,
-    required this.description,
-    required this.imageUrl,
-    required this.categoryId,
-    this.categoryTitle = "",
+    this.isHighlighted = false,
+    this.createdAtUnixTimestamp = 0,
+    this.createdAt = '',
   });
 
   factory BenefitModel.fromMap(Map<String, dynamic> map) {
     return BenefitModel(
-      title: map['title'],
-      id: map['id'],
-      description: map['description'],
-      imageUrl: map['imageUrl'],
-      categoryId: (map['categories'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList()
-          .first,
+      name: map['name'],
+      id: map['uuid'],
+      isHighlighted: map['isHighlighted'],
+      createdAtUnixTimestamp: map['createdAtUnixTimestamp'],
+      createdAt: map['createdAt'],
     );
   }
 
-  //copyWith
   BenefitModel copyWith({
-    String? title,
+    String? name,
     String? id,
-    String? description,
-    String? imageUrl,
-    String? categoryId,
-    String? categoryTitle,
+    bool? isHighlighted,
+    int? createdAtUnixTimestamp,
+    String? createdAt,
   }) {
     return BenefitModel(
-      title: title ?? this.title,
+      name: name ?? this.name,
       id: id ?? this.id,
-      description: description ?? this.description,
-      imageUrl: imageUrl ?? this.imageUrl,
-      categoryId: categoryId ?? this.categoryId,
-      categoryTitle: categoryTitle ?? this.categoryTitle,
+      isHighlighted: isHighlighted ?? this.isHighlighted,
+      createdAtUnixTimestamp:
+          createdAtUnixTimestamp ?? this.createdAtUnixTimestamp,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }
