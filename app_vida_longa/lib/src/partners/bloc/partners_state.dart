@@ -30,3 +30,8 @@ class BranchsSelectedLoadedState extends PartnersState {
     required this.parntersByBranch,
   });
 }
+
+class PartnersErrorState extends PartnersState {
+  final String message;
+  PartnersErrorState(this.message);
+}

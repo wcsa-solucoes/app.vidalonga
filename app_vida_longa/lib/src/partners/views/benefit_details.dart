@@ -1,3 +1,4 @@
+import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/partners_and_benefits/benefits_service.dart';
 import 'package:app_vida_longa/core/services/partners_and_benefits/partners_service.dart';
@@ -68,6 +69,14 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
                   maxLines: 20,
                   fontSize: 20,
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: DefaultText(
+                    "Endereço: ${_partnerService.selectedPartner.fullAddress}",
+                    fontSize: 20,
+                    maxLines: 4,
+                  ),
+                ),
                 _partnerService
                             .selectedPartner.presentationImagesUrl?.isEmpty ??
                         false
@@ -90,7 +99,23 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
                                       .presentationImagesUrl![index];
                                   return Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Image.network(image),
+                                    child: Image.network(
+                                      image,
+                                      width: 180,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const SizedBox(
+                                          width: 80,
+                                          child: Center(
+                                            child: DefaultText(
+                                              "Erro ao carregar imagem",
+                                              fontSize: 18,
+                                              maxLines: 4,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   );
                                 },
                               ),
@@ -102,11 +127,6 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
                   initialData: const [],
                   stream: _benefitsService.benefitsStream,
                   builder: (context, snapshot) {
-                    PrintColoredHelper.printPink(
-                        "snapshot.connectionState: ${snapshot.connectionState}");
-                    PrintColoredHelper.printGreen(
-                        "snapshot.data!.isEmpty: ${snapshot.data!.isEmpty}");
-
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Padding(
                         padding: EdgeInsets.only(top: 30),
@@ -145,7 +165,7 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
                 const SizedBox(height: 20),
                 _partnerService.selectedPartner.socialMedias.isEmpty
                     ? const DefaultText(
-                        "Nenhuma rede social encontrada.",
+                        "Nenhum link encontrado.",
                         fontSize: 20,
                       )
                     : Row(
@@ -155,34 +175,45 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
                           //                final Uri url =
                           //     Uri.parse('https://www.instagram.com/vidalongaapp/');
                           // _launchUrl(url);
-                          if (e.type == SocialMediaEnum.facebook) {
-                            return IconButton(
-                              icon: const FaIcon(FontAwesomeIcons.facebook),
-                              onPressed: () {
-                                var url = Uri.parse(e.url);
-                                _launchUrl(url);
-                              },
-                            );
+
+                          switch (e.type) {
+                            case SocialMediaEnum.facebook:
+                              return IconButton(
+                                icon: const FaIcon(FontAwesomeIcons.facebook),
+                                onPressed: () {
+                                  var url = Uri.parse(e.url);
+                                  _launchUrl(url);
+                                },
+                              );
+                            case SocialMediaEnum.instagram:
+                              return IconButton(
+                                icon: const FaIcon(FontAwesomeIcons.instagram),
+                                onPressed: () {
+                                  var url = Uri.parse(e.url);
+                                  _launchUrl(url);
+                                },
+                              );
+                            case SocialMediaEnum.whatsapp:
+                              return IconButton(
+                                icon: const FaIcon(FontAwesomeIcons.whatsapp),
+                                onPressed: () {
+                                  var url = Uri.parse(e.url);
+                                  _launchUrl(url);
+                                },
+                              );
+                            default:
+                              //others
+                              return Tooltip(
+                                message: e.url,
+                                child: IconButton(
+                                  icon: const FaIcon(FontAwesomeIcons.link),
+                                  onPressed: () {
+                                    var url = Uri.parse(e.url);
+                                    _launchUrl(url);
+                                  },
+                                ),
+                              );
                           }
-                          if (e.type == SocialMediaEnum.instagram) {
-                            return IconButton(
-                              icon: const FaIcon(FontAwesomeIcons.instagram),
-                              onPressed: () {
-                                var url = Uri.parse(e.url);
-                                _launchUrl(url);
-                              },
-                            );
-                          }
-                          if (e.type == SocialMediaEnum.whatsapp) {
-                            return IconButton(
-                              icon: const FaIcon(FontAwesomeIcons.whatsapp),
-                              onPressed: () {
-                                var url = Uri.parse(e.url);
-                                _launchUrl(url);
-                              },
-                            );
-                          }
-                          return const SizedBox.shrink();
                         }).toList(),
                       ),
                 const SizedBox(height: 120),
@@ -195,8 +226,10 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
   }
 
   Future<void> _launchUrl(Uri uri) async {
-    if (!await launchUrl(uri)) {
-      throw Exception('Could not launch $uri');
+    try {
+      await launchUrl(uri);
+    } catch (e) {
+      AppHelper.displayAlertError("Erro ao abrir link");
     }
     return;
   }

@@ -44,3 +44,8 @@ class SelectPartnerEvent extends PartnersEvent {
   final PartnerCompanyModel partner;
   SelectPartnerEvent(this.partner);
 }
+
+class ErrorEvent extends PartnersEvent {
+  final String message;
+  ErrorEvent(this.message);
+}

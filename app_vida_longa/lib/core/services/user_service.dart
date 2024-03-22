@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';

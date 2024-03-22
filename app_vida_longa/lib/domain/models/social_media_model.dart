@@ -8,8 +8,10 @@ class SocialMediaModel {
 
   factory SocialMediaModel.fromJson(Map<String, dynamic> json) {
     return SocialMediaModel(
-      type: SocialMediaEnum.values
-          .firstWhere((element) => element.type == json['type']),
+      type: SocialMediaEnum.values.firstWhere(
+        (element) => element.type == json['type'],
+        orElse: () => SocialMediaEnum.other,
+      ),
       url: json['link'],
     );
   }

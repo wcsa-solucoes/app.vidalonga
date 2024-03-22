@@ -1,4 +1,3 @@
-import 'package:app_vida_longa/core/controllers/we_exception.dart';
 import 'package:app_vida_longa/domain/models/benefit_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,41 +17,19 @@ class BenefitsRepositoryImpl extends IBenefitsRepository {
     ResponseStatusModel response = ResponseStatusModel();
     List<BenefitModel> benefits = [];
 
-    //find the docs that match the benefitsId
-
-    await Future.wait(
-      benefitsId.map(
-        (benefitiId) async {
-          await firestore
-              .collection("benefits")
-              .where('uuid', isEqualTo: benefitiId)
-              .get()
-              .then((value) {
-            if (value.docs.isNotEmpty) {
-              benefits.add(BenefitModel.fromMap(value.docs.first.data()));
-            }
-          }).onError((error, stackTrace) {
-            response = WeException.handle(error);
-            response.message = "Erro ao buscar os benefícios.";
-          });
-        },
-      ),
+    await firestore
+        .collection("benefits")
+        .where("partnerCompaniesUuid", arrayContains: partnerId)
+        .get()
+        .then(
+      (value) {
+        if (value.docs.isNotEmpty) {
+          for (var element in value.docs) {
+            benefits.add(BenefitModel.fromMap(element.data()));
+          }
+        }
+      },
     );
-
-    // await firestore
-    //     .collection("benefits")
-    //     .where(
-    //       "partnersId",
-    //       arrayContains: partnerId,
-    //     )
-    //     .get();
-
-    // benefitsId.forEach((element) async {
-    //   await firestore
-    //       .collection("benefit")
-    //       .where('uuid', isEqualTo: element)
-    //       .get();
-    // });
 
     return (response: response, benefits: benefits);
   }

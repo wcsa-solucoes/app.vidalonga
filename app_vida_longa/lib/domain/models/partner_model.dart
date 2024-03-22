@@ -18,7 +18,6 @@ class PartnerCompanyModel {
   final String? state;
   final String? city;
   final String? neighborhood;
-  final String? address;
   final String? number;
   final String? fullAddress;
 
@@ -39,7 +38,6 @@ class PartnerCompanyModel {
     this.city,
     this.neighborhood,
     this.number,
-    this.address,
     this.fullAddress,
     this.isHighlighted = false,
     this.socialMedias = const [],
@@ -60,7 +58,6 @@ class PartnerCompanyModel {
       state: map['state'],
       city: map['city'],
       neighborhood: map['neighborhood'],
-      address: map['address'],
       number: map['number'],
       fullAddress: map['fullAddress'],
       isHighlighted: map['isHighlighted'] ?? false,
@@ -127,11 +124,9 @@ class PartnerCompanyModel {
       state: state ?? this.state,
       city: city ?? this.city,
       neighborhood: neighborhood ?? this.neighborhood,
-      address: address ?? this.address,
       number: number ?? this.number,
       fullAddress: fullAddress ?? this.fullAddress,
       isHighlighted: isHighlighted ?? this.isHighlighted,
-      // socialMedias: socialMedias ?? this.socialMedias,
     );
   }
 }

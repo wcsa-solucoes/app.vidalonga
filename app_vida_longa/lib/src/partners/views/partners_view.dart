@@ -37,6 +37,12 @@ class _PartnersViewState extends State<PartnersView> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
+  void dispose() {
+    _partnersBloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
       appBar: AppBar(
@@ -66,6 +72,12 @@ class _PartnersViewState extends State<PartnersView> {
 
               if (state is BranchsSelectedLoadedState) {
                 return _branchsSelectedState(state);
+              }
+
+              if (state is PartnersErrorState) {
+                return Center(
+                  child: DefaultText(state.message),
+                );
               }
 
               return Container();

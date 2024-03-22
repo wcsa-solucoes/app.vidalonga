@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_vida_longa/core/repositories/partners_and_benefits/partner_companies_repository.dart';
 import 'package:app_vida_longa/domain/models/partner_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
@@ -9,6 +11,8 @@ abstract class IPartnerService {
   Future<void> getPartnerCompanies();
   void selectPartner(PartnerCompanyModel partner);
   PartnerCompanyModel get selectedPartner;
+  Stream<List<PartnerCompanyModel>> get companiesStream;
+  bool get hasLoaded;
 }
 
 class PartnerServiceImpl extends IPartnerService {
@@ -34,15 +38,16 @@ class PartnerServiceImpl extends IPartnerService {
   @override
   Future<void> getPartnerCompanies() async {
     final response = await _partnerCompaniesRepository.getAllPartners();
-
     if (response.response.status == ResponseStatusEnum.success) {
       _setPartnerCompanies(response.partnerCompanies);
     }
+    _hasLoaded = true;
   }
 
   void _setPartnerCompanies(List<PartnerCompanyModel> partnerCompanies) {
     _partnerCompanies.clear();
     _partnerCompanies.addAll(partnerCompanies);
+    _selectedPartnerController.sink.add(_partnerCompanies);
   }
 
   late PartnerCompanyModel _selectedPartner;
@@ -54,4 +59,15 @@ class PartnerServiceImpl extends IPartnerService {
 
   @override
   PartnerCompanyModel get selectedPartner => _selectedPartner;
+
+  final StreamController<List<PartnerCompanyModel>> _selectedPartnerController =
+      StreamController<List<PartnerCompanyModel>>.broadcast();
+
+  @override
+  Stream<List<PartnerCompanyModel>> get companiesStream =>
+      _selectedPartnerController.stream;
+  bool _hasLoaded = false;
+
+  @override
+  bool get hasLoaded => _hasLoaded;
 }

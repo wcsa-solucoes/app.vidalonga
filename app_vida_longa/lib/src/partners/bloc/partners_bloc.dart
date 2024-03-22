@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:app_vida_longa/core/services/partners_and_benefits/branchs_service.dart';
 import 'package:app_vida_longa/core/services/partners_and_benefits/partners_service.dart';
 import 'package:app_vida_longa/domain/models/branch_model.dart';
@@ -13,6 +14,7 @@ part 'partners_state.dart';
 class PartnersBloc extends Bloc<PartnersEvent, PartnersState> {
   final IPartnerService _partnerService = PartnerServiceImpl.instance;
   final IBranchsService _branchsService = BranchsServiceImpl.instance;
+  late final StreamSubscription<List<PartnerCompanyModel>> _subscription;
 
   PartnersBloc() : super(PartnersLoadingState()) {
     on<PartnersLoadingEvent>(_handleLoading);
@@ -21,17 +23,47 @@ class PartnersBloc extends Bloc<PartnersEvent, PartnersState> {
     on<PartnersSearchEvent>(_handleSearchFromTitle);
     on<RestartPartnersEvent>(_handleRestartPartners);
     on<SelectPartnerEvent>(_handleSelectPartner);
+    on<ErrorEvent>((event, emit) {
+      emit(PartnersErrorState(event.message));
+    });
 
-    if (_partnerService.partnerCompanies.isNotEmpty) {
-      // add(BenefitsLoadedEvent(benefits: test, chipsCategorie: test2));
-      add(PartnersLoadedEvent(
-        partners: _partners,
-        branchsChip: _allBranchesChip,
-        highlightedPartners: _highlightedPartners,
-      ));
+    _subscription = _partnerService.companiesStream.listen(
+      (event) {
+        if (_partnerService.hasLoaded) {
+          if (_partnerService.partnerCompanies.isNotEmpty) {
+            add(PartnersLoadedEvent(
+              partners: _partners,
+              branchsChip: _allBranchesChip,
+              highlightedPartners: _highlightedPartners,
+            ));
+          }
+
+          if (_partnerService.partnerCompanies.isEmpty) {
+            add(ErrorEvent("Nenhum parceiro encontrado!"));
+          }
+        }
+      },
+    );
+
+    if (_partnerService.hasLoaded) {
+      if (_partnerService.partnerCompanies.isNotEmpty) {
+        add(PartnersLoadedEvent(
+          partners: _partners,
+          branchsChip: _allBranchesChip,
+          highlightedPartners: _highlightedPartners,
+        ));
+      } else {
+        add(ErrorEvent("Nenhum parceiro encontrado!"));
+      }
     } else {
       add(PartnersLoadingEvent());
     }
+  }
+
+  @override
+  Future<void> close() {
+    _subscription.cancel();
+    return super.close();
   }
 
   List<PartnerCompanyModel> get _highlightedPartners =>

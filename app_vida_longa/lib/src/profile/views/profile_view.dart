@@ -10,12 +10,9 @@ import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/shared/widgets/open_button_page.dart';
 import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
-import 'package:app_vida_longa/src/profile/bloc/profile_bloc.dart';
 import 'package:app_vida_longa/src/profile/views/contacts_view.dart';
 import 'package:app_vida_longa/src/profile/views/favorites_articles.dart';
-import 'package:app_vida_longa/src/profile/views/qr_code_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,50 +26,42 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   final AuthBloc _authBloc = AuthBloc();
-  late final ProfileBloc _profileBloc;
 
   @override
   void initState() {
-    _profileBloc = context.read<ProfileBloc>();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProfileBloc, ProfileState>(
-      bloc: _profileBloc,
-      listener: (context, state) {},
-      builder: (context, state) {
-        return CustomAppScaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            backgroundColor: AppColors.white,
-            title: const DefaultText(
-              "Perfil",
-              fontSize: 20,
-              fontWeight: FontWeight.w300,
-            ),
-            //back button syle
-          ),
-          hasSafeArea: true,
-          body: Builder(builder: (context) {
-            return _body();
-          }),
-          bottomNavigationBar: const CustomBottomNavigationBar(),
-          hasScrollView: true,
-          // floatingActionButton: FloatingActionButton(
-          //   onPressed: () {
-          //     UserService.instance.updateSubscriberStatusFromRoles(
-          //         UserService.instance.user.subscriptionLevel ==
-          //                 SubscriptionEnum.nonPaying
-          //             ? SubscriptionEnum.paying
-          //             : SubscriptionEnum.nonPaying,
-          //         "google_play");
-          //   },
-          //   child: const Icon(Icons.workspace_premium),
-          // ),
-        );
-      },
+    return CustomAppScaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: AppColors.white,
+        title: const DefaultText(
+          "Perfil",
+          fontSize: 20,
+          fontWeight: FontWeight.w300,
+        ),
+        //back button syle
+      ),
+      hasSafeArea: true,
+      body: Builder(builder: (context) {
+        return _body();
+      }),
+      bottomNavigationBar: const CustomBottomNavigationBar(),
+      hasScrollView: true,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     UserService.instance.updateSubscriberStatusFromRoles(
+      //         UserService.instance.user.subscriptionLevel ==
+      //                 SubscriptionEnum.nonPaying
+      //             ? SubscriptionEnum.paying
+      //             : SubscriptionEnum.nonPaying,
+      //         "google_play");
+      //   },
+      //   child: const Icon(Icons.workspace_premium),
+      // ),
     );
   }
 
