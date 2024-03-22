@@ -69,26 +69,35 @@ class _DecoratedTextFieldWidgetState extends State<DecoratedTextFieldWidget> {
         hintText: widget.hintText,
         labelStyle: GoogleFonts.getFont(
           'Urbanist',
-          color: AppColors.dimGray,
+          color: AppColors.primaryText,
           fontWeight: FontWeight.w500,
           fontSize: 14.0,
         ),
         hintStyle: GoogleFonts.getFont(
           'Urbanist',
-          color: AppColors.dimGray,
+          color: AppColors.primaryText,
           fontWeight: FontWeight.w500,
           fontSize: 14.0,
         ),
         border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(4)),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
           borderSide: BorderSide(
-            color: AppColors.borderColor,
+            color: AppColors.grayBackgroundColor,
+            width: 2,
           ),
         ),
         focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(4)),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
           borderSide: BorderSide(
-            color: AppColors.selectedColor,
+            color: AppColors.grayBackgroundColor,
+            width: 2,
+          ),
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide(
+            color: AppColors.grayBackgroundColor,
+            width: 2,
           ),
         ),
       ),

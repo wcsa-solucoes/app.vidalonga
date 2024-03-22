@@ -1,5 +1,4 @@
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
-import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/partners_and_benefits/benefits_service.dart';
 import 'package:app_vida_longa/core/services/partners_and_benefits/partners_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';

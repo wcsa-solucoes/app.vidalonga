@@ -47,7 +47,12 @@ class AppColors {
 
   static const Color gray600 = Color(0xFF57636C); //L/D 0xFF57636C
   static const Color lineGray = Color(0xFFE1EDF9); //dark 0xFF262D34
-
+  //#95A1AC to 0xFF95A1AC
+  static const Color grayIconColor = Color(0xFF95A1AC); //L/D 0xFF95A1AC
+  //#95A1AC to 0xFF95A1AC
+  static const Color secondaryTextColor = Color(0xFF95A1AC); //L/D 0xFF95A1AC
+  //#E1EDF9 to 0xFFE1EDF9
+  static const Color grayBackgroundColor = Color(0xFFE1EDF9); //L/D 0xFFE1EDF9
   static BoxDecoration backgroundGradient() {
     return const BoxDecoration(
       gradient: RadialGradient(

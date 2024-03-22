@@ -1,3 +1,4 @@
+import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
@@ -95,7 +96,7 @@ class _LoginViewState extends State<LoginView>
         },
         builder: (context, state) {
           return CustomAppScaffold(
-            isWithAppBar: true,
+            isWithAppBar: false,
             hasScrollView: true,
             resizeToAvoidBottomInset: true,
             bottomNavigationBar: const CustomBottomNavigationBar(),
@@ -112,7 +113,7 @@ class _LoginViewState extends State<LoginView>
                     onPressed: () {
                       _authBloc.add(AuthSignOutEvent());
                     },
-                    child: const Text("Logado, clique para deslogar"),
+                    child: const DefaultText("Logado, clique para deslogar"),
                   ),
                 );
               }
@@ -134,61 +135,100 @@ class _LoginViewState extends State<LoginView>
   }
 
   Widget body(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 250),
-      child: Container(
-        padding: const EdgeInsets.only(top: 30),
-        decoration: BoxDecoration(
-            color: AppColors.backgroundColor,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.7), // Cor da sombra
-                spreadRadius: 3, // Raio de expansão da sombra
-                blurRadius: 4, // Raio de desfoque da sombra
-              ),
-            ]),
-        width: MediaQuery.of(context).size.width,
-        child: Column(
+    return Column(
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.03,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ToggleButtons(
-              borderWidth: 2,
-              borderRadius: BorderRadius.circular(10),
-              fillColor: AppColors.selectedColor.withOpacity(0.2),
-              // selectedBorderColor: Colors.orange,
-              onPressed: (index) {
-                setState(() {
-                  isLoginSelected = index == 0;
-                });
-              },
-              isSelected: [isLoginSelected, !isLoginSelected],
-              children: [
-                DefaultText(
-                  "Login",
-                  fontWeight: isLoginSelected ? FontWeight.bold : null,
-                ),
-                DefaultText("Cadastra-se",
-                    fontWeight: !isLoginSelected ? FontWeight.bold : null),
-              ],
+            Image.asset(
+              "assets/images/AVATAR_(1).png",
+              width: 80,
             ),
-            Stack(
-              children: [
-                Container(
-                  //border with elevation
-
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(10),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.75,
-                  child: Center(
-                    child: isLoginSelected ? signInView() : signUpView(),
-                  ),
-                ),
-              ],
-            )
+            const DefaultText(
+              "Vida Longa",
+              fontSize: 34,
+              fontWeight: FontWeight.bold,
+              color: AppColors.grayIconColor,
+            ),
           ],
         ),
-      ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.01,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 10, bottom: 250),
+          child: Container(
+            padding: const EdgeInsets.only(top: 30),
+            decoration: BoxDecoration(
+                color: AppColors.backgroundColor,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.7), // Cor da sombra
+                    spreadRadius: 3, // Raio de expansão da sombra
+                    blurRadius: 4, // Raio de desfoque da sombra
+                  ),
+                ]),
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: [
+                ToggleButtons(
+                  borderWidth: 2,
+                  borderRadius: BorderRadius.circular(10),
+                  fillColor: AppColors.selectedColor.withOpacity(0.2),
+                  selectedBorderColor: AppColors.selectedColor.withOpacity(0.2),
+                  onPressed: (index) {
+                    setState(() {
+                      isLoginSelected = index == 0;
+                    });
+                  },
+                  isSelected: [!isLoginSelected, isLoginSelected],
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: DefaultText(
+                        "Login",
+                        // fontWeight: isLoginSelected ? FontWeight.bold : null,
+                        color: !isLoginSelected
+                            ? AppColors.grayIconColor
+                            : AppColors.primaryText,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: DefaultText(
+                        "Cadastra-se",
+                        // fontWeight: !isLoginSelected ? FontWeight.bold : null,
+                        color: isLoginSelected
+                            ? AppColors.grayIconColor
+                            : AppColors.primaryText,
+                      ),
+                    ),
+                  ],
+                ),
+                Stack(
+                  children: [
+                    Container(
+                      //border with elevation
+
+                      margin: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.75,
+                      child: Center(
+                        child: isLoginSelected ? signInView() : signUpView(),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -232,43 +272,65 @@ class _LoginViewState extends State<LoginView>
           height: 10,
         ),
         FlatButton(
-            onPressed: () {
-              bool canPop = false;
-              for (var element in Modular.to.navigateHistory) {
-                if (element.name.contains(routes.app.home.path)) {
-                  canPop = true;
-                }
+          textLabel: "Entrar",
+          onPressed: () {
+            if (_emailLoginController.text.isEmpty ||
+                _passwordLoginController.text.isEmpty) {
+              AppHelper.displayAlertInfo(
+                  "Por favor, preencha todos os campos para logar.");
+              return;
+            }
+
+            bool canPop = false;
+            for (var element in Modular.to.navigateHistory) {
+              if (element.name.contains(routes.app.home.path)) {
+                canPop = true;
               }
-              _authBloc.add(
-                AuthSignInEvent(
-                  email: _emailLoginController.text,
-                  password: _passwordLoginController.text,
-                  canPop: canPop,
-                ),
-              );
-            },
-            textLabel: "Entrar"),
+            }
+            _authBloc.add(
+              AuthSignInEvent(
+                email: _emailLoginController.text,
+                password: _passwordLoginController.text,
+                canPop: canPop,
+              ),
+            );
+          },
+        ),
         TextButton(
           onPressed: () {
-            _authBloc.add(AuthRecoveryPasswordEvent(
-              email: _emailLoginController.text,
-            ));
+            if (_emailLoginController.text.isNotEmpty) {
+              _authBloc.add(AuthRecoveryPasswordEvent(
+                email: _emailLoginController.text,
+              ));
+            } else {
+              AppHelper.displayAlertInfo(
+                  "Por favor, preencha o campo de email.");
+            }
           },
-          child: const Text("Esqueceu a senha?"),
+          child: const DefaultText(
+            "Esqueceu a senha?",
+            decoration: TextDecoration.underline,
+          ),
         ),
         TextButton(
           onPressed: () {
             showDialog(
                 context: context, builder: (context) => const PolicyWidget());
           },
-          child: const Text("Política de Privacidade"),
+          child: const DefaultText(
+            "Política de Privacidade",
+            decoration: TextDecoration.underline,
+          ),
         ),
         TextButton(
           onPressed: () {
             showDialog(
                 context: context, builder: (context) => const TermsWiget());
           },
-          child: const Text("Termos e condições"),
+          child: const DefaultText(
+            "Termos e condições",
+            decoration: TextDecoration.underline,
+          ),
         ),
       ],
     );
@@ -276,89 +338,93 @@ class _LoginViewState extends State<LoginView>
 
   Widget signUpView() {
     const double padding = 10;
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              DefaultText("Crie a sua conta",
-                  fontSize: 22, fontWeight: FontWeight.w600),
-              DefaultText(
-                "Preencha as informações para criar a sua conta.",
-                fontSize: 16,
-                maxLines: 2,
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: padding,
-          ),
-          DecoratedTextFieldWidget(
-            controller: _emailRegisterController,
-            labelText: "Email",
-            hintText: "Email",
-          ),
-          const SizedBox(
-            height: padding,
-          ),
-          DecoratedTextFieldWidget(
-            controller: _nameRegisterController,
-            labelText: "Nome",
-            hintText: "Nome",
-          ),
-          const SizedBox(
-            height: padding,
-          ),
-          const SizedBox(
-            height: padding,
-          ),
-          DecoratedTextFieldWidget(
-            controller: _passwordRegisterController,
-            labelText: "Senha",
-            hintText: "Senha",
-            isPassword: true,
-          ),
-          const SizedBox(
-            height: padding,
-          ),
-          DecoratedTextFieldWidget(
-            controller: _passwordConfirmRegisterController,
-            isPassword: true,
-            labelText: "Confirmar Senha",
-            hintText: "Confirmar Senha",
-          ),
-          const SizedBox(
-            height: padding,
-          ),
-          FlatButton(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const DefaultText("Crie a sua conta",
+            fontSize: 22, fontWeight: FontWeight.w600),
+        const DefaultText(
+          "Preencha as informações para criar a sua conta.",
+          fontSize: 16,
+          maxLines: 2,
+        ),
+        const SizedBox(
+          height: padding,
+        ),
+        DecoratedTextFieldWidget(
+          controller: _emailRegisterController,
+          labelText: "Email",
+          hintText: "Email",
+        ),
+        const SizedBox(
+          height: padding,
+        ),
+        DecoratedTextFieldWidget(
+          controller: _nameRegisterController,
+          labelText: "Nome",
+          hintText: "Nome",
+        ),
+        const SizedBox(
+          height: padding,
+        ),
+
+        DecoratedTextFieldWidget(
+          controller: _passwordRegisterController,
+          labelText: "Senha",
+          hintText: "Senha",
+          isPassword: true,
+        ),
+        const SizedBox(
+          height: padding,
+        ),
+        DecoratedTextFieldWidget(
+          controller: _passwordConfirmRegisterController,
+          isPassword: true,
+          labelText: "Confirmar Senha",
+          hintText: "Confirmar Senha",
+        ),
+        const SizedBox(
+          height: padding,
+        ),
+        Center(
+          child: FlatButton(
             textLabel: "Cadastrar-se",
             onPressed: () {
-              if (_passwordRegisterController.text ==
-                  _passwordConfirmRegisterController.text) {
-                final String cpfData = _cpfRegisterController.text
-                    .replaceAll(".", "")
-                    .replaceAll("-", "");
-                final String phoneData = _phoneRegisterController.text
-                    .replaceAll("(", "")
-                    .replaceAll(")", "")
-                    .replaceAll(" ", "")
-                    .replaceAll("-", "");
+              //check if all fields are filled
+              if (_emailRegisterController.text.isNotEmpty &&
+                  _nameRegisterController.text.isNotEmpty &&
+                  _passwordRegisterController.text.isNotEmpty &&
+                  _passwordConfirmRegisterController.text.isNotEmpty) {
+                if (_passwordRegisterController.text ==
+                    _passwordConfirmRegisterController.text) {
+                  final String cpfData = _cpfRegisterController.text
+                      .replaceAll(".", "")
+                      .replaceAll("-", "");
+                  final String phoneData = _phoneRegisterController.text
+                      .replaceAll("(", "")
+                      .replaceAll(")", "")
+                      .replaceAll(" ", "")
+                      .replaceAll("-", "");
 
-                _authBloc.add(AuthSignUpEvent(
-                  name: _nameRegisterController.text,
-                  phone: phoneData,
-                  cpf: cpfData,
-                  email: _emailRegisterController.text,
-                  password: _passwordRegisterController.text,
-                ));
+                  _authBloc.add(AuthSignUpEvent(
+                    name: _nameRegisterController.text,
+                    phone: phoneData,
+                    cpf: cpfData,
+                    email: _emailRegisterController.text,
+                    password: _passwordRegisterController.text,
+                  ));
+                } else {
+                  AppHelper.displayAlertInfo("As senhas não coincidem.");
+                }
+              } else {
+                AppHelper.displayAlertInfo(
+                    "Por favor, preencha todos os campos.");
               }
             },
           ),
-          // ),
-        ],
-      ),
+        ),
+        // ),
+      ],
     );
   }
 }
