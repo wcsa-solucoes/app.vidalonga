@@ -215,7 +215,7 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
                           }
                         }).toList(),
                       ),
-                const SizedBox(height: 120),
+                const SizedBox(height: 180),
               ],
             ),
           ),

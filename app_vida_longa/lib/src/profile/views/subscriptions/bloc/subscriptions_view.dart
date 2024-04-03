@@ -297,6 +297,9 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                 ],
               ),
             ),
+            const SizedBox(
+              height: 80,
+            ),
           ],
         ),
       ),

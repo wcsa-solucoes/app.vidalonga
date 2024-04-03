@@ -51,17 +51,6 @@ class _ProfileViewState extends State<ProfileView> {
       }),
       bottomNavigationBar: const CustomBottomNavigationBar(),
       hasScrollView: true,
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     UserService.instance.updateSubscriberStatusFromRoles(
-      //         UserService.instance.user.subscriptionLevel ==
-      //                 SubscriptionEnum.nonPaying
-      //             ? SubscriptionEnum.paying
-      //             : SubscriptionEnum.nonPaying,
-      //         "google_play");
-      //   },
-      //   child: const Icon(Icons.workspace_premium),
-      // ),
     );
   }
 
@@ -203,7 +192,7 @@ class _ProfileViewState extends State<ProfileView> {
                           UserService.instance.user.photoUrl,
                           width: 70.0,
                           height: 70.0,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                         )),
             ),
           ),

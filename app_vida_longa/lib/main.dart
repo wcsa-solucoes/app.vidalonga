@@ -16,6 +16,7 @@ import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/main_module.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -36,6 +37,15 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
     name: mode,
   );
+
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
 
   if (kDebugMode) {
     try {
