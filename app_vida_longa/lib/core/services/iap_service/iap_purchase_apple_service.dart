@@ -61,9 +61,12 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
     _hasInit = true;
     _inAppPurchase = inAppPurchase;
 
+    _iosPlatformAddition = _inAppPurchase
+        .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+    await _iosPlatformAddition.setDelegate(_IosPaymentQueueDelegate());
+
     await _init();
   }
-  //...
 
   @override
   PlanModel get defaultPlan => _plansService.defaultPlan;
@@ -133,10 +136,6 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
     final isStoreAvailable = await _inAppPurchase.isAvailable();
 
     if (isStoreAvailable == false) return [];
-
-    _iosPlatformAddition = _inAppPurchase
-        .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-    await _iosPlatformAddition.setDelegate(_IosPaymentQueueDelegate());
 
     final response = await _inAppPurchase.queryProductDetails(kIds);
 
