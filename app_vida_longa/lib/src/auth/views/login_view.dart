@@ -100,12 +100,6 @@ class _LoginViewState extends State<LoginView>
             hasScrollView: true,
             resizeToAvoidBottomInset: true,
             bottomNavigationBar: const CustomBottomNavigationBar(),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                throw Exception("Teste de crash");
-              },
-              child: const Icon(Icons.arrow_forward),
-            ),
             body: Builder(builder: (context) {
               UserService.instance;
               if (state is AuthLoading) {

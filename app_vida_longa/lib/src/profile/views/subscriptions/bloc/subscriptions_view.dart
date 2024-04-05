@@ -5,6 +5,7 @@ import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/domain/models/coupon_model.dart';
 import 'package:app_vida_longa/domain/models/plan_model.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
+import 'package:app_vida_longa/shared/launch_util.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
@@ -59,7 +60,7 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
           },
         ),
       ),
-      hasScrollView: true,
+      // hasScrollView: true,
       body: body(),
     );
   }
@@ -147,8 +148,28 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                   ],
                 );
               }
-              return const Center(
-                  child: DefaultText('Erro ao carregar as assinaturas!'));
+
+              return SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const DefaultText(
+                      'Para saber mais sobre assinaturas acesse o nosso site',
+                      fontSize: 20,
+                      maxLines: 3,
+                      textAlign: TextAlign.center,
+                    ),
+                    FlatButton(
+                      textLabel: "Saiba mais",
+                      isWithContrastColor: true,
+                      onPressed: () =>
+                          LaunchUtil.call('https://vidalongaapp.com/'),
+                    ),
+                  ],
+                ),
+              );
             },
           );
         });
