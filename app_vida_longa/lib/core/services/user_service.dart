@@ -61,7 +61,6 @@ class UserService {
   void handleCallBack() async {
     if (_status == UserServiceStatusEnum.accountedCreated) {
       _handleValidate();
-      // TODO(any): redirecionar para pagina de conta criada e depoois pra login
       return;
     }
 

@@ -16,6 +16,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
           ? SubscriptionEnum.nonPaying
           : UserModel.subscriptionEnumFromJson(
               json['roles'] as Map<String, dynamic>),
+      lastSubscriptionPlatform: json['lastSubscriptionPlatform'] as String?,
     );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
@@ -24,4 +25,5 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'email': instance.email,
       'phone': instance.phone,
       'photo_url': instance.photoUrl,
+      'lastSubscriptionPlatform': instance.lastSubscriptionPlatform,
     };

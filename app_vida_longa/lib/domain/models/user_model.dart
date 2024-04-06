@@ -14,6 +14,7 @@ class UserModel {
   @JsonKey(
       fromJson: subscriptionEnumFromJson, includeToJson: false, name: "roles")
   final SubscriptionEnum subscriptionLevel;
+  final String? lastSubscriptionPlatform;
 
   UserModel({
     this.id = "",
@@ -22,6 +23,7 @@ class UserModel {
     this.phone = "",
     this.photoUrl = "",
     this.subscriptionLevel = SubscriptionEnum.nonPaying,
+    this.lastSubscriptionPlatform,
   });
 
   static UserModel empty() {

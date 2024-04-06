@@ -2,6 +2,7 @@ import "dart:async";
 
 import "package:app_vida_longa/core/helpers/async_helper.dart";
 import 'package:app_vida_longa/core/controllers/we_exception.dart';
+import "package:app_vida_longa/core/helpers/date_time_helper.dart";
 import "package:app_vida_longa/domain/enums/custom_exceptions_codes_enum.dart";
 import "package:app_vida_longa/domain/models/response_model.dart";
 import "package:app_vida_longa/domain/models/user_model.dart";
@@ -26,11 +27,22 @@ class UserRepository {
     late ResponseStatusModel response = ResponseStatusModel();
 
     await AsyncHelper.retry(() => _instance
-            .collection("users")
-            .doc(_auth.currentUser!.uid)
-            .set(user.toJson())
-            .then((value) => null)
-            .onError((error, stackTrace) {
+        .collection("users")
+        .doc(_auth.currentUser!.uid)
+        .set({
+          ...user.toJson(),
+          "createdAt": DateTimeHelper.formatDateTimeToYYYYMMDDHHmmss(
+            DateTime.now(),
+          ),
+          "isActive": true,
+          "lastSubscriptionPlatform": null,
+          "roles": {
+            "subscriptionType": "nonPaying",
+          },
+          "lastSignatureId": null
+        })
+        .then((value) => null)
+        .onError((error, stackTrace) {
           response = WeException.handle(error);
         }));
 
