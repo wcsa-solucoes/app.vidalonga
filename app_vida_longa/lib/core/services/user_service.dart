@@ -36,13 +36,10 @@ class UserService {
 
   late bool _hasSentValidationEmail = false;
 
-  static void init() {
-    _instance._userRepository.userStream.listen((event) {
+  void _registerListener() {
+    _userRepository.userStream.listen((event) {
       _instance._setUser(event);
     });
-    if (!_hasInit) {
-      _hasInit = true;
-    }
   }
 
   Future<void> uploadPhoto(String url) async {
@@ -166,6 +163,11 @@ class UserService {
   }
 
   void initUser() async {
+    if (_hasInit) {
+      throw Exception("User service already initialized");
+    }
+    _hasInit = true;
+    _registerListener();
     _userRepository.updateListener();
     IFavoritesRepository favoritesRepository =
         FavoritesRepositoryImpl(FirebaseFirestore.instance);
