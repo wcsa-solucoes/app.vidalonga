@@ -9,4 +9,10 @@ abstract class IHandleIAPRepository {
         ResponseStatusModel responseStatus,
         List<PurchaseDetails> purchasesDetails
       })> getPurchases();
+  Future<void> createDocInSignaturesCollection(
+    String userId,
+    String signatureId,
+    String status,
+    String date,
+  );
 }

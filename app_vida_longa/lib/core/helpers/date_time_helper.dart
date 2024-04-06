@@ -8,6 +8,66 @@ abstract class DateTimeHelper {
   static String _dateFormat = DateFormatEnum.ddMmYyyy.value;
   static String _dateTimeFormat = DateFormatEnum.h24MmDdMmYyyy.value;
 
+  static String formatDateTimeToYYYYMMDDHHmmss(DateTime dateTime) {
+    // Helper function to add leading zero if needed
+    String padLeft(int value) => value.toString().padLeft(2, '0');
+
+    // Extracting date components
+    int year = dateTime.year;
+    String month = padLeft(dateTime.month);
+    String day = padLeft(dateTime.day);
+    String hours = padLeft(dateTime.hour);
+    String minutes = padLeft(dateTime.minute);
+    String seconds = padLeft(dateTime.second);
+
+    // Building formatted date string
+    return "$year-$month-$day $hours:$minutes:$seconds";
+  }
+
+  static String formatEpochTimestamp(int epochTimestamp) {
+    // Convert the epoch timestamp (assumed to be in seconds) to a DateTime object
+    DateTime dateTime =
+        DateTime.fromMillisecondsSinceEpoch(epochTimestamp * 1000);
+
+    // Helper function to add leading zero if needed
+    String padLeft(int value) => value.toString().padLeft(2, '0');
+
+    // Extracting date components
+    int year = dateTime.year;
+    String month = padLeft(dateTime.month);
+    String day = padLeft(dateTime.day);
+    String hours = padLeft(dateTime.hour);
+    String minutes = padLeft(dateTime.minute);
+    String seconds = padLeft(dateTime.second);
+
+    // Building formatted date string
+    return "$year-$month-$day $hours:$minutes:$seconds";
+  }
+
+  static String? formatEpochTimestampFromApple(double? epochTimestamp) {
+    if (epochTimestamp == null) {
+      return null; // Or provide a default value or message as needed
+    }
+
+    // Convert the epoch timestamp from seconds to a DateTime object
+    DateTime dateTime =
+        DateTime.fromMillisecondsSinceEpoch((epochTimestamp * 1000).toInt());
+
+    // Helper function to add leading zero if needed
+    String padLeft(int value) => value.toString().padLeft(2, '0');
+
+    // Extracting date components
+    int year = dateTime.year;
+    String month = padLeft(dateTime.month);
+    String day = padLeft(dateTime.day);
+    String hours = padLeft(dateTime.hour);
+    String minutes = padLeft(dateTime.minute);
+    String seconds = padLeft(dateTime.second);
+
+    // Building formatted date string
+    return "$year-$month-$day $hours:$minutes:$seconds";
+  }
+
   static void setFormat({
     String? timeFormat,
     String? dateFormat,

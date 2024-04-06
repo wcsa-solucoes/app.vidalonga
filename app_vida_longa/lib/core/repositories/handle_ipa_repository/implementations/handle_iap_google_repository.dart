@@ -1,4 +1,5 @@
 import 'package:app_vida_longa/core/controllers/we_exception.dart';
+import 'package:app_vida_longa/core/helpers/date_time_helper.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/handle_ipa_repository/interface/handle_iap_interface.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
@@ -73,6 +74,16 @@ class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
           responseStatusModel = WeException.handle(error);
         });
 
+    String date = DateTimeHelper.formatEpochTimestamp(
+      someGooglePlayurchaseDetails.billingClientPurchase.purchaseTime,
+    );
+    createDocInSignaturesCollection(
+      UserService.instance.user.id,
+      someGooglePlayurchaseDetails.billingClientPurchase.purchaseToken,
+      someGooglePlayurchaseDetails.billingClientPurchase.purchaseState.name,
+      date,
+    );
+
     return responseStatusModel;
   }
 
@@ -106,5 +117,32 @@ class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
       responseStatus: responseStatusModel,
       purchasesDetails: purchaseDetails
     );
+  }
+
+  @override
+  Future<void> createDocInSignaturesCollection(
+      String userId, String signatureId, String status, String date) async {
+    final doc = await firestore.collection("signatures").doc(userId).get();
+
+    if (doc.exists) {
+      return;
+    } else {
+      await firestore.collection("signatures").doc(userId).set(
+        {
+          "userId": userId,
+          "lastSignatureId": signatureId,
+          "lastPlatformPaymentDate": date,
+          "lastPlatform": "google_play",
+          "googlePlayTransactions": [
+            {
+              "transactionId": signatureId,
+              "transactionDate": date,
+              "status": status,
+            }
+          ],
+        },
+        SetOptions(merge: true),
+      );
+    }
   }
 }
