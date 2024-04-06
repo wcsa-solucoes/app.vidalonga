@@ -99,25 +99,11 @@ class CouponsRepositoryImpl implements ICouponsRepository {
   @override
   Future<ResponseStatusModel> incrementCouponUsageQuantity(
       CouponModel coupon) async {
-    late ResponseStatusModel response = ResponseStatusModel();
+    ResponseStatusModel response = ResponseStatusModel();
 
-    final index = _coupons.indexWhere((element) => element.uuid == coupon.uuid);
-
-    if (index == -1) {
-      PrintColoredHelper.printError('>>>>>>>>>>>>Cupom não encontrado');
-      response.status = ResponseStatusEnum.error;
-      response.message = 'Cupom não encontrado';
-      return response;
-    }
-    CouponModel couponFound = _coupons[index];
-    couponFound =
-        couponFound.copyWith(usageQuantity: couponFound.usageQuantity + 1);
-
-    await firestore
-        .collection('coupons')
-        .doc(couponFound.uuid)
-        .update(CouponModel.toMap(couponFound))
-        .then((value) {
+    await firestore.collection('coupons').doc(coupon.uuid).update({
+      'usageQuantity': FieldValue.increment(1),
+    }).then((value) {
       response.status = ResponseStatusEnum.success;
     }).onError(
       (obj, error) {
