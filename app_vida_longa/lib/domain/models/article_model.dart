@@ -2,11 +2,12 @@ import 'package:app_vida_longa/domain/models/content_model.dart';
 import 'package:app_vida_longa/domain/models/sub_category_model.dart';
 
 enum SubscriptionTypeArticleEnum {
-  paid("pagante"),
-  free("livre");
+  paid("pagante", "paid"),
+  free("livre", "free");
 
   final String name;
-  const SubscriptionTypeArticleEnum(this.name);
+  final String value;
+  const SubscriptionTypeArticleEnum(this.name, this.value);
 }
 
 class ArticleModel {
@@ -38,7 +39,9 @@ class ArticleModel {
           .toList()
           .first,
       subscriptionType: SubscriptionTypeArticleEnum.values.firstWhere(
-        (SubscriptionTypeArticleEnum e) => e.name == map['subscriptionType'],
+        (SubscriptionTypeArticleEnum e) {
+          return e.value == map['subscriptionType'];
+        },
         orElse: () => SubscriptionTypeArticleEnum.paid,
       ),
       uuid: map['uuid'] as String,
