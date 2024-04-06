@@ -111,6 +111,24 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
     if (index != -1) {
       var coupon = _couponsService.coupons[index];
 
+      if (coupon.activationDateTimestamp == null ||
+          DateTime.now().millisecondsSinceEpoch <
+              coupon.activationDateTimestamp!) {
+        AppHelper.displayAlertError('Cupom ainda não ativado');
+        return;
+      }
+
+      if (coupon.haveUsageLimit && coupon.usageQuantity >= coupon.limit) {
+        AppHelper.displayAlertError('Cupom esgotado');
+        return;
+      }
+      if (coupon.expiryDateTimestamp != null &&
+          DateTime.now().millisecondsSinceEpoch >=
+              coupon.expiryDateTimestamp!) {
+        AppHelper.displayAlertError('Cupom expirado');
+        return;
+      }
+
       _productWithCoupon = paymentService.productDetails.firstWhereOrNull(
         (ProductDetails element) {
           return element.id == coupon.applePlanId ||

@@ -1,5 +1,4 @@
 class CouponModel {
-  final String activationDate;
   final String createdAt;
   final String expiryDate;
   final bool haveUsageLimit;
@@ -9,9 +8,10 @@ class CouponModel {
   final String? googlePlanId;
   final String uuid;
   final int usageQuantity;
+  final int? expiryDateTimestamp;
+  final int? activationDateTimestamp;
 
   CouponModel({
-    required this.activationDate,
     required this.createdAt,
     required this.expiryDate,
     required this.haveUsageLimit,
@@ -21,11 +21,12 @@ class CouponModel {
     this.googlePlanId,
     required this.uuid,
     this.usageQuantity = 0,
+    this.expiryDateTimestamp,
+    this.activationDateTimestamp,
   });
 
   factory CouponModel.fromMap(Map<String, dynamic> json) {
     return CouponModel(
-      activationDate: json['activationDate'],
       createdAt: json['createdAt'],
       expiryDate: json['expiryDate'],
       haveUsageLimit: json['haveUsageLimit'],
@@ -35,12 +36,12 @@ class CouponModel {
       googlePlanId: json['googlePlanId'],
       uuid: json['uuid'],
       usageQuantity: json['usageQuantity'],
+      expiryDateTimestamp: json['expiryDateTimestamp'],
     );
   }
 
   static Map<String, dynamic> toMap(CouponModel coupon) {
     return {
-      'activationDate': coupon.activationDate,
       'createdAt': coupon.createdAt,
       'expiryDate': coupon.expiryDate,
       'haveUsageLimit': coupon.haveUsageLimit,
@@ -50,6 +51,7 @@ class CouponModel {
       'googlePlanId': coupon.googlePlanId,
       'uuid': coupon.uuid,
       'usageQuantity': coupon.usageQuantity,
+      'expiryDateTimestamp': coupon.expiryDateTimestamp,
     };
   }
 
@@ -67,7 +69,6 @@ class CouponModel {
     int? usageQuantity,
   }) {
     return CouponModel(
-      activationDate: activationDate ?? this.activationDate,
       createdAt: createdAt ?? this.createdAt,
       expiryDate: expiryDate ?? this.expiryDate,
       haveUsageLimit: haveUsageLimit ?? this.haveUsageLimit,
