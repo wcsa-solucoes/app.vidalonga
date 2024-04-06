@@ -7,7 +7,6 @@ import 'package:app_vida_longa/domain/models/response_model.dart';
 abstract class IFavoritesService {
   late IFavoritesRepository _repository;
   Future<void> init(IFavoritesRepository repository, String userId);
-  Future<List<String>> get();
   Future<void> add(String articleId);
   Future<void> remove(String articleId);
   List<ArticleModel> favorites = [];
@@ -42,7 +41,7 @@ class FavoritesServiceImpl extends IFavoritesService {
     _userId = userId;
 
     final ({List<String> ids, ResponseStatusModel response}) result =
-        await repository.favorites(userId);
+        await repository.getAll(userId);
 
     if (result.response.status == ResponseStatusEnum.success) {
       _setIds = result.ids;
@@ -91,17 +90,6 @@ class FavoritesServiceImpl extends IFavoritesService {
     } else {
       AppHelper.displayAlertError("Erro ao remover artigo dos favoritos!");
     }
-  }
-
-  @override
-  Future<List<String>> get() async {
-    await _repository.favorites(userId).then((result) {
-      if (result.response.status == ResponseStatusEnum.success) {
-        _setIds = result.ids;
-      }
-    });
-
-    return favoritesIds;
   }
 
   @override

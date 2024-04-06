@@ -6,7 +6,7 @@ abstract class IFavoritesRepository<T> {
   late T dataSource;
   Future<ResponseStatusModel> add(List<String> ids, String userId);
   Future<ResponseStatusModel> remove(List<String> ids, String userId);
-  Future<({ResponseStatusModel response, List<String> ids})> favorites(
+  Future<({ResponseStatusModel response, List<String> ids})> getAll(
       String userId);
 }
 
@@ -47,7 +47,7 @@ class FavoritesRepositoryImpl
   }
 
   @override
-  Future<({ResponseStatusModel response, List<String> ids})> favorites(
+  Future<({ResponseStatusModel response, List<String> ids})> getAll(
       String userId) async {
     ResponseStatusModel response = ResponseStatusModel();
     List<String> ids = [];

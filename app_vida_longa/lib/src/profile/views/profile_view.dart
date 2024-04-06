@@ -11,7 +11,7 @@ import 'package:app_vida_longa/shared/widgets/open_button_page.dart';
 import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/profile/views/contacts_view.dart';
-import 'package:app_vida_longa/src/profile/views/favorites_articles.dart';
+import 'package:app_vida_longa/src/profile/views/favorites_articles_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';

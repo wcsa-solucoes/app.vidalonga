@@ -76,14 +76,12 @@ Future<void> startServices() async {
   } else {
     paymentService = InAppPurchaseImplServicesAppleImpl.instance;
   }
+  await ArticleService.init().then((value) {
+    CategoriesService.init(ArticleService.instance);
+  });
 
   Future.wait([
     AuthService.init(),
-    ArticleService.init().then(
-      (value) {
-        CategoriesService.init(ArticleService.instance);
-      },
-    ),
     CouponsServiceImpl.instance.init(),
     QAServiceImpl.instance.init(QARepositoryImpl(FirebaseFirestore.instance)),
     PlansServiceImpl.instance.getPlans().then((value) {
