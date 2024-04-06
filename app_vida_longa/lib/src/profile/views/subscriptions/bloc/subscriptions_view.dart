@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/plans_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
@@ -79,17 +82,42 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
               ),
             );
           }
+          if (Platform.isIOS) {
+            PrintColoredHelper.printWhite(
+                "snapshot.data!.subscriptionLevel: ${snapshot.data!.subscriptionLevel}");
+          } else if (Platform.isAndroid) {
+            PrintColoredHelper.printWhite(
+                "snapshot.data!.subscriptionLevel: ${snapshot.data!.subscriptionLevel}");
+          }
 
           if (snapshot.data!.subscriptionLevel == SubscriptionEnum.paying) {
             return SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.7,
-                child: const Center(
-                  child: DefaultText(
-                    'Parábens, você é um assinante!',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w300,
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Center(
+                      child: DefaultText(
+                        'Parábens, você é um assinante!',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    FlatButton(
+                      textLabel: "Mais informações",
+                      onPressed: () {
+                        if (Platform.isAndroid) {
+                          LaunchUtil.call(
+                              "https://play.google.com/store/account/subscriptions");
+                        } else if (Platform.isIOS) {
+                          LaunchUtil.call(
+                              "https://apps.apple.com/account/subscriptions");
+                        }
+                      },
+                    ),
+                  ],
                 ));
           }
 
