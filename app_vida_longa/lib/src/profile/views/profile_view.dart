@@ -330,17 +330,6 @@ class _ProfileViewState extends State<ProfileView> {
                                     fontWeight: FontWeight.normal,
                                   ),
                                 ),
-                                // Text(
-                                //   DateFormat('dd/MM/yy').format(DateTime.now()
-                                //       .add(const Duration(days: 30))),
-                                //   style: GoogleFonts.getFont(
-                                //     'Roboto Mono',
-                                //     color: AppColors
-                                //         .blackCard, //const Color.fromRGBO(87, 99, 108, 1),
-                                //     fontSize: 14.0,
-                                //     fontWeight: FontWeight.normal,
-                                //   ),
-                                // ),
                               ],
                             ),
                           ),

@@ -85,10 +85,12 @@ class _MyProfileViewState extends State<MyProfileView> {
                 onPressed: () async {
                   pickImage();
                 },
-                child: const Card(
+                child: Card(
                   child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: DefaultText("Alterar foto"),
+                    padding: const EdgeInsets.all(8.0),
+                    child: UserService.instance.user.photoUrl.isEmpty
+                        ? const DefaultText("Adicionar foto")
+                        : const DefaultText("Trocar foto"),
                   ),
                 ),
               )
