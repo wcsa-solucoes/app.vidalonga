@@ -37,13 +37,13 @@ class _FavoritesArticlesViewState extends State<FavoritesArticlesView> {
   }
 
   Widget body() {
-    return Column(
-      children: [
-        SizedBox(
-          // color: Colors.amber,
-          width: MediaQuery.sizeOf(context).width,
-          height: MediaQuery.sizeOf(context).height * 0.9,
-          child: Builder(builder: (context) {
+    return SizedBox(
+      width: MediaQuery.sizeOf(context).width,
+      height: MediaQuery.sizeOf(context).height * 0.9,
+      child: StreamBuilder(
+          initialData: _favoritesService.favorites,
+          stream: _favoritesService.favoritesStream,
+          builder: (context, snapshot) {
             if (_favoritesService.favorites.isEmpty) {
               return const Center(child: Text("Nenhum artigo favorito :("));
             }
@@ -64,8 +64,6 @@ class _FavoritesArticlesViewState extends State<FavoritesArticlesView> {
               },
             );
           }),
-        ),
-      ],
     );
   }
 }

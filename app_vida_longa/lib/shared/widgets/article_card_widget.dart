@@ -87,6 +87,16 @@ class ArticleCard extends StatelessWidget {
                         article.uuid,
                         article,
                       );
+                      //verify if the article is paid if not go to the article
+                      if (article.subscriptionType ==
+                          SubscriptionTypeArticleEnum.free) {
+                        var path = routes.app.home.article.path;
+                        NavigationController.push(path, arguments: {
+                          "articleId": article.uuid,
+                          "article": article
+                        });
+                        return;
+                      }
 
                       if (user == null) {
                         NavigationController.to(routes.app.auth.login.path);

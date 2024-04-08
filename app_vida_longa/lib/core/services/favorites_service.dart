@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
@@ -14,6 +16,8 @@ abstract class IFavoritesService {
   // ignore: unused_element
   set _setIds(List<String> ids);
 
+  Stream<List<ArticleModel>> get favoritesStream;
+
   // ignore: prefer_final_fields
   bool _hasInit = false;
   bool get hasInit => _hasInit;
@@ -29,6 +33,13 @@ class FavoritesServiceImpl extends IFavoritesService {
   static FavoritesServiceImpl get instance => _instance;
 
   final ArticleService _articleService = ArticleService.instance;
+
+  @override
+  Stream<List<ArticleModel>> get favoritesStream =>
+      _favoritesStreamController.stream;
+
+  final StreamController<List<ArticleModel>> _favoritesStreamController =
+      StreamController.broadcast();
 
   @override
   Future<void> init(IFavoritesRepository repository, String userId) async {
@@ -54,6 +65,8 @@ class FavoritesServiceImpl extends IFavoritesService {
         favorites.add(article);
       }
     }
+
+    _setArticleIds(favorites);
   }
 
   @override
@@ -67,11 +80,19 @@ class FavoritesServiceImpl extends IFavoritesService {
 
     if (response.status == ResponseStatusEnum.success) {
       favoritesIds.add(articleId);
-      favorites.add(_articleService.articles
-          .firstWhere((element) => element.uuid == articleId));
+      final ArticleModel article = _articleService.articles
+          .firstWhere((element) => element.uuid == articleId);
+
+      favorites.add(article);
+
+      _setArticleIds(favorites);
     } else {
       AppHelper.displayAlertError("Erro ao adicionar artigo aos favoritos!");
     }
+  }
+
+  void _setArticleIds(List<ArticleModel> favoritesArticles) {
+    _favoritesStreamController.add(favoritesArticles);
   }
 
   @override
@@ -87,6 +108,7 @@ class FavoritesServiceImpl extends IFavoritesService {
     if (response.status == ResponseStatusEnum.success) {
       favoritesIds.remove(articleId);
       favorites.removeWhere((element) => element.uuid == articleId);
+      _setArticleIds(favorites);
     } else {
       AppHelper.displayAlertError("Erro ao remover artigo dos favoritos!");
     }
