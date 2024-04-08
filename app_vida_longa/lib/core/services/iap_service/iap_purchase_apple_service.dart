@@ -73,7 +73,9 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
 
   Future<void> _init() async {
     for (var plan in _plansService.plans) {
-      _kIds.add(plan.applePlanId);
+      if (plan.applePlanId != null && plan.applePlanId!.isNotEmpty) {
+        _kIds.add(plan.applePlanId!);
+      }
     }
 
     final Stream<List<PurchaseDetails>> purchaseUpdated =

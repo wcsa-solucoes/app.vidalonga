@@ -1,7 +1,7 @@
 class PlanModel {
   final String name;
-  final String applePlanId;
-  final String googlePlanId;
+  final String? applePlanId;
+  final String? googlePlanId;
   final double price;
   PlanModel({
     required this.name,

@@ -64,7 +64,9 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
 
   Future<void> _init() async {
     for (var plan in _plansService.plans) {
-      _kIds.add(plan.googlePlanId);
+      if (plan.googlePlanId != null && plan.googlePlanId!.isNotEmpty) {
+        _kIds.add(plan.googlePlanId!);
+      }
     }
 
     getProductsDetails(_kIds);
