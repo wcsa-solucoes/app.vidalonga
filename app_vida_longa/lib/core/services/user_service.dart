@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';
@@ -35,11 +36,18 @@ class UserService {
   Stream<UserModel> get userStream => _userRepository.userStream;
 
   late bool _hasSentValidationEmail = false;
+  StreamSubscription<UserModel>? subscription;
 
   void _registerListener() {
-    _userRepository.userStream.listen((event) {
-      _instance._setUser(event);
-    });
+    PrintColoredHelper.printOrange(">>>>debug Registering listener");
+    if (subscription != null) {
+      subscription!.cancel();
+    }
+    subscription = _userRepository.userStream.listen(
+      (event) {
+        _instance._setUser(event);
+      },
+    );
   }
 
   Future<void> uploadPhoto(String url) async {
@@ -49,6 +57,7 @@ class UserService {
 
   void handleUserLogout() {
     _user = UserModel();
+    _hasInit = false;
 
     if (_status != UserServiceStatusEnum.accountedCreated) {
       _status = UserServiceStatusEnum.loggedOut;
