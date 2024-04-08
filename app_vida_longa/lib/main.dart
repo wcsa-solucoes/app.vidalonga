@@ -28,10 +28,15 @@ import 'firebase_options.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  String mode = const String.fromEnvironment("MODE", defaultValue: "dev");
+  String mode = const String.fromEnvironment("MODE", defaultValue: "prod");
+
+  if (Platform.isIOS) {
+    AppTrackingTransparency.requestTrackingAuthorization();
+  }
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
