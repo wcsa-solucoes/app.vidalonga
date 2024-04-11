@@ -94,7 +94,6 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
       } else if (purchaseDetails.status == PurchaseStatus.purchased ||
           purchaseDetails.status == PurchaseStatus.restored) {
         if (purchaseDetails.status == PurchaseStatus.purchased) {
-          PrintColoredHelper.printOrange('>>>>>debug purchased');
           await _handleIAPService.handlePurchase(
             purchaseDetails,
             'google_play',

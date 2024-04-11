@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_vida_longa/core/controllers/we_exception.dart';
 import 'package:app_vida_longa/core/helpers/date_time_helper.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
@@ -20,61 +22,39 @@ class HandleIAPGoogleRepositoryImpl
       List<PurchaseDetails> purchasesDetails) async {
     ResponseStatusModel responseStatusModel = ResponseStatusModel();
     List<Map<String, dynamic>> maps = [];
-    List<GooglePlayPurchaseDetails> googlePlayPurchases = [];
     GooglePlayPurchaseDetails? someGooglePlayurchaseDetails;
 
-    for (var element in purchasesDetails) {
-      if (element is GooglePlayPurchaseDetails) {
-        someGooglePlayurchaseDetails = element;
-        break;
-      }
-    }
+    someGooglePlayurchaseDetails =
+        purchasesDetails.last as GooglePlayPurchaseDetails?;
 
     if (someGooglePlayurchaseDetails == null) {
       throw UnimplementedError(
           "No GooglePlayPurchaseDetails found in purchasesDetails");
     }
 
-    await Future.wait([
-      firestore
-          .collection("googleInAppPurchases")
-          .doc(UserService.instance.user.id)
-          .set(
-        {
-          "userId": UserService.instance.user.id,
-          "lastSignatureId":
-              someGooglePlayurchaseDetails.billingClientPurchase.purchaseToken,
-        },
-        SetOptions(merge: true),
-      ),
-      saveNewSignature(
-          someGooglePlayurchaseDetails, UserService.instance.user.id),
-    ]);
+    unawaited(saveNewSignature(
+        someGooglePlayurchaseDetails, UserService.instance.user.id));
 
-    for (var element in purchasesDetails) {
-      if (element is GooglePlayPurchaseDetails) {
-        googlePlayPurchases.add(element);
-      }
-    }
+    maps = [PurchaseDetailsDto.toGoogleMap(someGooglePlayurchaseDetails)];
 
-    maps = googlePlayPurchases
-        .map((GooglePlayPurchaseDetails purchase) =>
-            PurchaseDetailsDto.toGoogleMap(purchase))
-        .toList();
-    PrintColoredHelper.printOrange(
-        someGooglePlayurchaseDetails.billingClientPurchase.purchaseToken);
-    PrintColoredHelper.printWhite(
-        someGooglePlayurchaseDetails.billingClientPurchase.originalJson);
+    Map<String, dynamic> payload = {
+      "purchases": FieldValue.arrayUnion(maps),
+      "userId": UserService.instance.user.id,
+      "lastSignatureId":
+          someGooglePlayurchaseDetails.billingClientPurchase.purchaseToken,
+    };
 
     await firestore
         .collection("googleInAppPurchases")
         .doc(UserService.instance.user.id)
-        .set({"purchases": maps}, SetOptions(merge: true))
+        .set(payload, SetOptions(merge: true))
         .then((value) {})
-        .onError((error, stackTrace) {
-          PrintColoredHelper.printError("savePurchase ${error.toString()}");
-          responseStatusModel = WeException.handle(error);
-        });
+        .onError(
+      (error, stackTrace) {
+        PrintColoredHelper.printError("savePurchase ${error.toString()}");
+        responseStatusModel = WeException.handle(error);
+      },
+    );
 
     return responseStatusModel;
   }
@@ -122,9 +102,6 @@ class HandleIAPGoogleRepositoryImpl
 
     String date = DateTimeHelper.formatEpochTimestamp(
         purchasesDetails.billingClientPurchase.purchaseTime);
-
-    PrintColoredHelper.printError(
-        "purchaseTime: ${purchasesDetails.billingClientPurchase.purchaseTime} date: $date");
 
     final newTransaction = {
       "transactionId": purchasesDetails.billingClientPurchase.purchaseToken,

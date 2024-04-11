@@ -27,7 +27,6 @@ class HandleIAPService {
       UserService.instance
           .updateSubscriberStatusFromRoles(SubscriptionEnum.paying, platform),
     ]);
-    PrintColoredHelper.printGreen(">>>>debug finished handlePurchase<<<<");
   }
 
   Future<void> _handleCoupon(CouponModel? couponAdded) async {
