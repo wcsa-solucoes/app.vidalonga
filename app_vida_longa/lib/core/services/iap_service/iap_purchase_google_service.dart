@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/handle_ipa_repository/implementations/handle_iap_google_repository.dart';
-import 'package:app_vida_longa/core/services/handle_iap_service.dart';
+import 'package:app_vida_longa/core/services/iap_service/handle_iap_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
 import 'package:app_vida_longa/core/services/plans_service.dart';
 import 'package:app_vida_longa/domain/models/coupon_model.dart';
@@ -86,7 +86,6 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
   void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetailsList) async {
     if (purchaseDetailsList.isEmpty) return;
 
-    PrintColoredHelper.printPink(purchaseDetailsList.toString());
     final PurchaseDetails purchaseDetails = purchaseDetailsList.last;
 
     if (purchaseDetails.status == PurchaseStatus.pending) {
@@ -95,6 +94,7 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
       } else if (purchaseDetails.status == PurchaseStatus.purchased ||
           purchaseDetails.status == PurchaseStatus.restored) {
         if (purchaseDetails.status == PurchaseStatus.purchased) {
+          PrintColoredHelper.printOrange('>>>>>debug purchased');
           await _handleIAPService.handlePurchase(
             purchaseDetails,
             'google_play',
@@ -173,7 +173,7 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
       await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
       return true;
     } on PlatformException catch (e) {
-      PrintColoredHelper.printOrange(e.toString());
+      PrintColoredHelper.printError(e.toString());
       return false;
     } catch (e) {
       return false;

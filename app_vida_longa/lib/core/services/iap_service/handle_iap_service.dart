@@ -12,6 +12,7 @@ class HandleIAPService {
   List<PurchaseDetails> get purchases => _purchases;
   final IHandleIAPRepository handleIAPRepository;
   final ICouponsService _couponsService = CouponsServiceImpl.instance;
+  // ISignaturesRepository signaturesRepository = SignaturesRepository();
 
   HandleIAPService({required this.handleIAPRepository});
 
@@ -20,13 +21,13 @@ class HandleIAPService {
     String platform, {
     CouponModel? couponAdded,
   }) async {
-    PrintColoredHelper.printOrange('handlePurchase called');
     await Future.wait([
       _handleCoupon(couponAdded),
       savePurchase(purchaseDetails),
       UserService.instance
           .updateSubscriberStatusFromRoles(SubscriptionEnum.paying, platform),
     ]);
+    PrintColoredHelper.printGreen(">>>>debug finished handlePurchase<<<<");
   }
 
   Future<void> _handleCoupon(CouponModel? couponAdded) async {

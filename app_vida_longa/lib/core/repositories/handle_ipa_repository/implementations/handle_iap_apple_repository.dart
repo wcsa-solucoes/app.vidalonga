@@ -9,7 +9,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 
-class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
+class HandleIAPAppleRepositoryImpl
+    implements IHandleIAPRepository, ISignaturesRepository {
   FirebaseFirestore firestore;
 
   HandleIAPAppleRepositoryImpl({required this.firestore});
@@ -21,9 +22,6 @@ class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
     List<Map<String, dynamic>> maps = [];
     List<AppStorePurchaseDetails> appStorePurchases = [];
     AppStorePurchaseDetails? someAppStorePurchaseDetails;
-
-    PrintColoredHelper.printWhite(
-        "purchasesDetails.length: ${purchasesDetails.length}");
 
     for (var element in purchasesDetails) {
       if (element is AppStorePurchaseDetails) {
@@ -48,20 +46,23 @@ class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
             PurchaseDetailsDto.toMapApple(purchase))
         .toList();
 
-    await firestore
-        .collection("appleInAppPurchases")
-        .doc(UserService.instance.user.id)
-        .set(
-      {
-        "userId": UserService.instance.user.id,
-        "lastSignatureId": someAppStorePurchaseDetails.skPaymentTransaction
-                .originalTransaction?.transactionIdentifier ??
-            someAppStorePurchaseDetails
-                .skPaymentTransaction.transactionIdentifier,
-      },
-      SetOptions(merge: true),
-    );
-
+    await Future.wait([
+      firestore
+          .collection("appleInAppPurchases")
+          .doc(UserService.instance.user.id)
+          .set(
+        {
+          "userId": UserService.instance.user.id,
+          "lastSignatureId": someAppStorePurchaseDetails.skPaymentTransaction
+                  .originalTransaction?.transactionIdentifier ??
+              someAppStorePurchaseDetails
+                  .skPaymentTransaction.transactionIdentifier,
+        },
+        SetOptions(merge: true),
+      ),
+      saveNewSignature(
+          someAppStorePurchaseDetails, UserService.instance.user.id),
+    ]);
     await firestore
         .collection("appleInAppPurchases")
         .doc(UserService.instance.user.id)
@@ -72,8 +73,6 @@ class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
           responseStatusModel = WeException.handle(error);
         });
 
-    String? date = DateTimeHelper.formatEpochTimestampFromApple(
-        someAppStorePurchaseDetails.skPaymentTransaction.transactionTimeStamp);
     // someAppStorePurchaseDetails.skPaymentTransaction.transactionTimeStamp
     // 1712370299.0
     // someAppStorePurchaseDetails.transactionDate
@@ -81,18 +80,6 @@ class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
 
     //someAppStorePurchaseDetails.purchaseID == someAppStorePurchaseDetails.skPaymentTransaction.transactionIdentifier
     // true
-    if (someAppStorePurchaseDetails
-            .skPaymentTransaction.transactionIdentifier !=
-        null) {
-      createDocInSignaturesCollection(
-          UserService.instance.user.id,
-          someAppStorePurchaseDetails
-              .skPaymentTransaction.transactionIdentifier!,
-          someAppStorePurchaseDetails
-              .skPaymentTransaction.transactionState.name,
-          date ??
-              DateTimeHelper.formatDateTimeToYYYYMMDDHHmmss(DateTime.now()));
-    }
 
     return responseStatusModel;
   }
@@ -130,30 +117,42 @@ class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
   }
 
   @override
-  Future<void> createDocInSignaturesCollection(
-      String userId, String signatureId, String status, String date) async {
-    //verify if exists a document with the same userId
-    final doc = await firestore.collection("signatures").doc(userId).get();
+  Future<void> saveNewSignature(PurchaseDetails purchaseDetails, userId) async {
+    purchaseDetails as AppStorePurchaseDetails;
 
-    if (doc.exists) {
-      return;
+    String? date = DateTimeHelper.formatEpochTimestampFromApple(
+      purchaseDetails.skPaymentTransaction.transactionTimeStamp ??
+          DateTime.now().millisecondsSinceEpoch.toDouble(),
+    );
+
+    List<dynamic>? appStoreTransactions =
+        (await firestore.collection("signatures").doc(userId).get())
+            .data()?['appStoreTransactions'] as List<dynamic>?;
+
+    final newTransaction = {
+      "transactionId":
+          purchaseDetails.skPaymentTransaction.transactionIdentifier,
+      "transactionDate": date,
+      "status": purchaseDetails.skPaymentTransaction.transactionState.name,
+    };
+
+    if (appStoreTransactions != null) {
+      appStoreTransactions.add(newTransaction);
     } else {
-      await firestore.collection("signatures").doc(userId).set(
-        {
-          "userId": userId,
-          "lastSignatureId": signatureId,
-          "lastPlatformPaymentDate": date,
-          "lastPlatform": "apple_store",
-          "appStoreTransactions": [
-            {
-              "transactionId": signatureId,
-              "transactionDate": date,
-              "status": status,
-            }
-          ],
-        },
-        SetOptions(merge: true),
-      );
+      appStoreTransactions = [newTransaction];
     }
+
+    await firestore.collection("signatures").doc(userId).set(
+      {
+        "appStoreTransactions": appStoreTransactions,
+        "userId": userId,
+        "lastSignatureId":
+            purchaseDetails.skPaymentTransaction.transactionIdentifier,
+        "lastPaymentDate": date,
+        "lastPlatform": "app_store",
+        "status": "active",
+      },
+      SetOptions(merge: true),
+    );
   }
 }

@@ -9,7 +9,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 
-class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
+class HandleIAPGoogleRepositoryImpl
+    implements IHandleIAPRepository, ISignaturesRepository {
   FirebaseFirestore firestore;
 
   HandleIAPGoogleRepositoryImpl({required this.firestore});
@@ -21,9 +22,6 @@ class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
     List<Map<String, dynamic>> maps = [];
     List<GooglePlayPurchaseDetails> googlePlayPurchases = [];
     GooglePlayPurchaseDetails? someGooglePlayurchaseDetails;
-
-    PrintColoredHelper.printWhite(
-        "purchasesDetails.length: ${purchasesDetails.length}");
 
     for (var element in purchasesDetails) {
       if (element is GooglePlayPurchaseDetails) {
@@ -37,17 +35,21 @@ class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
           "No GooglePlayPurchaseDetails found in purchasesDetails");
     }
 
-    await firestore
-        .collection("googleInAppPurchases")
-        .doc(UserService.instance.user.id)
-        .set(
-      {
-        "userId": UserService.instance.user.id,
-        "lastSignatureId":
-            someGooglePlayurchaseDetails.billingClientPurchase.purchaseToken,
-      },
-      SetOptions(merge: true),
-    );
+    await Future.wait([
+      firestore
+          .collection("googleInAppPurchases")
+          .doc(UserService.instance.user.id)
+          .set(
+        {
+          "userId": UserService.instance.user.id,
+          "lastSignatureId":
+              someGooglePlayurchaseDetails.billingClientPurchase.purchaseToken,
+        },
+        SetOptions(merge: true),
+      ),
+      saveNewSignature(
+          someGooglePlayurchaseDetails, UserService.instance.user.id),
+    ]);
 
     for (var element in purchasesDetails) {
       if (element is GooglePlayPurchaseDetails) {
@@ -73,16 +75,6 @@ class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
           PrintColoredHelper.printError("savePurchase ${error.toString()}");
           responseStatusModel = WeException.handle(error);
         });
-
-    String date = DateTimeHelper.formatEpochTimestamp(
-      someGooglePlayurchaseDetails.billingClientPurchase.purchaseTime,
-    );
-    createDocInSignaturesCollection(
-      UserService.instance.user.id,
-      someGooglePlayurchaseDetails.billingClientPurchase.purchaseToken,
-      someGooglePlayurchaseDetails.billingClientPurchase.purchaseState.name,
-      date,
-    );
 
     return responseStatusModel;
   }
@@ -120,29 +112,43 @@ class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
   }
 
   @override
-  Future<void> createDocInSignaturesCollection(
-      String userId, String signatureId, String status, String date) async {
-    final doc = await firestore.collection("signatures").doc(userId).get();
+  Future<void> saveNewSignature(
+      PurchaseDetails purchasesDetails, String userId) async {
+    purchasesDetails as GooglePlayPurchaseDetails;
 
-    if (doc.exists) {
-      return;
+    List<dynamic>? googlePlayTransactions =
+        (await firestore.collection("signatures").doc(userId).get())
+            .data()?['googlePlayTransactions'] as List<dynamic>?;
+
+    String date = DateTimeHelper.formatEpochTimestamp(
+        purchasesDetails.billingClientPurchase.purchaseTime);
+
+    PrintColoredHelper.printError(
+        "purchaseTime: ${purchasesDetails.billingClientPurchase.purchaseTime} date: $date");
+
+    final newTransaction = {
+      "transactionId": purchasesDetails.billingClientPurchase.purchaseToken,
+      "transactionDate": date,
+      "status":
+          4, //4 = "purchased" = SUBSCRIPTION_PURCHASED = purchaseDetails.skPaymentTransaction.transactionState.name,
+    };
+
+    if (googlePlayTransactions != null) {
+      googlePlayTransactions.add(newTransaction);
     } else {
-      await firestore.collection("signatures").doc(userId).set(
-        {
-          "userId": userId,
-          "lastSignatureId": signatureId,
-          "lastPlatformPaymentDate": date,
-          "lastPlatform": "google_play",
-          "googlePlayTransactions": [
-            {
-              "transactionId": signatureId,
-              "transactionDate": date,
-              "status": status,
-            }
-          ],
-        },
-        SetOptions(merge: true),
-      );
+      googlePlayTransactions = [newTransaction];
     }
+
+    await firestore.collection("signatures").doc(userId).set(
+      {
+        "googlePlayTransactions": googlePlayTransactions,
+        "userId": userId,
+        "lastSignatureId": purchasesDetails.billingClientPurchase.purchaseToken,
+        "lastPaymentDate": date,
+        "lastPlatform": "google_play",
+        "status": "active",
+      },
+      SetOptions(merge: true),
+    );
   }
 }
