@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/plans_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
@@ -81,13 +79,6 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                 child: CircularProgressIndicator(),
               ),
             );
-          }
-          if (Platform.isIOS) {
-            PrintColoredHelper.printWhite(
-                "snapshot.data!.subscriptionLevel: ${snapshot.data!.subscriptionLevel}");
-          } else if (Platform.isAndroid) {
-            PrintColoredHelper.printWhite(
-                "snapshot.data!.subscriptionLevel: ${snapshot.data!.subscriptionLevel}");
           }
 
           if (snapshot.data!.subscriptionLevel == SubscriptionEnum.paying) {
@@ -366,13 +357,13 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
       child: SizedBox(
         // color: AppColors.white,
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.7,
+        height: MediaQuery.of(context).size.height * 0.8,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.25,
+              height: MediaQuery.of(context).size.height * 0.3,
               decoration: BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.circular(10),

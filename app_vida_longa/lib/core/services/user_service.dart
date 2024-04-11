@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';
@@ -39,7 +38,6 @@ class UserService {
   StreamSubscription<UserModel>? subscription;
 
   void _registerListener() {
-    PrintColoredHelper.printOrange(">>>>debug Registering listener");
     if (subscription != null) {
       subscription!.cancel();
     }
@@ -172,7 +170,7 @@ class UserService {
 
   void initUser() async {
     if (_hasInit) {
-      throw Exception("User service already initialized");
+      return;
     }
     _hasInit = true;
     _registerListener();

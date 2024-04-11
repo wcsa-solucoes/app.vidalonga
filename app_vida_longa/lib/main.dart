@@ -60,7 +60,7 @@ void main() async {
       print(e);
     }
   }
-  Bloc.observer = MyBlocObserver();
+  // Bloc.observer = MyBlocObserver();
   InAppPurchaseStoreKitPlatform.registerPlatform();
 
   await startServices();

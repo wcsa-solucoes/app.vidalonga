@@ -37,6 +37,7 @@ class CouponModel {
       uuid: json['uuid'],
       usageQuantity: json['usageQuantity'],
       expiryDateTimestamp: json['expiryDateTimestamp'],
+      activationDateTimestamp: json['activationDateTimestamp'],
     );
   }
 

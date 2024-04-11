@@ -122,9 +122,9 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
         AppHelper.displayAlertError('Cupom esgotado');
         return;
       }
-      if (coupon.expiryDateTimestamp != null &&
-          DateTime.now().millisecondsSinceEpoch >=
-              coupon.expiryDateTimestamp!) {
+      var now = DateTime.now().millisecond;
+      var res = now >= coupon.expiryDateTimestamp!;
+      if (coupon.expiryDateTimestamp != null && res) {
         AppHelper.displayAlertError('Cupom expirado');
         return;
       }

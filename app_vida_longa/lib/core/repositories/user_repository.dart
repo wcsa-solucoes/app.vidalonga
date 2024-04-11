@@ -39,7 +39,8 @@ class UserRepository {
           "roles": {
             "subscriptionType": "nonPaying",
           },
-          "lastSignatureId": null
+          "lastSignatureId": null,
+          "profile": "client",
         })
         .then((value) => null)
         .onError((error, stackTrace) {
