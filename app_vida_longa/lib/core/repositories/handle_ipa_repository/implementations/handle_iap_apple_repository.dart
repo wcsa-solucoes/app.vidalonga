@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:app_vida_longa/core/controllers/we_exception.dart';
 import 'package:app_vida_longa/core/helpers/date_time_helper.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
@@ -19,67 +20,51 @@ class HandleIAPAppleRepositoryImpl
   Future<ResponseStatusModel> savePurchase(
       List<PurchaseDetails> purchasesDetails) async {
     ResponseStatusModel responseStatusModel = ResponseStatusModel();
-    List<Map<String, dynamic>> maps = [];
-    List<AppStorePurchaseDetails> appStorePurchases = [];
-    AppStorePurchaseDetails? someAppStorePurchaseDetails;
+    AppStorePurchaseDetails? lastPurchase;
 
-    for (var element in purchasesDetails) {
-      if (element is AppStorePurchaseDetails) {
-        someAppStorePurchaseDetails = element;
-        break;
-      }
-    }
+    lastPurchase = purchasesDetails.last as AppStorePurchaseDetails?;
 
-    if (someAppStorePurchaseDetails == null) {
+    if (lastPurchase == null) {
       throw UnimplementedError(
           "No AppStorePurchaseDetails found in purchasesDetails");
     }
 
-    for (var element in purchasesDetails) {
-      if (element is AppStorePurchaseDetails) {
-        appStorePurchases.add(element);
-      }
+    unawaited(saveNewSignature(lastPurchase, UserService.instance.user.id));
+
+    Map<String, dynamic> payload = {
+      "purchases": FieldValue.arrayUnion(
+        [PurchaseDetailsDto.toMapApple(lastPurchase)],
+      ),
+      "userId": UserService.instance.user.id,
+    };
+
+    if (lastPurchase
+            .skPaymentTransaction.originalTransaction?.transactionIdentifier !=
+        null) {
+      payload = {
+        ...payload,
+        "originalTransactionId": lastPurchase.skPaymentTransaction
+                .originalTransaction?.transactionIdentifier ??
+            lastPurchase.skPaymentTransaction.transactionIdentifier,
+        "lastSignatureId":
+            lastPurchase.skPaymentTransaction.transactionIdentifier,
+      };
     }
 
-    maps = appStorePurchases
-        .map((AppStorePurchaseDetails purchase) =>
-            PurchaseDetailsDto.toMapApple(purchase))
-        .toList();
-
-    await Future.wait([
-      firestore
-          .collection("appleInAppPurchases")
-          .doc(UserService.instance.user.id)
-          .set(
-        {
-          "userId": UserService.instance.user.id,
-          "lastSignatureId": someAppStorePurchaseDetails.skPaymentTransaction
-                  .originalTransaction?.transactionIdentifier ??
-              someAppStorePurchaseDetails
-                  .skPaymentTransaction.transactionIdentifier,
-        },
-        SetOptions(merge: true),
-      ),
-      saveNewSignature(
-          someAppStorePurchaseDetails, UserService.instance.user.id),
-    ]);
     await firestore
         .collection("appleInAppPurchases")
         .doc(UserService.instance.user.id)
-        .set({"purchases": maps}, SetOptions(merge: true))
+        .set(payload, SetOptions(merge: true))
         .then((value) {})
         .onError((error, stackTrace) {
-          PrintColoredHelper.printError("savePurchase ${error.toString()}");
-          responseStatusModel = WeException.handle(error);
-        });
+      PrintColoredHelper.printError("savePurchase ${error.toString()}");
+      responseStatusModel = WeException.handle(error);
+    });
 
     // someAppStorePurchaseDetails.skPaymentTransaction.transactionTimeStamp
     // 1712370299.0
     // someAppStorePurchaseDetails.transactionDate
     // "1712370299000"
-
-    //someAppStorePurchaseDetails.purchaseID == someAppStorePurchaseDetails.skPaymentTransaction.transactionIdentifier
-    // true
 
     return responseStatusModel;
   }
@@ -144,13 +129,17 @@ class HandleIAPAppleRepositoryImpl
 
     await firestore.collection("signatures").doc(userId).set(
       {
-        "appStoreTransactions": appStoreTransactions,
+        //not need here because webhook will handle this
+        // "appStoreTransactions": appStoreTransactions,
         "userId": userId,
         "lastSignatureId":
             purchaseDetails.skPaymentTransaction.transactionIdentifier,
         "lastPaymentDate": date,
         "lastPlatform": "app_store",
         "status": "active",
+        "originalTransactionIdAppStore": purchaseDetails.skPaymentTransaction
+                .originalTransaction?.transactionIdentifier ??
+            purchaseDetails.skPaymentTransaction.transactionIdentifier,
       },
       SetOptions(merge: true),
     );

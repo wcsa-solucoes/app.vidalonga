@@ -11,6 +11,7 @@ class ArticlesRepository {
 
     await FirebaseFirestore.instance
         .collection('articles')
+        .where('status', isEqualTo: 'published')
         .orderBy('createdAt', descending: true)
         .get()
         .then((snpashot) {
