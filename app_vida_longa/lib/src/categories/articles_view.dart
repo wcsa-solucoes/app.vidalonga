@@ -50,7 +50,6 @@ class _ArticlesViewState extends State<ArticlesView> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.8,
-                      height: MediaQuery.of(context).size.height * 0.3,
                       child: ArticleCard(
                           article: CategoriesService
                               .instance.articlesFromSubcategories[index]),
