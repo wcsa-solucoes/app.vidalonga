@@ -52,14 +52,6 @@ void main() async {
     return true;
   };
 
-  if (kDebugMode) {
-    try {
-      // FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-      // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-    } catch (e) {
-      print(e);
-    }
-  }
   // Bloc.observer = MyBlocObserver();
   InAppPurchaseStoreKitPlatform.registerPlatform();
 

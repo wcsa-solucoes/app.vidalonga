@@ -1,6 +1,6 @@
 enum SubscriptionEnum {
   paying("paying", "Assinante"),
-  nonPaying("nonPaying", "Não assinante");
+  nonPaying("nonpaying", "Não assinante");
 
   final String name;
   final String value;

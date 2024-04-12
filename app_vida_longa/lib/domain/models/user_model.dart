@@ -38,13 +38,13 @@ class UserModel {
   }
 
   static SubscriptionEnum subscriptionEnumFromJson(Map<String, dynamic> roles) {
-    final subscriptionType = roles["subscriptionType"];
+    final subscriptionType = roles["subscriptionType"] as String?;
 
     if (subscriptionType == null) {
       return SubscriptionEnum.nonPaying;
     }
     return SubscriptionEnum.values.firstWhere(
-      (e) => e.name == subscriptionType,
+      (e) => e.name == subscriptionType.toLowerCase(),
       orElse: () => SubscriptionEnum.nonPaying,
     );
   }
