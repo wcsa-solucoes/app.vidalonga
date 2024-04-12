@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
@@ -12,6 +13,7 @@ import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/profile/views/contacts_view.dart';
 import 'package:app_vida_longa/src/profile/views/favorites_articles_view.dart';
+import 'package:app_vida_longa/src/profile/views/qr_code_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
@@ -26,6 +28,8 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   final AuthBloc _authBloc = AuthBloc();
+
+  final UserService _userService = UserService.instance;
 
   @override
   void initState() {
@@ -84,16 +88,30 @@ class _ProfileViewState extends State<ProfileView> {
             ),
           );
         }),
-        // OpenPageButtonWiget(
-        //   "Abrir QRCode",
-        //   onPressed: () {
-        //     Navigator.of(context).push(
-        //       MaterialPageRoute(
-        //         builder: (context) => const QrCodeView(),
-        //       ),
-        //     );
-        //   },
-        // ),
+        StreamBuilder<UserModel>(
+          initialData: _userService.user,
+          stream: _userService.userStream,
+          builder: (context, snapshot) {
+            return OpenPageButtonWiget(
+              "Abrir QRCode",
+              onPressed: () {
+                if (snapshot.data!.subscriptionLevel ==
+                    SubscriptionEnum.paying) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const QrCodeView(),
+                    ),
+                  );
+                } else {
+                  AppHelper.displayAlertInfo(
+                    "Para acessar o QRCode é necessário ter uma assinatura ativa.",
+                  );
+                }
+              },
+            );
+          },
+        ),
+
         OpenPageButtonWiget(
           "Dúvidas e sugestões",
           onPressed: () {

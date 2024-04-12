@@ -187,12 +187,11 @@ class _HomeViewState extends State<HomeView> {
   Widget _handleChips(List<ChipCategorieModel> chipsCategorie,
       List<List<ArticleModel>> articlesByCategorySelectedAll) {
     return ListView.builder(
-      padding: const EdgeInsets.all(8.0),
       scrollDirection: Axis.horizontal,
       itemCount: chipsCategorie.length,
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.only(left: 10),
+          padding: const EdgeInsets.only(right: 10),
           child: IconChoiceChip(
             isSelected: chipsCategorie[index].selected,
             label: chipsCategorie[index].label,
@@ -271,12 +270,12 @@ class _HomeViewState extends State<HomeView> {
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: categoryArticles.length,
-                  padding: const EdgeInsets.only(right: 20),
+                  // padding: const EdgeInsets.only(right: 20),
                   itemBuilder: (BuildContext context, int articleIndex) {
                     final article = categoryArticles[articleIndex];
                     return Padding(
                       padding: const EdgeInsets.only(
-                          left: 10, top: 4, bottom: 0, right: 15),
+                          left: 0, top: 4, bottom: 0, right: 15),
                       child: ArticleCard(article: article),
                     );
                   },
