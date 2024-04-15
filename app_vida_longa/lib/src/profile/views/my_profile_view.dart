@@ -8,6 +8,7 @@ import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/shared/widgets/flat_button.dart';
 import 'package:app_vida_longa/shared/widgets/wrapper_dialog.dart';
@@ -42,21 +43,7 @@ class _MyProfileViewState extends State<MyProfileView> {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.white,
-        title: const DefaultText(
-          "Meu Perfil",
-          fontSize: 20,
-          fontWeight: FontWeight.w300,
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar: const DefaultAppBar(title: "Meu Perfil", isWithBackButton: true),
       hasScrollView: true,
       body: _body(),
     );

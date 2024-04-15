@@ -1,10 +1,10 @@
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/services/partners_and_benefits/benefits_service.dart';
 import 'package:app_vida_longa/core/services/partners_and_benefits/partners_service.dart';
-import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/enums/social_media_enum.dart';
 import 'package:app_vida_longa/domain/models/benefit_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -37,22 +37,7 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.white,
-        title: DefaultText(
-          _partnerService.selectedPartner.name,
-          fontSize: 20,
-          fontWeight: FontWeight.w300,
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      // hasScrollView: true,
+      appBar: const DefaultAppBar(title: "Benefícios", isWithBackButton: true),
       body: SizedBox(
         width: MediaQuery.sizeOf(context).width,
         height: MediaQuery.sizeOf(context).height,
@@ -63,6 +48,13 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                DefaultText(
+                  _partnerService.selectedPartner.name,
+                  maxLines: 2,
+                  fontSize: 20,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
                 DefaultText(
                   _partnerService.selectedPartner.presentationText,
                   maxLines: 20,

@@ -2,6 +2,7 @@ import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/src/questions_and_answers/bloc/qa_bloc.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
 class NewQuestionView extends StatefulWidget {
-  const NewQuestionView({super.key});
+  final QABloc qaBloc;
+  const NewQuestionView({super.key, required this.qaBloc});
 
   @override
   State<NewQuestionView> createState() => _NewQuestionViewState();
@@ -21,7 +23,7 @@ class _NewQuestionViewState extends State<NewQuestionView> {
 
   @override
   void initState() {
-    _qaBloc = ReadContext(context).read<QABloc>();
+    _qaBloc = widget.qaBloc;
     super.initState();
   }
 
@@ -34,22 +36,8 @@ class _NewQuestionViewState extends State<NewQuestionView> {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.white,
-        title: const DefaultText(
-          "Nova pergunta",
-          fontSize: 20,
-          fontWeight: FontWeight.w300,
-        ),
-        //back button
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar:
+          const DefaultAppBar(title: "Nova pergunta", isWithBackButton: true),
       body: body(),
     );
   }
@@ -66,7 +54,7 @@ class _NewQuestionViewState extends State<NewQuestionView> {
       bloc: _qaBloc,
       builder: (context, state) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height * 0.6,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -104,6 +92,7 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 5),
                         child: Tooltip(
+                          preferBelow: false,
                           message:
                               "Somente você e o profissional sabe quem fez a pergunta",
                           child: DefaultText(

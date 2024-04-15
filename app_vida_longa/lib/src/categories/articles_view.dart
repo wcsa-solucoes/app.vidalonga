@@ -1,9 +1,8 @@
 import 'package:app_vida_longa/core/services/categories_service.dart';
-import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/models/sub_category_model.dart';
 import 'package:app_vida_longa/shared/widgets/article_card_widget.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
-import 'package:app_vida_longa/shared/widgets/default_text.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class ArticlesView extends StatefulWidget {
@@ -17,27 +16,11 @@ class _ArticlesViewState extends State<ArticlesView> {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: AppColors.white,
-          title: DefaultText(
-            widget.subCategory.name,
-            fontSize: 20,
-            fontWeight: FontWeight.w300,
-          ),
-          //back button syle
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
+        appBar: DefaultAppBar(
+            title: widget.subCategory.name, isWithBackButton: true),
         body: Column(
           children: [
-            Text("Artigos", style: Theme.of(context).textTheme.displaySmall),
             SizedBox(
-              // color: Colors.amber,
               width: MediaQuery.sizeOf(context).width,
               height: MediaQuery.sizeOf(context).height * 0.9,
               child: ListView.builder(

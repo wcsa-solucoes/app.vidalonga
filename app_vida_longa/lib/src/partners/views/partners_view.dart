@@ -11,6 +11,7 @@ import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart'
 import 'package:app_vida_longa/shared/widgets/custom_chip.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/partners/bloc/partners_bloc.dart';
@@ -45,15 +46,7 @@ class _PartnersViewState extends State<PartnersView> {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.white,
-        title: const DefaultText(
-          "Parceiros",
-          fontSize: 20,
-          fontWeight: FontWeight.w300,
-        ),
-      ),
+      appBar: const DefaultAppBar(title: "Parceiros"),
       bottomNavigationBar: const CustomBottomNavigationBar(),
       body: SizedBox(
         width: MediaQuery.sizeOf(context).width,

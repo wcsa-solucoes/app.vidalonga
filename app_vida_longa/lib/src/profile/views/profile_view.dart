@@ -7,13 +7,11 @@ import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
-import 'package:app_vida_longa/shared/widgets/default_text.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/open_button_page.dart';
 import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/profile/views/contacts_view.dart';
-import 'package:app_vida_longa/src/profile/views/favorites_articles_view.dart';
-import 'package:app_vida_longa/src/profile/views/qr_code_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
@@ -39,16 +37,7 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.white,
-        title: const DefaultText(
-          "Perfil",
-          fontSize: 20,
-          fontWeight: FontWeight.w300,
-        ),
-        //back button syle
-      ),
+      appBar: const DefaultAppBar(title: "Perfil"),
       hasSafeArea: true,
       body: Builder(builder: (context) {
         return _body();
@@ -78,8 +67,7 @@ class _ProfileViewState extends State<ProfileView> {
           },
         ),
         OpenPageButtonWiget("Meus favoritos", onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const FavoritesArticlesView()));
+          NavigationController.push(routes.app.profile.favorites.path);
         }),
         OpenPageButtonWiget("Contatos", onPressed: () {
           Navigator.of(context).push(
@@ -97,11 +85,7 @@ class _ProfileViewState extends State<ProfileView> {
               onPressed: () {
                 if (snapshot.data!.subscriptionLevel ==
                     SubscriptionEnum.paying) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const QrCodeView(),
-                    ),
-                  );
+                  NavigationController.push(routes.app.profile.qrcode.path);
                 } else {
                   AppHelper.displayAlertInfo(
                     "Para acessar o QRCode é necessário ter uma assinatura ativa.",

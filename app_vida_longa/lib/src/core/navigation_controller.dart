@@ -9,6 +9,22 @@ abstract class NavigationController {
 
   static Stream<String> get routeStream => _routeController.stream;
 
+  //altura da profundidade
+  static int heightDepth() {
+    return countWordsBetweenSlashes(Modular.to.path);
+  }
+
+  static int countWordsBetweenSlashes(String path) {
+    List<String> parts = path.split('/');
+    int count = 0;
+    for (String part in parts) {
+      if (part.isNotEmpty) {
+        count += part.split(' ').length;
+      }
+    }
+    return count;
+  }
+
   static void init() {
     Modular.to.addListener(() {
       log(Modular.to.path);

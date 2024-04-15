@@ -16,6 +16,7 @@ class OpenPageButtonWiget extends StatelessWidget {
         borderRadius: BorderRadius.circular(0.0),
       ),
       child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
         width: MediaQuery.sizeOf(context).width * 1.0,
         height: 50.0,
         decoration: BoxDecoration(
@@ -46,9 +47,9 @@ class OpenPageButtonWiget extends StatelessWidget {
                     text,
                     style: GoogleFonts.getFont(
                       'Urbanist',
-                      color: AppColors.secondaryText,
+                      color: AppColors.primaryText,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
+                      fontSize: 20.0,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),

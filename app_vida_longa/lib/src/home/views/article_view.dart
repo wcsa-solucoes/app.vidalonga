@@ -8,6 +8,7 @@ import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:flutter/material.dart';
@@ -77,21 +78,22 @@ class _ArticleViewState extends State<ArticleView> {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.white,
-        title: const DefaultText(
-          "Artigo",
-          fontSize: 20,
-          fontWeight: FontWeight.w300,
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar: const DefaultAppBar(title: "Artigo", isWithBackButton: true),
+      //  appBar: AppBar(
+      //   centerTitle: true,
+      //   backgroundColor: AppColors.white,
+      //   title: const DefaultText(
+      //     "Artigo",
+      //     fontSize: 20,
+      //     fontWeight: FontWeight.w300,
+      //   ),
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
+      //     onPressed: () {
+      //       Navigator.pop(context);
+      //     },
+      //   ),
+      // ),
       hasScrollView: true,
       body: Column(
         children: [

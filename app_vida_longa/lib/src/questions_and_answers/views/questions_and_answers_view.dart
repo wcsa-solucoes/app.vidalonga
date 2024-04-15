@@ -1,15 +1,15 @@
 import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
+import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/domain/models/question_answer_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/shared/widgets/open_button_page.dart';
+import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/questions_and_answers/bloc/qa_bloc.dart';
-import 'package:app_vida_longa/src/questions_and_answers/views/some_question_view.dart';
-import 'package:app_vida_longa/src/questions_and_answers/views/new_question_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -44,12 +44,32 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
   Widget build(BuildContext context) {
     return CustomAppScaffold(
       appBar: AppBar(
-        centerTitle: true,
         backgroundColor: AppColors.white,
-        title: const DefaultText(
-          "Perguntas e Respostas",
-          fontSize: 20,
-          fontWeight: FontWeight.w300,
+        flexibleSpace: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Image.asset(
+                    "assets/images/AVATAR_(1).png",
+                    width: 60,
+                  ),
+                  const DefaultText(
+                    "Perguntas",
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  const SizedBox(
+                    width: 60,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
         bottom: TabBar(
             indicatorColor: AppColors.selectedColor,
@@ -63,10 +83,17 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
             ),
             tabs: const [
               Tab(
-                text: "Todas perguntas",
-              ),
+                  icon: DefaultText(
+                "Todas perguntas",
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              )),
               Tab(
-                text: "Minhas perguntas",
+                icon: DefaultText(
+                  "Minhas perguntas",
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               )
             ],
             controller: _tabController),
@@ -77,14 +104,8 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
           ? FloatingActionButton(
               backgroundColor: AppColors.white,
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider.value(
-                      value: _qaBloc,
-                      child: const NewQuestionView(),
-                    ),
-                  ),
-                );
+                NavigationController.push(routes.app.qa.newQuestion.path,
+                    arguments: _qaBloc);
               },
               child: const FaIcon(
                 FontAwesomeIcons.plus,
@@ -168,13 +189,8 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
                 return OpenPageButtonWiget(
                   question.question,
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => SomeQuestionView(
-                          question: question,
-                        ),
-                      ),
-                    );
+                    NavigationController.push(routes.app.qa.question.path,
+                        arguments: question);
                   },
                 );
               },

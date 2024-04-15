@@ -6,6 +6,7 @@ import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart'
 import 'package:app_vida_longa/shared/widgets/custom_chip.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/src/home/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
@@ -43,15 +44,7 @@ class _HomeViewState extends State<HomeView> {
       listener: (context, state) {},
       builder: (BuildContext context, HomeState state) {
         return CustomAppScaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            backgroundColor: AppColors.white,
-            title: const DefaultText(
-              "Início",
-              fontSize: 20,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
+          appBar: const DefaultAppBar(title: "Ínicio"),
           body: SizedBox(
             width: MediaQuery.sizeOf(context).width,
             height: MediaQuery.sizeOf(context).height,

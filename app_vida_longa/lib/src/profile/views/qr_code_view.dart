@@ -1,7 +1,7 @@
 import 'package:app_vida_longa/core/services/user_service.dart';
-import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -19,22 +19,7 @@ class _QrCodeViewState extends State<QrCodeView> {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: AppColors.white,
-          title: const DefaultText(
-            "QRCode",
-            fontSize: 20,
-            fontWeight: FontWeight.w300,
-          ),
-          //back button syle
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
+        appBar: const DefaultAppBar(title: "QRCode", isWithBackButton: true),
         body: body());
   }
 

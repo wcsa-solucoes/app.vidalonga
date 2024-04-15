@@ -310,6 +310,8 @@ class _LoginViewState extends State<LoginView>
           child: const DefaultText(
             "Esqueceu a senha?",
             decoration: TextDecoration.underline,
+            color: AppColors.buttonText,
+            fontSize: 16,
           ),
         ),
         TextButton(
@@ -320,6 +322,8 @@ class _LoginViewState extends State<LoginView>
           child: const DefaultText(
             "Política de Privacidade",
             decoration: TextDecoration.underline,
+            color: AppColors.buttonText,
+            fontSize: 16,
           ),
         ),
         TextButton(
@@ -330,6 +334,8 @@ class _LoginViewState extends State<LoginView>
           child: const DefaultText(
             "Termos e condições",
             decoration: TextDecoration.underline,
+            color: AppColors.buttonText,
+            fontSize: 16,
           ),
         ),
       ],

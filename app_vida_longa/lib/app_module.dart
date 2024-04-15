@@ -21,7 +21,6 @@ class AppModule extends Module {
       ModuleRoute("/home", module: HomeModule()),
       ModuleRoute("/categories", module: CategoriesModule()),
       ModuleRoute("/questionsAndAnswers", module: QuestionAndAnswersModule()),
-      // ModuleRoute("/benefits", module: BenefitsModule()),
       ModuleRoute("/partners", module: PartnersModule()),
     ]);
   }

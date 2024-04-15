@@ -9,6 +9,7 @@ import 'package:app_vida_longa/domain/models/user_model.dart';
 import 'package:app_vida_longa/shared/launch_util.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/shared/widgets/flat_button.dart';
 import 'package:app_vida_longa/shared/widgets/policy_widget.dart';
@@ -46,21 +47,8 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.white,
-        title: const DefaultText(
-          'Assinatura',
-          fontSize: 20,
-          fontWeight: FontWeight.w300,
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar: const DefaultAppBar(title: "Assinaturas", isWithBackButton: true),
+
       // hasScrollView: true,
       body: body(),
     );
@@ -203,119 +191,13 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    const DefaultText(
-                      "Torne-se um membro",
-                      fontSize: 20,
-                      fontWeight: FontWeight.w300,
-                      color: AppColors.secondary,
-                    ),
-                    const DefaultText(
-                      'Para acessar todo o nosso conteúdo ilimitado, assine agora.',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                    ),
-                    DefaultText(
-                      'R\$ ${productDetails.rawPrice}/mês',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w300,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: FlatButton(
-                        isWithContrastColor: true,
-                        onPressed: () {
-                          _subscriptionsBloc
-                              .add(SelectedProductEvent(productDetails));
-                        },
-                        textLabel: 'Assinar',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
+            applyCoupon(),
+            const SizedBox(height: 20),
+            becomeNewMember(productDetails),
+            const SizedBox(height: 20),
+            recoverySubscription(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  //restore purchases
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: FlatButton(
-                      isWithContrastColor: true,
-                      onPressed: () {
-                        _subscriptionsBloc.add(RestorePurchasesEvent());
-                      },
-                      textLabel: 'Restaurar compras',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const DefaultText(
-                      'Possui cupom para plano com desconto?',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    DecoratedTextFieldWidget(
-                      controller: _couponTxtEdtCtrl,
-                      labelText: 'Cupom',
-                      hintText: 'Digite o cupom',
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: FlatButton(
-                        isWithContrastColor: true,
-                        onPressed: () {
-                          _subscriptionsBloc
-                              .add(AddedCouponEvent(_couponTxtEdtCtrl.text));
-                        },
-                        textLabel: 'Buscar plano!',
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Column(
                 children: [
                   TextButton(
@@ -324,7 +206,13 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                           context: context,
                           builder: (context) => const PolicyWidget());
                     },
-                    child: const Text("Política de Privacidade"),
+                    // child: const Text("Política de Privacidade"),
+                    child: const DefaultText(
+                      "Política de Privacidade",
+                      decoration: TextDecoration.underline,
+                      color: AppColors.buttonText,
+                      fontSize: 16,
+                    ),
                   ),
                   TextButton(
                     onPressed: () {
@@ -332,13 +220,128 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                           context: context,
                           builder: (context) => const TermsWiget());
                     },
-                    child: const Text("Termos e condições"),
+                    child: const DefaultText(
+                      "Termos de Uso",
+                      decoration: TextDecoration.underline,
+                      color: AppColors.buttonText,
+                      fontSize: 16,
+                    ),
                   ),
                 ],
               ),
             ),
             const SizedBox(
               height: 80,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container applyCoupon() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 20,
+            ),
+            const DefaultText(
+              'Possui cupom para plano com desconto?',
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+              maxLines: 2,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            DecoratedTextFieldWidget(
+              controller: _couponTxtEdtCtrl,
+              labelText: 'Cupom',
+              hintText: 'Digite o cupom',
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: FlatButton(
+                isWithContrastColor: true,
+                onPressed: () {
+                  _subscriptionsBloc
+                      .add(AddedCouponEvent(_couponTxtEdtCtrl.text));
+                },
+                textLabel: 'Aplicar Cupom',
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding recoverySubscription() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          //restore purchases
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: FlatButton(
+              isWithContrastColor: true,
+              onPressed: () {
+                _subscriptionsBloc.add(RestorePurchasesEvent());
+              },
+              textLabel: 'Restaurar assinaturas',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container becomeNewMember(ProductDetails productDetails) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            const DefaultText(
+              "Torne-se um membro",
+              fontSize: 20,
+              fontWeight: FontWeight.w300,
+              color: AppColors.secondary,
+            ),
+            const DefaultText(
+              'Para acessar todo o nosso conteúdo ilimitado, assine agora.',
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+              maxLines: 2,
+              textAlign: TextAlign.center,
+            ),
+            DefaultText(
+              'R\$ ${productDetails.rawPrice}/mês',
+              fontSize: 20,
+              fontWeight: FontWeight.w300,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: FlatButton(
+                isWithContrastColor: true,
+                onPressed: () {
+                  _subscriptionsBloc.add(SelectedProductEvent(productDetails));
+                },
+                textLabel: 'Assinar',
+              ),
             ),
           ],
         ),
