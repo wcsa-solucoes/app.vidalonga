@@ -11,7 +11,6 @@ class HandleIAPService {
   List<PurchaseDetails> get purchases => _purchases;
   final IHandleIAPRepository handleIAPRepository;
   final ICouponsService _couponsService = CouponsServiceImpl.instance;
-  // ISignaturesRepository signaturesRepository = SignaturesRepository();
 
   HandleIAPService({required this.handleIAPRepository});
 

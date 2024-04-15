@@ -3,7 +3,9 @@ import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-abstract class ISubscriptionRepository {
+abstract class ISubscriptionRepository implements IUpdateUserStatusFromRoles {}
+
+abstract class IUpdateUserStatusFromRoles {
   Future<ResponseStatusModel> updateSubscriberStatusFromRoles(
       SubscriptionEnum subscription, String platform);
 }

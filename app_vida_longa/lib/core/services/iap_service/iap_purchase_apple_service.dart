@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/handle_ipa_repository/implementations/handle_iap_apple_repository.dart';
 import 'package:app_vida_longa/core/services/iap_service/handle_iap_service.dart';
@@ -94,6 +95,11 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
 
   void _handlePurchaseUpdatesFromApples(
       List<PurchaseDetails> purchaseDetailsList) async {
+    if (purchaseDetailsList.isEmpty) {
+      AppHelper.displayAlertInfo('Erro ao realizar a compra, tente novamente');
+      return;
+    }
+
     final PurchaseDetails purchaseDetails = purchaseDetailsList.last;
 
     if (purchaseDetails.status == PurchaseStatus.canceled) {

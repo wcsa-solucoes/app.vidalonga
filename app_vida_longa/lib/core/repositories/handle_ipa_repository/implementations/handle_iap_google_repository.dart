@@ -11,8 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 
-class HandleIAPGoogleRepositoryImpl
-    implements IHandleIAPRepository, ISignaturesRepository {
+class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
   FirebaseFirestore firestore;
 
   HandleIAPGoogleRepositoryImpl({required this.firestore});

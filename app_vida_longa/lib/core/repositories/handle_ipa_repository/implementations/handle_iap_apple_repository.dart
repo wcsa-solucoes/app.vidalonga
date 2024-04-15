@@ -10,8 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 
-class HandleIAPAppleRepositoryImpl
-    implements IHandleIAPRepository, ISignaturesRepository {
+class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
   FirebaseFirestore firestore;
 
   HandleIAPAppleRepositoryImpl({required this.firestore});
