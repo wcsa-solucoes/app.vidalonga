@@ -118,6 +118,7 @@ class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
       "transactionId": purchasesDetails.billingClientPurchase.purchaseToken,
       "date": date,
       "status": 4,
+      "from": "androidMobileApplication",
     };
 
     Map<String, dynamic> payload = {
