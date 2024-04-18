@@ -76,15 +76,19 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
         _inAppPurchase.purchaseStream;
 
     _subscription = purchaseUpdated.listen(
-      (purchaseDetailsList) {
-        _handlePurchaseUpdates(purchaseDetailsList);
+      (purchaseDetailsList) async {
+        await _handlePurchaseUpdates(purchaseDetailsList);
+        isRestored = false;
       },
       onError: (error) {},
       onDone: () {},
     );
   }
 
-  void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetailsList) async {
+  bool isRestored = false;
+
+  Future<void> _handlePurchaseUpdates(
+      List<PurchaseDetails> purchaseDetailsList) async {
     if (purchaseDetailsList.isEmpty) {
       AppHelper.displayAlertInfo('Erro ao realizar a compra, tente novamente');
       return;
@@ -97,25 +101,31 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
       if (purchaseDetails.status == PurchaseStatus.error) {
       } else if (purchaseDetails.status == PurchaseStatus.purchased ||
           purchaseDetails.status == PurchaseStatus.restored) {
-        final PlanModel plan = _plansService.getPlanIdByGoogleId(
-          purchaseDetails.productID,
-        );
+        final PlanModel plan =
+            _plansService.getPlanIdByGoogleId(purchaseDetails.productID);
 
         if (purchaseDetails.status == PurchaseStatus.purchased) {
-          await _handleIAPService.handlePurchase(
-            purchaseDetails,
-            'google_play',
-            plan,
-            couponAdded: _couponAdded,
-          );
+          if (isRestored) {
+            _handleIAPService.recoverPurchase(purchaseDetails, "google_play");
+          } else {
+            await _handleIAPService.handlePurchase(
+              purchaseDetails,
+              'google_play',
+              plan,
+              couponAdded: _couponAdded,
+            );
+          }
+
+          isRestored = false;
         }
         _couponAdded = null;
 
         if (purchaseDetails.status == PurchaseStatus.restored) {
-          await _handleIAPService.handlePurchase(
+          isRestored = true;
+
+          await _handleIAPService.recoverPurchase(
             purchaseDetails,
-            'google_play',
-            plan,
+            "google_play",
           );
         }
 
@@ -197,7 +207,7 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
     // The old subscription is only required on Android since Apple handles this internally
     // by using the subscription group feature in ItunesConnect.
 
-    const oldSubscriptionId = 'old.subscription.teste';
+    var oldSubscriptionId = productDetails.id;
 
     if (purchases?.containsKey(oldSubscriptionId) == true) {
       return purchases?[oldSubscriptionId] as GooglePlayPurchaseDetails;

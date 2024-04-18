@@ -6,7 +6,8 @@ abstract class IHandleIAPRepository
     implements
         ISavePurchaseRepository,
         IGetPurchasesRepository,
-        ISignaturesRepository {}
+        ISignaturesRepository,
+        IRecoversRepository {}
 
 abstract class ISavePurchaseRepository {
   Future<ResponseStatusModel> savePurchase(
@@ -29,4 +30,8 @@ abstract class ISignaturesRepository {
     PlanModel plan, {
     String? couponId,
   });
+}
+
+abstract class IRecoversRepository {
+  Future<void> recoverPurchase(PurchaseDetails purchasesDetails);
 }
