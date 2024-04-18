@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:app_vida_longa/core/helpers/date_time_helper.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
+import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/models/coupon_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -49,31 +51,6 @@ class CouponsRepositoryImpl implements ICouponsRepository {
   Future<({ResponseStatusModel response, List<CouponModel> coupons})>
       getCoupons() async {
     ResponseStatusModel response = ResponseStatusModel();
-    //  _coupons = [
-    //   CouponModel(
-    //     uuid: 'abc',
-    //     activationDate: "2024-01-23T17:04",
-    //     createdAt: "2024-01-23 14:01:14",
-    //     expiryDate: "2024-01-31T14:01",
-    //     haveUsageLimit: true,
-    //     limit: 1,
-    //     name: "CUPOM",
-    //     applePlanId: "app.vidalongaapp.assinaturamensal.test.prod",
-    //     googlePlanId: "com.vidalonga.assinaturamensal.90",
-    //     usageQuantity: 0,
-    //   ),
-    //   CouponModel(
-    //     uuid: 'asdasd',
-    //     activationDate: "2024-01-23T17:04",
-    //     createdAt: "2024-01-23 14:01:14",
-    //     expiryDate: "2024-01-31T14:01",
-    //     haveUsageLimit: false,
-    //     limit: 0,
-    //     name: "CUPOM2",
-    //     applePlanId: "app.vidalongaapp.assinaturamensal",
-    //     googlePlanId: "com.vidalonga.assinaturamensal",
-    //   ),
-    // ];
 
     await firestore.collection('coupons').get().then((querySnapshot) {
       final List<CouponModel> tempCoupons = [];
@@ -103,6 +80,13 @@ class CouponsRepositoryImpl implements ICouponsRepository {
 
     await firestore.collection('coupons').doc(coupon.uuid).update({
       'usageQuantity': FieldValue.increment(1),
+      "usageHistory": FieldValue.arrayUnion([
+        {
+          "date": DateTimeHelper.formatEpochTimestamp(
+              DateTime.now().millisecondsSinceEpoch),
+          "userId": UserService.instance.user.id,
+        }
+      ])
     }).then((value) {
       response.status = ResponseStatusEnum.success;
     }).onError(

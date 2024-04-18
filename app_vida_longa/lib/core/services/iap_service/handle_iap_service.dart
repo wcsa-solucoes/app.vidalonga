@@ -3,6 +3,7 @@ import 'package:app_vida_longa/core/services/coupons_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/domain/models/coupon_model.dart';
+import 'package:app_vida_longa/domain/models/plan_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
@@ -16,12 +17,13 @@ class HandleIAPService {
 
   Future<void> handlePurchase(
     PurchaseDetails purchaseDetails,
-    String platform, {
+    String platform,
+    PlanModel plan, {
     CouponModel? couponAdded,
   }) async {
     await Future.wait([
       _handleCoupon(couponAdded),
-      savePurchase(purchaseDetails),
+      savePurchase(purchaseDetails, plan, couponAdded: couponAdded),
       UserService.instance
           .updateSubscriberStatusFromRoles(SubscriptionEnum.paying, platform),
     ]);
@@ -33,9 +35,14 @@ class HandleIAPService {
     }
   }
 
-  Future<void> savePurchase(PurchaseDetails purchaseDetails) async {
+  Future<void> savePurchase(
+    PurchaseDetails purchaseDetails,
+    PlanModel plan, {
+    CouponModel? couponAdded,
+  }) async {
     _purchases.add(purchaseDetails);
-    await handleIAPRepository.savePurchase(_purchases);
+    await handleIAPRepository.savePurchase(_purchases, plan,
+        couponId: couponAdded?.uuid);
   }
 
   Future<void> getPurchases() async {

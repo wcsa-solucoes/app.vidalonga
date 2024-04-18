@@ -8,6 +8,8 @@ abstract class IPlansService {
   List<PlanModel> get plans;
 
   late final PlanModel defaultPlan;
+  PlanModel getPlanIdByAppleId(String id);
+  PlanModel getPlanIdByGoogleId(String id);
 }
 
 class PlansServiceImpl implements IPlansService {
@@ -43,4 +45,20 @@ class PlansServiceImpl implements IPlansService {
 
   @override
   List<PlanModel> get plans => _plans;
+
+  @override
+  PlanModel getPlanIdByAppleId(String id) {
+    return _plans.firstWhere(
+      (element) => element.applePlanId == id,
+      orElse: () => defaultPlan,
+    );
+  }
+
+  @override
+  PlanModel getPlanIdByGoogleId(String id) {
+    return _plans.firstWhere(
+      (element) => element.googlePlanId == id,
+      orElse: () => defaultPlan,
+    );
+  }
 }

@@ -3,11 +3,14 @@ class PlanModel {
   final String? applePlanId;
   final String? googlePlanId;
   final double price;
+  final String uuid;
+
   PlanModel({
     required this.name,
     required this.applePlanId,
     required this.googlePlanId,
     required this.price,
+    this.uuid = "",
   });
 
   factory PlanModel.fromMap(Map<String, dynamic> json) {
@@ -16,6 +19,7 @@ class PlanModel {
       applePlanId: json['applePlanId'],
       googlePlanId: json['googlePlanId'],
       price: json['price'],
+      uuid: json['uuid'],
     );
   }
 }

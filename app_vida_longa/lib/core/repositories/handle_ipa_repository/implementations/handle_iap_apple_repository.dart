@@ -5,6 +5,7 @@ import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/handle_ipa_repository/interface/handle_iap_interface.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/dtos/purchase_details_dto.dart';
+import 'package:app_vida_longa/domain/models/plan_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -17,7 +18,10 @@ class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
 
   @override
   Future<ResponseStatusModel> savePurchase(
-      List<PurchaseDetails> purchasesDetails) async {
+    List<PurchaseDetails> purchasesDetails,
+    PlanModel plan, {
+    String? couponId,
+  }) async {
     ResponseStatusModel responseStatusModel = ResponseStatusModel();
     AppStorePurchaseDetails? lastPurchase;
 
@@ -28,27 +32,27 @@ class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
           "No AppStorePurchaseDetails found in purchasesDetails");
     }
 
-    unawaited(saveNewSignature(lastPurchase, UserService.instance.user.id));
+    unawaited(saveNewSignature(
+      lastPurchase,
+      UserService.instance.user.id,
+      plan,
+      couponId: couponId,
+    ));
+
+    String? originalTransactionId = lastPurchase
+            .skPaymentTransaction.originalTransaction?.transactionIdentifier ??
+        lastPurchase.skPaymentTransaction.transactionIdentifier;
 
     Map<String, dynamic> payload = {
       "purchases": FieldValue.arrayUnion(
         [PurchaseDetailsDto.toMapApple(lastPurchase)],
       ),
       "userId": UserService.instance.user.id,
+      "lastUpdateFrom": "mobileApplication",
+      "lastSignatureId":
+          lastPurchase.skPaymentTransaction.transactionIdentifier,
+      "originalTransactionIdAppStore": originalTransactionId,
     };
-
-    if (lastPurchase
-            .skPaymentTransaction.originalTransaction?.transactionIdentifier !=
-        null) {
-      payload = {
-        ...payload,
-        "originalTransactionId": lastPurchase.skPaymentTransaction
-                .originalTransaction?.transactionIdentifier ??
-            lastPurchase.skPaymentTransaction.transactionIdentifier,
-        "lastSignatureId":
-            lastPurchase.skPaymentTransaction.transactionIdentifier,
-      };
-    }
 
     await firestore
         .collection("appleInAppPurchases")
@@ -101,7 +105,9 @@ class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
   }
 
   @override
-  Future<void> saveNewSignature(PurchaseDetails purchaseDetails, userId) async {
+  Future<void> saveNewSignature(
+      PurchaseDetails purchaseDetails, String userId, PlanModel plan,
+      {String? couponId}) async {
     purchaseDetails as AppStorePurchaseDetails;
 
     String? date = DateTimeHelper.formatEpochTimestampFromApple(
@@ -109,38 +115,47 @@ class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
           DateTime.now().millisecondsSinceEpoch.toDouble(),
     );
 
-    List<dynamic>? appStoreTransactions =
-        (await firestore.collection("signatures").doc(userId).get())
-            .data()?['appStoreTransactions'] as List<dynamic>?;
+    Map<String, dynamic>? signaturesData =
+        (await firestore.collection("signatures").doc(userId).get()).data();
 
-    final newTransaction = {
-      "transactionId":
+    Map<String, dynamic> payload = {
+      "userId": userId,
+      "uuid": userId,
+      "price": plan.price,
+      "lastSignatureId":
           purchaseDetails.skPaymentTransaction.transactionIdentifier,
-      "transactionDate": date,
-      "status": purchaseDetails.skPaymentTransaction.transactionState.name,
+      "lastPaymentDate": date,
+      "lastPlatform": "app_store",
+      "status": "active",
+      "originalTransactionIdAppStore": purchaseDetails.skPaymentTransaction
+              .originalTransaction?.transactionIdentifier ??
+          purchaseDetails.skPaymentTransaction.transactionIdentifier,
+      "lastUpdateFrom": "mobileApplication",
     };
 
-    if (appStoreTransactions != null) {
-      appStoreTransactions.add(newTransaction);
-    } else {
-      appStoreTransactions = [newTransaction];
+    if (!(signaturesData?["status"] == "active")) {
+      payload = {
+        ...payload,
+        "signaturesDate": FieldValue.arrayUnion([date]),
+        "plans": FieldValue.arrayUnion([
+          {
+            "includedAt": date,
+            "planId": plan.uuid,
+          }
+        ]),
+      };
     }
 
-    await firestore.collection("signatures").doc(userId).set(
-      {
-        //not need here because webhook will handle this
-        // "appStoreTransactions": appStoreTransactions,
-        "userId": userId,
-        "lastSignatureId":
-            purchaseDetails.skPaymentTransaction.transactionIdentifier,
-        "lastPaymentDate": date,
-        "lastPlatform": "app_store",
-        "status": "active",
-        "originalTransactionIdAppStore": purchaseDetails.skPaymentTransaction
-                .originalTransaction?.transactionIdentifier ??
-            purchaseDetails.skPaymentTransaction.transactionIdentifier,
-      },
-      SetOptions(merge: true),
-    );
+    if (couponId != null) {
+      payload = {
+        ...payload,
+        "couponId": couponId,
+      };
+    }
+
+    await firestore
+        .collection("signatures")
+        .doc(userId)
+        .set(payload, SetOptions(merge: true));
   }
 }

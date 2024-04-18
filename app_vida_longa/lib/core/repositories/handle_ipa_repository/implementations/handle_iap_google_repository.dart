@@ -6,6 +6,7 @@ import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/handle_ipa_repository/interface/handle_iap_interface.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/dtos/purchase_details_dto.dart';
+import 'package:app_vida_longa/domain/models/plan_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -18,7 +19,10 @@ class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
 
   @override
   Future<ResponseStatusModel> savePurchase(
-      List<PurchaseDetails> purchasesDetails) async {
+    List<PurchaseDetails> purchasesDetails,
+    PlanModel plan, {
+    String? couponId,
+  }) async {
     ResponseStatusModel responseStatusModel = ResponseStatusModel();
     List<Map<String, dynamic>> maps = [];
     GooglePlayPurchaseDetails? someGooglePlayurchaseDetails;
@@ -32,13 +36,18 @@ class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
     }
 
     unawaited(saveNewSignature(
-        someGooglePlayurchaseDetails, UserService.instance.user.id));
+      someGooglePlayurchaseDetails,
+      UserService.instance.user.id,
+      plan,
+      couponId: couponId,
+    ));
 
     maps = [PurchaseDetailsDto.toGoogleMap(someGooglePlayurchaseDetails)];
 
     Map<String, dynamic> payload = {
       "purchases": FieldValue.arrayUnion(maps),
       "userId": UserService.instance.user.id,
+      "lastUpdateFrom": "mobileApplication",
       "lastSignatureId":
           someGooglePlayurchaseDetails.billingClientPurchase.purchaseToken,
     };
@@ -92,39 +101,60 @@ class HandleIAPGoogleRepositoryImpl implements IHandleIAPRepository {
 
   @override
   Future<void> saveNewSignature(
-      PurchaseDetails purchasesDetails, String userId) async {
+    PurchaseDetails purchasesDetails,
+    String userId,
+    PlanModel plan, {
+    String? couponId,
+  }) async {
     purchasesDetails as GooglePlayPurchaseDetails;
 
-    List<dynamic>? googlePlayTransactions =
-        (await firestore.collection("signatures").doc(userId).get())
-            .data()?['googlePlayTransactions'] as List<dynamic>?;
+    Map<String, dynamic>? signaturesData =
+        (await firestore.collection("signatures").doc(userId).get()).data();
 
     String date = DateTimeHelper.formatEpochTimestamp(
         purchasesDetails.billingClientPurchase.purchaseTime);
 
     final newTransaction = {
       "transactionId": purchasesDetails.billingClientPurchase.purchaseToken,
-      "transactionDate": date,
-      "status":
-          4, //4 = "purchased" = SUBSCRIPTION_PURCHASED = purchaseDetails.skPaymentTransaction.transactionState.name,
+      "date": date,
+      "status": 4,
     };
 
-    if (googlePlayTransactions != null) {
-      googlePlayTransactions.add(newTransaction);
-    } else {
-      googlePlayTransactions = [newTransaction];
+    Map<String, dynamic> payload = {
+      "googlePlayTransactions": FieldValue.arrayUnion([newTransaction]),
+      "userId": userId,
+      "uuid": userId,
+      "price": plan.price,
+      "lastSignatureId": purchasesDetails.billingClientPurchase.purchaseToken,
+      "lastPaymentDate": date,
+      "lastPlatform": "google_play",
+      "status": "active",
+      "lastUpdateFrom": "mobileApplication",
+    };
+
+    if (!(signaturesData?["status"] == "active")) {
+      payload = {
+        ...payload,
+        "signaturesDate": FieldValue.arrayUnion([date]),
+        "plans": FieldValue.arrayUnion([
+          {
+            "includedAt": date,
+            "planId": plan.uuid,
+          }
+        ]),
+      };
     }
 
-    await firestore.collection("signatures").doc(userId).set(
-      {
-        "googlePlayTransactions": googlePlayTransactions,
-        "userId": userId,
-        "lastSignatureId": purchasesDetails.billingClientPurchase.purchaseToken,
-        "lastPaymentDate": date,
-        "lastPlatform": "google_play",
-        "status": "active",
-      },
-      SetOptions(merge: true),
-    );
+    if (couponId != null) {
+      payload = {
+        ...payload,
+        "couponId": couponId,
+      };
+    }
+
+    await firestore
+        .collection("signatures")
+        .doc(userId)
+        .set(payload, SetOptions(merge: true));
   }
 }

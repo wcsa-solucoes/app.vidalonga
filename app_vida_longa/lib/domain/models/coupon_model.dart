@@ -10,6 +10,7 @@ class CouponModel {
   final int usageQuantity;
   final int? expiryDateTimestamp;
   final int? activationDateTimestamp;
+  final String? planUuid;
 
   CouponModel({
     required this.createdAt,
@@ -23,6 +24,7 @@ class CouponModel {
     this.usageQuantity = 0,
     this.expiryDateTimestamp,
     this.activationDateTimestamp,
+    this.planUuid,
   });
 
   factory CouponModel.fromMap(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class CouponModel {
       usageQuantity: json['usageQuantity'],
       expiryDateTimestamp: json['expiryDateTimestamp'],
       activationDateTimestamp: json['activationDateTimestamp'],
+      planUuid: json['planUuid'],
     );
   }
 
@@ -53,6 +56,8 @@ class CouponModel {
       'uuid': coupon.uuid,
       'usageQuantity': coupon.usageQuantity,
       'expiryDateTimestamp': coupon.expiryDateTimestamp,
+      'activationDateTimestamp': coupon.activationDateTimestamp,
+      'planUuid': coupon.planUuid,
     };
   }
 

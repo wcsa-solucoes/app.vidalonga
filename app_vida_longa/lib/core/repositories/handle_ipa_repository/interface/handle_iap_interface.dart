@@ -1,3 +1,4 @@
+import 'package:app_vida_longa/domain/models/plan_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
@@ -9,7 +10,8 @@ abstract class IHandleIAPRepository
 
 abstract class ISavePurchaseRepository {
   Future<ResponseStatusModel> savePurchase(
-      List<PurchaseDetails> purchasesDetails);
+      List<PurchaseDetails> purchasesDetails, PlanModel plan,
+      {String? couponId});
 }
 
 abstract class IGetPurchasesRepository {
@@ -22,5 +24,9 @@ abstract class IGetPurchasesRepository {
 
 abstract class ISignaturesRepository {
   Future<void> saveNewSignature(
-      PurchaseDetails purchasesDetails, String userId);
+    PurchaseDetails purchasesDetails,
+    String userId,
+    PlanModel plan, {
+    String? couponId,
+  });
 }

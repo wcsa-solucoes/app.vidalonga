@@ -97,10 +97,15 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
       if (purchaseDetails.status == PurchaseStatus.error) {
       } else if (purchaseDetails.status == PurchaseStatus.purchased ||
           purchaseDetails.status == PurchaseStatus.restored) {
+        final PlanModel plan = _plansService.getPlanIdByGoogleId(
+          purchaseDetails.productID,
+        );
+
         if (purchaseDetails.status == PurchaseStatus.purchased) {
           await _handleIAPService.handlePurchase(
             purchaseDetails,
             'google_play',
+            plan,
             couponAdded: _couponAdded,
           );
         }
@@ -110,6 +115,7 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
           await _handleIAPService.handlePurchase(
             purchaseDetails,
             'google_play',
+            plan,
           );
         }
 

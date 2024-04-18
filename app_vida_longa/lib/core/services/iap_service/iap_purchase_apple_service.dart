@@ -111,10 +111,15 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
       if (purchaseDetails.status == PurchaseStatus.error) {
       } else if (purchaseDetails.status == PurchaseStatus.purchased ||
           purchaseDetails.status == PurchaseStatus.restored) {
+        final PlanModel plan = _plansService.getPlanIdByAppleId(
+          purchaseDetails.productID,
+        );
+
         if (purchaseDetails.status == PurchaseStatus.purchased) {
           await _handleIAPService.handlePurchase(
             purchaseDetails,
             'app_store',
+            plan,
             couponAdded: _couponAdded,
           );
         }
@@ -124,6 +129,7 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
           await _handleIAPService.handlePurchase(
             purchaseDetails,
             'app_store',
+            plan,
           );
         }
 
