@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:app_vida_longa/core/controllers/we_exception.dart';
 import 'package:app_vida_longa/core/helpers/date_time_helper.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
-import 'package:app_vida_longa/core/repositories/handle_ipa_repository/interface/handle_iap_interface.dart';
+import 'package:app_vida_longa/core/repositories/handle_ipa_repository/interface/handle_iap_repository_interface.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/dtos/purchase_details_dto.dart';
 import 'package:app_vida_longa/domain/models/plan_model.dart';
@@ -157,5 +157,29 @@ class HandleIAPAppleRepositoryImpl implements IHandleIAPRepository {
         .collection("signatures")
         .doc(userId)
         .set(payload, SetOptions(merge: true));
+  }
+
+  @override
+  Future<void> recoverPurchase(PurchaseDetails purchasesDetail) async {
+    purchasesDetail as AppStorePurchaseDetails;
+
+    String? recoveryOriginal = purchasesDetail
+            .skPaymentTransaction.originalTransaction?.transactionIdentifier ??
+        purchasesDetail.skPaymentTransaction.transactionIdentifier;
+
+    firestore
+        .collection("appleInAppPurchases")
+        .doc(UserService.instance.user.id)
+        .set({
+      "recoveriesDate": FieldValue.arrayUnion(
+        [
+          DateTime.now().microsecondsSinceEpoch,
+        ],
+      ),
+      "lastUpdateFrom": "mobileApplication",
+      "lastRecoveredSignatureId":
+          purchasesDetail.skPaymentTransaction.transactionIdentifier,
+      "recoveryOriginalTransactionIdAppStore": recoveryOriginal,
+    }, SetOptions(merge: true));
   }
 }

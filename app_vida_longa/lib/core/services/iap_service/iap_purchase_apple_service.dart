@@ -72,6 +72,8 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
   @override
   PlanModel get defaultPlan => _plansService.defaultPlan;
 
+  bool isRestored = false;
+
   Future<void> _init() async {
     for (var plan in _plansService.plans) {
       if (plan.applePlanId != null && plan.applePlanId!.isNotEmpty) {
@@ -85,15 +87,15 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
     getProductsDetails(_kIds);
 
     _subscription = purchaseUpdated.listen(
-      (purchaseDetailsList) {
-        _handlePurchaseUpdatesFromApples(purchaseDetailsList);
+      (purchaseDetailsList) async {
+        await _handlePurchaseUpdatesFromApples(purchaseDetailsList);
       },
       onError: (error) {},
       onDone: () {},
     );
   }
 
-  void _handlePurchaseUpdatesFromApples(
+  Future<void> _handlePurchaseUpdatesFromApples(
       List<PurchaseDetails> purchaseDetailsList) async {
     if (purchaseDetailsList.isEmpty) {
       AppHelper.displayAlertInfo('Erro ao realizar a compra, tente novamente');
@@ -116,21 +118,23 @@ class InAppPurchaseImplServicesAppleImpl extends IInAppPurchaseService {
         );
 
         if (purchaseDetails.status == PurchaseStatus.purchased) {
-          await _handleIAPService.handlePurchase(
-            purchaseDetails,
-            'app_store',
-            plan,
-            couponAdded: _couponAdded,
-          );
+          if (isRestored) {
+            _handleIAPService.recoverPurchase(purchaseDetails, 'app_store');
+          } else {
+            await _handleIAPService.handlePurchase(
+              purchaseDetails,
+              'app_store',
+              plan,
+              couponAdded: _couponAdded,
+            );
+          }
+          isRestored = false;
         }
         _couponAdded = null;
 
         if (purchaseDetails.status == PurchaseStatus.restored) {
-          await _handleIAPService.handlePurchase(
-            purchaseDetails,
-            'app_store',
-            plan,
-          );
+          isRestored = true;
+          _handleIAPService.recoverPurchase(purchaseDetails, 'app_store');
         }
 
         if (purchaseDetails.pendingCompletePurchase) {
