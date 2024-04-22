@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
@@ -24,6 +26,15 @@ class _AppWrapViewState extends State<AppWrapView> {
   final AppWrapBloc appWrapBloc = AppWrapBloc.instance;
 
   final double labelSize = 16.0;
+  double bottomPadding = 0;
+
+  @override
+  void initState() {
+    if (Platform.isIOS) {
+      bottomPadding = 10;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +87,7 @@ class _AppWrapViewState extends State<AppWrapView> {
               ],
               inactiveIcons: [
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
+                  padding: EdgeInsets.only(bottom: bottomPadding),
                   child: DefaultText(
                     "Início",
                     color: AppColors.white,
@@ -85,7 +96,7 @@ class _AppWrapViewState extends State<AppWrapView> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
+                  padding: EdgeInsets.only(bottom: bottomPadding),
                   child: DefaultText(
                     "Categorias",
                     color: AppColors.white,
@@ -94,7 +105,7 @@ class _AppWrapViewState extends State<AppWrapView> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
+                  padding: EdgeInsets.only(bottom: bottomPadding),
                   child: DefaultText(
                     "Conta",
                     color: AppColors.white,
@@ -103,7 +114,7 @@ class _AppWrapViewState extends State<AppWrapView> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
+                  padding: EdgeInsets.only(bottom: bottomPadding),
                   child: DefaultText(
                     "Perguntas",
                     color: AppColors.white,
@@ -112,7 +123,7 @@ class _AppWrapViewState extends State<AppWrapView> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
+                  padding: EdgeInsets.only(bottom: bottomPadding),
                   child: DefaultText(
                     "Benefícios",
                     color: AppColors.white,

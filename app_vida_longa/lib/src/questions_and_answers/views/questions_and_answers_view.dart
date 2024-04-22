@@ -44,7 +44,7 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
   Widget build(BuildContext context) {
     return CustomAppScaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.primary,
         flexibleSpace: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Align(
@@ -62,6 +62,7 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
                     "Perguntas",
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
+                    color: AppColors.white,
                   ),
                   const SizedBox(
                     width: 60,
@@ -87,12 +88,14 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
                 "Todas perguntas",
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
+                color: AppColors.white,
               )),
               Tab(
                 icon: DefaultText(
                   "Minhas perguntas",
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
+                  color: AppColors.white,
                 ),
               )
             ],

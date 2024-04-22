@@ -14,6 +14,7 @@ class PartnerCompanyModel {
   final String? urlLogo;
   final List<String>? presentationImagesUrl;
   final String presentationText;
+  final String? phoneNumber;
 
   final String? state;
   final String? city;
@@ -41,6 +42,7 @@ class PartnerCompanyModel {
     this.fullAddress,
     this.isHighlighted = false,
     this.socialMedias = const [],
+    this.phoneNumber,
   });
 
   factory PartnerCompanyModel.fromMap(Map<String, dynamic> map) {
@@ -61,10 +63,7 @@ class PartnerCompanyModel {
       number: map['number'],
       fullAddress: map['fullAddress'],
       isHighlighted: map['isHighlighted'] ?? false,
-      // socialMedias: map['socialMedias'] != null
-      //     ? List.from(map['socialMedias'].map((x) =>
-      //         SocialMediaEnum.values.firstWhere((e) => e.type == x['type'])))
-      //     : [],
+      phoneNumber: map['phoneNumber'],
       socialMedias: newMethod(map),
     );
   }

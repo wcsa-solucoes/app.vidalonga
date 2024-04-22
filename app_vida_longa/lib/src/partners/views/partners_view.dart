@@ -232,8 +232,8 @@ class _PartnersViewState extends State<PartnersView> {
       padding: const EdgeInsets.only(top: 10),
       child: DecoratedTextFieldWidget(
         controller: _searchController,
-        hintText: "Buscar por ramo, endereço, cidade, esstado...",
-        labelText: "Buscar por ramo, endereço, cidade, esstado...",
+        hintText: "Buscar por ramo, endereço, cidade, estado...",
+        labelText: "Buscar por ramo, endereço, cidade, estado...",
         suffixIcon: IconButton(
           icon: const Icon(Icons.close, color: AppColors.dimGray),
           onPressed: () {
@@ -435,7 +435,7 @@ class _PartnerCardWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       DefaultText(
-                        "Telefone: ${partner.number}",
+                        "Telefone: ${partner.phoneNumber ?? "Sem telefone"}",
                         fontSize: 16,
                         // fontWeight: FontWeight.w700,
                         color: AppColors.gray600,

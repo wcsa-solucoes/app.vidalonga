@@ -16,13 +16,13 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.primary,
       bottom: bottom,
       leading: isWithBackButton
           ? IconButton(
               icon: const Icon(
                 Icons.arrow_back_ios,
-                color: AppColors.matterhorn,
+                color: AppColors.white,
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -45,6 +45,7 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
               DefaultText(
                 title,
+                color: AppColors.white,
                 fontSize: 24,
                 fontWeight: FontWeight.w600,
               ),
