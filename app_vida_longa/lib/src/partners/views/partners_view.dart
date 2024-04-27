@@ -1,4 +1,3 @@
-import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
@@ -312,29 +311,32 @@ class _PartnersViewState extends State<PartnersView> {
           return Padding(
             padding:
                 const EdgeInsets.only(left: 10, top: 4, bottom: 0, right: 15),
-            child: _PartnerCardWidget(
-                partner: partner,
-                onPressed: () {
-                  //verify if the user is l
-                  var user = AuthService.instance.getCurrentUser;
+            child: StreamBuilder<UserModel>(
+                initialData: UserService.instance.user,
+                stream: UserService.instance.userStream,
+                builder: (context, snapshot) {
+                  return _PartnerCardWidget(
+                      partner: partner,
+                      onPressed: () {
+                        var user = AuthService.instance.getCurrentUser;
 
-                  if (user == null) {
-                    AppHelper.displayAlertInfo(
-                        "Você precisa estar logado e ser assinante para acessar");
-                    return;
-                  }
-                  //verify if the user is a subscriber
-                  if (!(UserService.instance.user.subscriptionLevel ==
-                      SubscriptionEnum.paying)) {
-                    AppHelper.displayAlertInfo(
-                        "Seja um assinante para acessar os benefícios");
-                    return;
-                  }
+                        if (user == null) {
+                          NavigationController.to(routes.app.auth.login.path);
+                          return;
+                        }
 
-                  _partnersBloc.add(SelectPartnerEvent(partner));
-                  NavigationController.push(
-                      routes.app.partners.benefitDetails.path,
-                      arguments: partner);
+                        if (UserService.instance.user.subscriptionLevel !=
+                            SubscriptionEnum.paying) {
+                          NavigationController.push(
+                              routes.app.profile.subscriptions.path);
+                          return;
+                        }
+
+                        _partnersBloc.add(SelectPartnerEvent(partner));
+                        NavigationController.push(
+                            routes.app.partners.benefitDetails.path,
+                            arguments: partner);
+                      });
                 }),
           );
         },
