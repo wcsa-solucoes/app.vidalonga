@@ -6,6 +6,7 @@ import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/domain/models/question_answer_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/shared/widgets/open_button_page.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
@@ -32,13 +33,22 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
   void initState() {
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     super.initState();
+    _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
+    _searchController.removeListener(_onSearchChanged);
     _qaBloc.close();
     super.dispose();
   }
+
+  void _onSearchChanged() {
+    final text = _searchController.text;
+    _qaBloc.add(QuestionsSearchEvent(text));
+  }
+
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -147,21 +157,25 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
         }
 
         if (state is QALoaded) {
-          return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.72,
-            width: MediaQuery.of(context).size.width,
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                allQuestions(state.questions),
-                myQuestions(state.myQuestions),
-              ],
-            ),
-          );
+          return _loadedState(state);
         }
 
         return const SizedBox();
       },
+    );
+  }
+
+  Widget _loadedState(QALoaded state) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.72,
+      width: MediaQuery.of(context).size.width,
+      child: TabBarView(
+        controller: _tabController,
+        children: [
+          allQuestions(state.questions),
+          myQuestions(state.myQuestions),
+        ],
+      ),
     );
   }
 
@@ -170,37 +184,121 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
         UserService.instance.status != UserServiceStatusEnum.loggedOut;
     return !isSignIn
         ? const Center(child: DefaultText("Logue para ver as suas perguntas"))
-        : allQuestions(questions);
+        : RefreshIndicator(
+            onRefresh: () async {
+              _qaBloc.add(FetchQuestionsEvent());
+            },
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: questions.length,
+                    itemBuilder: (context, index) {
+                      final question = questions[index];
+
+                      return OpenPageButtonWiget(
+                        question.question,
+                        onPressed: () {
+                          NavigationController.push(routes.app.qa.question.path,
+                              arguments: question);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
   }
 
   Widget allQuestions(List<QuestionAnswerModel> questions) {
-    if (questions.isEmpty) {
-      return const Center(child: DefaultText("Não há perguntas!"));
-    }
     return RefreshIndicator(
       onRefresh: () async {
         _qaBloc.add(FetchQuestionsEvent());
       },
       child: Column(
         children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: questions.length,
-              itemBuilder: (context, index) {
-                final question = questions[index];
+          _handleSearch(),
+          questions.isEmpty
+              ? _handleEmptyQuestions()
+              : Expanded(
+                  child: ListView.builder(
+                    itemCount: questions.length,
+                    itemBuilder: (context, index) {
+                      final question = questions[index];
 
-                return OpenPageButtonWiget(
-                  question.question,
-                  onPressed: () {
-                    NavigationController.push(routes.app.qa.question.path,
-                        arguments: question);
-                  },
-                );
-              },
-            ),
-          ),
+                      return OpenPageButtonWiget(
+                        question.question,
+                        onPressed: () {
+                          NavigationController.push(routes.app.qa.question.path,
+                              arguments: question);
+                        },
+                      );
+                    },
+                  ),
+                ),
         ],
       ),
     );
+  }
+
+  Widget _handleEmptyQuestions() {
+    return Expanded(
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 100),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const DefaultText("Nenhuma pergunta encontrada :("),
+              TextButton(
+                onPressed: _onRestart,
+                child: const Text(
+                  "Recarregar",
+                  style: TextStyle(
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _handleSearch() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 15),
+      child: DecoratedTextFieldWidget(
+        controller: _searchController,
+        hintText: "Buscar pergunta...",
+        labelText: "Buscar pergunta...",
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.close, color: AppColors.dimGray),
+          onPressed: () {
+            if (_searchController.text.isNotEmpty) {
+              _onRestart();
+              return;
+            }
+          },
+        ),
+        textInputAction: TextInputAction.search,
+        onSubmitted: (value) {
+          if (value.isEmpty) {
+            _qaBloc.add(RestartQuestionsEvent());
+          } else {
+            _qaBloc.add(QuestionsSearchEvent(value));
+          }
+        },
+      ),
+    );
+  }
+
+  void _onRestart() {
+    _searchController.clear();
+    _qaBloc.add(RestartQuestionsEvent());
   }
 }
