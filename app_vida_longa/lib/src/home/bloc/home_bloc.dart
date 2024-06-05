@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
+import 'package:app_vida_longa/core/utils/string_util.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
 import 'package:app_vida_longa/domain/models/categorie_chip_model.dart';
 import 'package:app_vida_longa/domain/models/category_model.dart';
@@ -68,20 +68,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final List<List<ArticleModel>> tempArticles = [];
 
     for (var element in _articles) {
-      final List<ArticleModel> temp = element
-          .where((element) => element.title
-              .toLowerCase()
-              .contains(event.searchTerm.toLowerCase()))
-          .toList();
+      final String normalizedSearchTerm = removeDiacritics(event.searchTerm);
+      final List<ArticleModel> temp = element.where((element) {
+        final String normalizedTitle = removeDiacritics(element.title);
+        return normalizedTitle.toLowerCase().contains(normalizedSearchTerm);
+      }).toList();
+
       if (temp.isNotEmpty) {
         tempArticles.add(temp);
       }
     }
 
-    if (tempArticles.isEmpty) {
-      AppHelper.displayAlertInfo(
-          "Nenhum artigo encontrado com o título pesquisado.");
-    }
     emit(
       ArticlesSearchedState(
         articlesByCategory: tempArticles,

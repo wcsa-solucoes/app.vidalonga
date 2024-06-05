@@ -58,8 +58,8 @@ class _CustomAppAlertModalState extends State<CustomAppAlertModal> {
     entry = OverlayEntry(
       builder: (context) {
         return Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          alignment: Alignment.bottomCenter,
+          margin: const EdgeInsets.only(top: 50, right: 10),
+          alignment: Alignment.topRight,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 450),
             child: SingleChildScrollView(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:app_vida_longa/core/services/partners_and_benefits/branchs_service.dart';
 import 'package:app_vida_longa/core/services/partners_and_benefits/partners_service.dart';
+import 'package:app_vida_longa/core/utils/string_util.dart';
 import 'package:app_vida_longa/domain/models/branch_model.dart';
 import 'package:app_vida_longa/domain/models/categorie_chip_model.dart';
 import 'package:app_vida_longa/domain/models/partner_model.dart';
@@ -135,36 +136,38 @@ class PartnersBloc extends Bloc<PartnersEvent, PartnersState> {
       PartnersSearchEvent event, Emitter<PartnersState> emit) async {
     emit(PartnersLoadingState());
 
-    final List<String> branchesId = _branchsService.branchs
-        .where(
-          (branch) => branch.name.toLowerCase().contains(
-                event.searchTerm.toLowerCase(),
-              ),
-        )
-        .map((e) => e.id)
-        .toList();
+    final List<List<PartnerCompanyModel>> tempPartners = [];
+    try {
+      final String normalizedSearchTerm =
+          removeDiacritics(event.searchTerm.toLowerCase());
 
-    final List<List<PartnerCompanyModel>> tempArticles = [];
-
-    for (var element in _partners) {
-      final List<PartnerCompanyModel> temp = element
-          .where((element) =>
-              branchesId.contains(element.branchesId.first) ||
-              element.name
-                  .toLowerCase()
-                  .contains(event.searchTerm.toLowerCase()) ||
-              element.fullAddress!
-                  .toLowerCase()
-                  .contains(event.searchTerm.toLowerCase()))
+      final List<String> branchesId = _branchsService.branchs
+          .where((branch) => removeDiacritics(branch.name.toLowerCase())
+              .contains(normalizedSearchTerm))
+          .map((e) => e.id)
           .toList();
-      if (temp.isNotEmpty) {
-        tempArticles.add(temp);
+
+      for (var element in _partners) {
+        final List<PartnerCompanyModel> temp = element
+            .where((element) =>
+                branchesId.contains(element.branchesId.first) ||
+                removeDiacritics(element.name.toLowerCase())
+                    .contains(normalizedSearchTerm) ||
+                (element.fullAddress != null &&
+                    removeDiacritics(element.fullAddress!.toLowerCase())
+                        .contains(normalizedSearchTerm)))
+            .toList();
+        if (temp.isNotEmpty) {
+          tempPartners.add(temp);
+        }
       }
+    } catch (ex) {
+      rethrow;
     }
 
     emit(PartnersLoadedState(
-      partners: tempArticles,
-      branchsChip: _allBranchesChip,
+      partners: tempPartners,
+      branchsChip: tempPartners.isEmpty ? [] : _allBranchesChip,
       highlightedPartners: const [],
     ));
   }

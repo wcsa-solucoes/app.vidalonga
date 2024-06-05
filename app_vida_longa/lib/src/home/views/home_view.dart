@@ -27,12 +27,19 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     _homeBloc = Modular.get<HomeBloc>();
     super.initState();
+    _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
+    _searchController.removeListener(_onSearchChanged);
     _homeBloc.close();
     super.dispose();
+  }
+
+  void _onSearchChanged() {
+    final text = _searchController.text;
+    _homeBloc.add(HomeSearchEvent(searchTerm: text));
   }
 
   final TextEditingController _searchController = TextEditingController();
@@ -132,7 +139,7 @@ class _HomeViewState extends State<HomeView> {
   Widget _handleEmptyArticles() {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.9,
+      height: MediaQuery.of(context).size.height * 0.8,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 100),
         child: Column(

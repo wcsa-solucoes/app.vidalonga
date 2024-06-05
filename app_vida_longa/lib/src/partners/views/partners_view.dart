@@ -32,14 +32,21 @@ class _PartnersViewState extends State<PartnersView> {
   void initState() {
     _partnersBloc = PartnersBloc();
     super.initState();
+    _searchController.addListener(_onSearchChanged);
   }
 
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void dispose() {
+    _searchController.removeListener(_onSearchChanged);
     _partnersBloc.close();
     super.dispose();
+  }
+
+  void _onSearchChanged() {
+    final text = _searchController.text;
+    _partnersBloc.add(PartnersSearchEvent(text));
   }
 
   @override
@@ -80,16 +87,16 @@ class _PartnersViewState extends State<PartnersView> {
     );
   }
 
-  Widget _handleEmptyArticles() {
+  Widget _handleEmptyPartners() {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.9,
+      height: MediaQuery.of(context).size.height * 0.7,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 100),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const DefaultText("Nenhum benefício encontrado"),
+            const DefaultText("Nenhum benefício encontrado :("),
             _handleReload(),
           ],
         ),
@@ -110,15 +117,11 @@ class _PartnersViewState extends State<PartnersView> {
   }
 
   void _onRestart() {
-    //if is empty
     _searchController.clear();
     _partnersBloc.add(RestartPartnersEvent());
   }
 
   Widget _loadedState(PartnersLoadedState state) {
-    if (state.partners.isEmpty) {
-      return _handleEmptyArticles();
-    }
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -256,7 +259,7 @@ class _PartnersViewState extends State<PartnersView> {
 
   Widget _handlePartnersWidget(List<List<PartnerCompanyModel>> partners) {
     if (partners.isEmpty) {
-      return _handleEmptyArticles();
+      return _handleEmptyPartners();
     }
 
     return ListView.builder(
