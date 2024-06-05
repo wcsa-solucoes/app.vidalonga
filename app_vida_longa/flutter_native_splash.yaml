@@ -1,0 +1,12 @@
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/splash.png
+  background_image: assets/splash.png
+  ios: true
+  android: true
+  android_gravity: fill
+  ios_content_mode: scaleToFill
+  web: false
+  android_12:
+    image: assets/images/longavida.png
+    color: "#ffffff"

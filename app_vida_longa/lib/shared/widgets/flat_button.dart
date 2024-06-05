@@ -3,13 +3,17 @@ import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:flutter/material.dart';
 
 class FlatButton extends StatefulWidget {
+  final String textLabel;
+  final void Function()? onPressed;
+  final bool isWithContrastColor;
+  final bool isDangerButton;
   const FlatButton({
+    this.isWithContrastColor = false,
     super.key,
     required this.textLabel,
     this.onPressed,
+    this.isDangerButton = false,
   });
-  final String textLabel;
-  final void Function()? onPressed;
 
   @override
   State<FlatButton> createState() => _FlatButtonState();
@@ -23,7 +27,11 @@ class _FlatButtonState extends State<FlatButton> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30.0),
-          color: AppColors.white,
+          color: widget.isWithContrastColor
+              ? AppColors.secondary
+              : widget.isDangerButton
+                  ? AppColors.redError
+                  : AppColors.white,
         ),
         width: MediaQuery.of(context).size.width * 0.5,
         height: 50.0,
@@ -31,6 +39,9 @@ class _FlatButtonState extends State<FlatButton> {
           child: DefaultText(
             widget.textLabel,
             fontWeight: FontWeight.bold,
+            color: widget.isWithContrastColor || widget.isDangerButton
+                ? AppColors.white
+                : null,
           ),
         ),
       ),

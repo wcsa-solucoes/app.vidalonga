@@ -1,4 +1,4 @@
-package com.appvidalonga.dev
+package com.vidalongaapp.app
 
 import io.flutter.embedding.android.FlutterActivity
 

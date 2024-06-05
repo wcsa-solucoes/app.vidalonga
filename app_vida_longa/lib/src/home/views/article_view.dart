@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
+import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +17,8 @@ import 'package:flutter_html_iframe/flutter_html_iframe.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ArticleView extends StatefulWidget {
-  final ArticleModel article;
-  const ArticleView({super.key, required this.article});
+  final ArticleModel? article;
+  const ArticleView({super.key, this.article});
 
   @override
   State<ArticleView> createState() => _ArticleViewState();
@@ -25,10 +27,11 @@ class ArticleView extends StatefulWidget {
 class _ArticleViewState extends State<ArticleView> {
   double fontSize = 16.0;
   List<Widget> widgets = [];
-  IFavoritesService _favoritesService = FavoritesServiceImpl.instance;
+  final IFavoritesService _favoritesService = FavoritesServiceImpl.instance;
 
   final StreamController<double> _streamControllerFontSize =
       StreamController.broadcast();
+  late ArticleModel _currentlyArticle;
 
   @override
   void dispose() {
@@ -40,9 +43,15 @@ class _ArticleViewState extends State<ArticleView> {
 
   @override
   void initState() {
-    isFavorited = _favoritesService.favoritesIds.contains(widget.article.uuid);
+    if (widget.article != null) {
+      _currentlyArticle = widget.article!;
+    } else {
+      _currentlyArticle = ArticleService.currentlyArticle;
+    }
+    isFavorited =
+        _favoritesService.favoritesIds.contains(_currentlyArticle.uuid);
 
-    for (var item in widget.article.contents) {
+    for (var item in _currentlyArticle.contents) {
       if (item.type == "text") {
         widgets.add(
           StreamBuilder<double>(
@@ -69,24 +78,34 @@ class _ArticleViewState extends State<ArticleView> {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.white,
-        title: const DefaultText(
-          "Artigo",
-          fontSize: 20,
-          fontWeight: FontWeight.w300,
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar: const DefaultAppBar(title: "Artigo", isWithBackButton: true),
+      //  appBar: AppBar(
+      //   centerTitle: true,
+      //   backgroundColor: AppColors.white,
+      //   title: const DefaultText(
+      //     "Artigo",
+      //     fontSize: 20,
+      //     fontWeight: FontWeight.w300,
+      //   ),
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
+      //     onPressed: () {
+      //       Navigator.pop(context);
+      //     },
+      //   ),
+      // ),
       hasScrollView: true,
       body: Column(
-        children: widgets,
+        children: [
+          DefaultText(
+            _currentlyArticle.title,
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            maxLines: 4,
+            textAlign: TextAlign.center,
+          ),
+          ...widgets
+        ],
       ),
       bottomNavigationBar: optionsBottomBar(),
     );
@@ -143,9 +162,9 @@ class _ArticleViewState extends State<ArticleView> {
                         ),
                   onPressed: () {
                     if (isFavorited) {
-                      _favoritesService.remove(widget.article.uuid);
+                      _favoritesService.remove(_currentlyArticle.uuid);
                     } else {
-                      _favoritesService.add(widget.article.uuid);
+                      _favoritesService.add(_currentlyArticle.uuid);
                     }
                     setState(() {
                       isFavorited = !isFavorited;

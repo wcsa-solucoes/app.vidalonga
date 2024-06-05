@@ -20,4 +20,12 @@ sealed class PrintColoredHelper {
   static void printWhite(String message) {
     print('\x1B[37m$message\x1B[0m');
   }
+
+  static void printError(String text) {
+    print('\x1B[31m$text\x1B[0m');
+  }
+
+  static void printOrange(String text) {
+    print('\x1B[33m$text\x1B[0m');
+  }
 }

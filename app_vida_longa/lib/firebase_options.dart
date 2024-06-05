@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -46,19 +49,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCjmyca8e2hETTV1TLqYiLyzoYR9IEWdTs',
-    appId: '1:307746117848:web:e79d07d3c3abbb021ddfad',
-    messagingSenderId: '307746117848',
-    projectId: 'vidalonga-7be23',
-    authDomain: 'vidalonga-7be23.firebaseapp.com',
-    storageBucket: 'vidalonga-7be23.appspot.com',
-    measurementId: 'G-HE2X94P6DH',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBjcWNhDt2dKkS_s1Vb19NQ3PMCO1Z1v-g',
-    appId: '1:307746117848:android:12ab5637c98d94981ddfad',
+    appId: '1:307746117848:android:17928d98613d7a8a1ddfad',
     messagingSenderId: '307746117848',
     projectId: 'vidalonga-7be23',
     storageBucket: 'vidalonga-7be23.appspot.com',
@@ -66,10 +59,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCcq5O4xVEtk2t8dYi2_8sHi5ggorNvUxs',
-    appId: '1:307746117848:ios:63f93b76eb48e35f1ddfad',
+    appId: '1:307746117848:ios:48535993e406d92b1ddfad',
     messagingSenderId: '307746117848',
     projectId: 'vidalonga-7be23',
     storageBucket: 'vidalonga-7be23.appspot.com',
-    iosBundleId: 'com.example.appVidaLonga',
+    iosBundleId: 'app.vidalongaapp.com',
   );
 }

@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:307746117848:android:12ab5637c98d94981ddfad",
+        "mobilesdk_app_id": "1:307746117848:android:3a8858339e3d8a241ddfad",
         "android_client_info": {
-          "package_name": "com.example.app_vida_longa"
+          "package_name": "app.vidalongaapp.com"
         }
       },
       "oauth_client": [],
@@ -26,9 +26,28 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:307746117848:android:49054368054ca97c1ddfad",
+        "mobilesdk_app_id": "1:307746117848:android:9963e386c4574fc71ddfad",
         "android_client_info": {
-          "package_name": "com.flutterflow.homeU"
+          "package_name": "com.vidalonga.appvidalonga"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjcWNhDt2dKkS_s1Vb19NQ3PMCO1Z1v-g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:307746117848:android:17928d98613d7a8a1ddfad",
+        "android_client_info": {
+          "package_name": "com.vidalongaapp.app"
         }
       },
       "oauth_client": [],

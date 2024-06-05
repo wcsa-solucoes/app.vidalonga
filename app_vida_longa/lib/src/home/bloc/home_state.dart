@@ -1,17 +1,8 @@
 part of 'home_bloc.dart';
 
-class ChipCategorie {
-  late String label;
-  late bool selected;
-  ChipCategorie({
-    this.label = "",
-    this.selected = false,
-  });
-}
-
 class HomeState {
   final List<List<ArticleModel>>? articlesByCategory;
-  final List<ChipCategorie>? chipsCategorie;
+  final List<ChipCategorieModel>? chipsCategorie;
   final bool? isLoading;
   HomeState({
     this.articlesByCategory,
@@ -25,10 +16,12 @@ class HomeState {
     T Function(HomeLoadedState state)? loaded,
     T Function(HomeErrorState state)? error,
     T Function(HomeCategoriesSelectedState state)? categoriesSelected,
+    T Function(ArticlesSearchedState state)? articlesSearched,
   }) {
     return switch (this) {
       HomeLoadingState s => loading?.call(s) ?? initial(),
       HomeLoadedState s => loaded?.call(s) ?? initial(),
+      ArticlesSearchedState s => articlesSearched?.call(s) ?? initial(),
       HomeErrorState s => error?.call(s) ?? initial(),
       HomeCategoriesSelectedState s => categoriesSelected?.call(s) ?? initial(),
       _ => initial(),
@@ -71,5 +64,13 @@ class HomeCategoriesSelectedState extends HomeState {
     super.isLoading,
     super.chipsCategorie,
     super.articlesByCategory,
+  });
+}
+
+class ArticlesSearchedState extends HomeState {
+  ArticlesSearchedState({
+    super.articlesByCategory,
+    super.chipsCategorie,
+    super.isLoading,
   });
 }

@@ -1,7 +1,6 @@
 import "dart:async";
 import "package:app_vida_longa/core/controllers/notification_controller.dart";
 import "package:app_vida_longa/core/helpers/app_helper.dart";
-import "package:app_vida_longa/core/helpers/field_format_helper.dart";
 import "package:app_vida_longa/core/repositories/auth_repository.dart";
 import "package:app_vida_longa/core/services/user_service.dart";
 import "package:app_vida_longa/domain/contants/routes.dart";
@@ -19,7 +18,7 @@ class AuthService {
 
   static bool _hasInit = false;
 
-  static void init() async {
+  static Future<void> init() async {
     if (!_hasInit) {
       _hasInit = true;
       instance._init();
@@ -70,13 +69,13 @@ class AuthService {
 
   Future<ResponseStatusModel> register(
       UserModel user, String password, String name) async {
-    user.phone = FieldFormatHelper.phone(phone: user.phone);
+    user = user.copyWith(phone: user.phone);
 
     final ResponseStatusModel response =
         await _authRepository.register(user, password, name);
 
     if (response.status == ResponseStatusEnum.success) {
-      unawaited(_userService.create(user));
+      await _userService.create(user);
     } else {
       NotificationController.alert(response: response);
     }
@@ -113,6 +112,35 @@ class AuthService {
 
   void _handleDisconnectedRedirect() {
     NavigationController.to(routes.app.auth.login.path);
+  }
+
+  Future<void> deleteAccount() async {
+    final User? user = _auth.currentUser;
+
+    if (user == null) {
+      return;
+    }
+
+    try {
+      await user.delete();
+      var message = "Conta deletada.";
+      AppHelper.displayAlertSuccess(message);
+      return;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        var message = "Faça login novamente para deletar a conta.";
+        AppHelper.displayAlertError(message);
+        return;
+      }
+    } catch (e) {
+      var message = "Não foi possível deletar a conta.";
+      AppHelper.displayAlertError(message);
+      return;
+    }
+
+    var message = "Não foi possível deletar a conta!";
+    AppHelper.displayAlertError(message);
+    return;
   }
 
   Future<bool> changePassword(String password) async {

@@ -1,8 +1,11 @@
 import 'dart:async';
-
 import 'package:app_vida_longa/core/repositories/articles_repository.dart';
+import 'package:app_vida_longa/core/repositories/categories_repository.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
+import 'package:app_vida_longa/domain/models/category_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:tuple/tuple.dart';
 
 class ArticleService {
@@ -16,6 +19,22 @@ class ArticleService {
 
   static String _currentlyArticleId = "";
   static String get currentlyArticleId => _currentlyArticleId;
+  final List<CategoryModel> _categories = <CategoryModel>[];
+  List<CategoryModel> get categories => _instance._categories;
+  late final CategoriesRepository _categoriesRepository;
+
+  static ArticleModel? _currentlyArticle;
+  static ArticleModel get currentlyArticle => _currentlyArticle!;
+
+  final ArticlesRepository _repository = ArticlesRepository();
+
+  final List<ArticleModel> _articles = <ArticleModel>[];
+  List<ArticleModel> get articles => _instance._articles;
+
+  final List<CategoryModel?> _categoriesCollection = <CategoryModel?>[];
+
+  List<CategoryModel?> get categoriesCollection =>
+      _instance._categoriesCollection;
 
   static Future<void> init() async {
     if (!_hasInit) {
@@ -24,57 +43,67 @@ class ArticleService {
     }
   }
 
-  static void setCurrentlyArticleId(String value) {
-    _currentlyArticleId = value;
-  }
-
-  final ArticlesRepository _repository = ArticlesRepository();
-
-  final List<ArticleModel> _articles = <ArticleModel>[];
-  List<ArticleModel> get articles => _instance._articles;
-
-  final List<List<ArticleModel>> _articlesByCategories = <List<ArticleModel>>[];
-  List<List<ArticleModel>> get articlesByCategories =>
-      _instance._articlesByCategories;
-
   Future<void> _init() async {
-    await getAll();
+    await getCategories();
+
+    await getAllArticles();
   }
 
-  Future<Tuple2<ResponseStatusModel, List<ArticleModel>>> getAll() async {
+  static void setCurrentlyArticleId(String value, ArticleModel article) {
+    _currentlyArticleId = value;
+    _currentlyArticle = article;
+  }
+
+  Future<void> getCategories() async {
+    _categoriesRepository =
+        CategoriesRepository(firestore: FirebaseFirestore.instance);
+
+    final result = await _categoriesRepository.getAll();
+
+    if (result.response.status == ResponseStatusEnum.success) {
+      _categoriesCollection.clear();
+
+      _categoriesCollection.addAll(result.categories);
+      _setCategories(result.categories);
+    }
+  }
+
+  void _setCategories(List<CategoryModel> categories) {
+    _categories.clear();
+    _categories.addAll(categories);
+    _articlesStreamController.sink.add((_articles, _categories));
+  }
+
+  Future<Tuple2<ResponseStatusModel, List<ArticleModel>>>
+      getAllArticles() async {
     final Tuple2<ResponseStatusModel, List<ArticleModel>> data =
         await _repository.getAll();
 
-    _updateArticles(data.item2);
-    _updateArticlesByCategories(data.item2);
+    if (data.item1.status == ResponseStatusEnum.success) {
+      _setArticles(data.item2);
+    }
 
     return data;
   }
 
-  void _updateArticles(List<ArticleModel> articles) {
+  void _setArticles(List<ArticleModel> articles) {
+    for (var article in articles) {
+      article.categoryTitle = _categoriesCollection
+              .firstWhereOrNull(
+                  (element) => element!.uuid == article.categoryUuid)
+              ?.name ??
+          "";
+    }
+
     _articles.clear();
     _articles.addAll(articles);
+    _articlesStreamController.sink.add((_articles, _categories));
   }
 
-  void _updateArticlesByCategories(List<ArticleModel> articles) {
-    List<List<ArticleModel>> articleAgrouped = _articles
-        .fold<List<List<ArticleModel>>>(<List<ArticleModel>>[],
-            (previousValue, element) {
-      if (previousValue.isEmpty) {
-        previousValue.add(<ArticleModel>[element]);
-      } else {
-        final List<ArticleModel> lastList = previousValue.last;
-        if (lastList.first.category == element.category) {
-          lastList.add(element);
-        } else {
-          previousValue.add(<ArticleModel>[element]);
-        }
-      }
-      return previousValue;
-    });
-    if (articleAgrouped.isNotEmpty) articles.clear();
-    _articlesByCategories.clear();
+  final StreamController<(List<ArticleModel>, List<CategoryModel>)>
+      _articlesStreamController =
+      StreamController<(List<ArticleModel>, List<CategoryModel>)>.broadcast();
 
-    _articlesByCategories.addAll(articleAgrouped);
-  }
+  Stream<(List<ArticleModel>, List<CategoryModel>)> get articlesStream =>
+      _articlesStreamController.stream;
 }

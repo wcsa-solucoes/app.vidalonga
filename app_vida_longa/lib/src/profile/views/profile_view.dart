@@ -1,22 +1,21 @@
+import 'dart:io';
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
+import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
-import 'package:app_vida_longa/shared/widgets/default_text.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/open_button_page.dart';
 import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
-import 'package:app_vida_longa/src/profile/bloc/profile_bloc.dart';
-import 'package:app_vida_longa/src/profile/views/favorites_articles.dart';
-import 'package:app_vida_longa/src/profile/views/qr_code_view.dart';
+import 'package:app_vida_longa/src/profile/views/contacts_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -27,67 +26,101 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   final AuthBloc _authBloc = AuthBloc();
-  late final ProfileBloc _profileBloc;
-  final String _userEmail = UserService.instance.user.email;
-  final String _userName = UserService.instance.user.name;
+
+  final UserService _userService = UserService.instance;
+
   @override
   void initState() {
-    _profileBloc = context.read<ProfileBloc>();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProfileBloc, ProfileState>(
-      bloc: _profileBloc,
-      listener: (context, state) {},
-      builder: (context, state) {
-        return CustomAppScaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            backgroundColor: AppColors.white,
-            title: const DefaultText(
-              "Perfil",
-              fontSize: 20,
-              fontWeight: FontWeight.w300,
-            ),
-            //back button syle
-          ),
-          hasSafeArea: true,
-          body: Builder(builder: (context) {
-            return _body();
-          }),
-          bottomNavigationBar: const CustomBottomNavigationBar(),
-          hasScrollView: true,
-        );
-      },
+    return CustomAppScaffold(
+      appBar: const DefaultAppBar(title: "Perfil"),
+      hasSafeArea: true,
+      body: Builder(builder: (context) {
+        return _body();
+      }),
+      bottomNavigationBar: const CustomBottomNavigationBar(),
+      hasScrollView: true,
     );
   }
 
   Widget _body() {
     return Column(
       children: [
-        _userInfos(),
-        _userCard(UserService.instance.user.subscriptionLevel),
-        _userCard(SubscriptionLevelEnum.premium),
+        _userCard(),
         const SizedBox(
           height: 10,
         ),
 
         OpenPageButtonWiget(
-          "Editar perfil",
+          "Meu perfil",
           onPressed: () =>
               NavigationController.push(routes.app.profile.edit.path),
         ), //
-
+        OpenPageButtonWiget(
+          "Assinaturas",
+          onPressed: () {
+            NavigationController.push(routes.app.profile.subscriptions.path);
+          },
+        ),
         OpenPageButtonWiget("Meus favoritos", onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const FavoritesArticlesView()));
+          NavigationController.push(routes.app.profile.favorites.path);
         }),
-
-        OpenPageButtonWiget("Abrir QRCode", onPressed: () {
+        OpenPageButtonWiget("Contatos", onPressed: () {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const QrCodeView()));
+            MaterialPageRoute(
+              builder: (context) => const ContactsView(),
+            ),
+          );
+        }),
+        StreamBuilder<UserModel>(
+          initialData: _userService.user,
+          stream: _userService.userStream,
+          builder: (context, snapshot) {
+            return OpenPageButtonWiget(
+              "Abrir QRCode",
+              onPressed: () {
+                if (snapshot.data!.subscriptionLevel ==
+                    SubscriptionEnum.paying) {
+                  NavigationController.push(routes.app.profile.qrcode.path);
+                } else {
+                  AppHelper.displayAlertInfo(
+                    "Para acessar o QRCode é necessário ter uma assinatura ativa.",
+                  );
+                }
+              },
+            );
+          },
+        ),
+
+        OpenPageButtonWiget(
+          "Dúvidas e sugestões",
+          onPressed: () {
+            final Uri url = Uri.parse(
+                'mailto:contato@vidalongaapp.com?subject=Dúvidas e Sugestões');
+            _launchUrl(url);
+          },
+        ),
+
+        OpenPageButtonWiget(
+          "Contate o suporte",
+          onPressed: () {
+            final Uri url = Uri.parse(
+                'mailto:contato@vidalongaapp.com?subject=Support Vida Longa&body=Preencha abaixo os detalhes da sua solicitação:%0D%0A%0D%0A');
+            _launchUrl(url);
+          },
+        ),
+        OpenPageButtonWiget("Recomendar o app", onPressed: () {
+          if (Platform.isAndroid) {
+            Share.share(
+                'https://play.google.com/store/apps/details?id=com.vidalongaapp.app&pcampaignid=web_share');
+          } else {
+            Share.share(
+                'https://apps.apple.com/br/app/vida-longa/id6446136437?l');
+          }
         }),
         const SizedBox(
           height: 10,
@@ -98,6 +131,13 @@ class _ProfileViewState extends State<ProfileView> {
         ),
       ],
     );
+  }
+
+  Future<void> _launchUrl(Uri uri) async {
+    if (!await launchUrl(uri)) {
+      throw Exception('Could not launch $uri');
+    }
+    return;
   }
 
   Widget logout() {
@@ -123,7 +163,7 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget _userInfos() {
+  Widget _userInfos(String name, String email) {
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(20.0, 15.0, 20.0, 0.0),
       child: Row(
@@ -154,7 +194,7 @@ class _ProfileViewState extends State<ProfileView> {
                           UserService.instance.user.photoUrl,
                           width: 70.0,
                           height: 70.0,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                         )),
             ),
           ),
@@ -167,7 +207,7 @@ class _ProfileViewState extends State<ProfileView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _userName,
+                    name,
                     style: const TextStyle(
                       fontFamily: 'Lexend Deca',
                       color: AppColors.blackCard,
@@ -179,7 +219,7 @@ class _ProfileViewState extends State<ProfileView> {
                     padding: const EdgeInsetsDirectional.fromSTEB(
                         0.0, 4.0, 0.0, 0.0),
                     child: Text(
-                      _userEmail,
+                      email,
                       style: const TextStyle(
                         fontFamily: 'Lexend Deca',
                         color: AppColors.blackCard,
@@ -197,112 +237,112 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget _userCard(SubscriptionLevelEnum status) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: MediaQuery.sizeOf(context).width * 0.88,
-            decoration: BoxDecoration(
-              boxShadow: const [
-                BoxShadow(
-                  blurRadius: 6.0,
-                  color: Color(0x4B1A1F24),
-                  offset: Offset(0.0, 2.0),
-                )
-              ],
-              gradient: LinearGradient(
-                colors: [
-                  Colors.white,
-                  status == SubscriptionLevelEnum.premium
-                      ? const Color(0xBB0F65D8)
-                      : Colors.orange,
-                ],
-                stops: const [0.0, 1.0],
-                begin: const AlignmentDirectional(0.94, -1.0),
-                end: const AlignmentDirectional(-0.94, 1.0),
-              ),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                      20.0, 20.0, 20.0, 0.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Image.asset(
-                        'assets/images/LOGO_VIDA_HORIZ_white-2048x370.png',
-                        width: 146.0,
-                        height: 25.0,
-                        fit: BoxFit.cover,
+  Widget _userCard() {
+    return StreamBuilder<UserModel>(
+        initialData: UserService.instance.user,
+        stream: UserService.instance.userStream,
+        builder: (context, snapshot) {
+          return Column(
+            children: [
+              _userInfos(snapshot.data?.name ?? "Nome",
+                  snapshot.data?.email ?? "email"),
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: MediaQuery.sizeOf(context).width * 0.88,
+                      decoration: BoxDecoration(
+                        boxShadow: const [
+                          BoxShadow(
+                            blurRadius: 6.0,
+                            color: Color(0x4B1A1F24),
+                            offset: Offset(0.0, 2.0),
+                          )
+                        ],
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white,
+                            snapshot.data!.subscriptionLevel ==
+                                    SubscriptionEnum.paying
+                                ? const Color(0xBB0F65D8)
+                                : Colors.orange,
+                          ],
+                          stops: const [0.0, 1.0],
+                          begin: const AlignmentDirectional(0.94, -1.0),
+                          end: const AlignmentDirectional(-0.94, 1.0),
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                      20.0, 8.0, 20.0, 0.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                            0.0, 30.0, 0.0, 0.0),
-                        child: Text(
-                          _userName,
-                          style: GoogleFonts.getFont(
-                            'Roboto Mono',
-                            color: AppColors.blackCard,
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.w800,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Image.asset(
+                                'assets/images/thumbnail_vidalonga4.png',
+                                width: 206.0,
+                                height: 80.0,
+                                fit: BoxFit.cover,
+                              ),
+                            ],
                           ),
-                        ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20.0, 0, 20.0, 0.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 30.0, 0.0, 0.0),
+                                  child: Text(
+                                    snapshot.data?.name ?? "name",
+                                    style: GoogleFonts.getFont(
+                                      'Roboto Mono',
+                                      color: AppColors.blackCard,
+                                      fontSize: 22.0,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20.0, 12.0, 20.0, 16.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  snapshot.data!.subscriptionLevel.value,
+                                  style: GoogleFonts.getFont(
+                                    'Roboto Mono',
+                                    color: snapshot.data!.subscriptionLevel ==
+                                            SubscriptionEnum.paying
+                                        ? AppColors.blackCard
+                                        : Colors
+                                            .red, //const Color.fromRGBO(87, 99, 108, 1),
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                      20.0, 12.0, 20.0, 16.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        status.name,
-                        style: GoogleFonts.getFont(
-                          'Roboto Mono',
-                          color: AppColors
-                              .blackCard, //const Color.fromRGBO(87, 99, 108, 1),
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                      Text(
-                        DateFormat('dd/MM/yy').format(
-                            DateTime.now().add(const Duration(days: 30))),
-                        style: GoogleFonts.getFont(
-                          'Roboto Mono',
-                          color: AppColors
-                              .blackCard, //const Color.fromRGBO(87, 99, 108, 1),
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+              ),
+            ],
+          );
+        });
   }
 }

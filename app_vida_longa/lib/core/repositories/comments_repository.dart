@@ -15,6 +15,8 @@ abstract class ICommentsRepository {
   Future<ResponseStatusModel> deleteComment(CommentModel comment);
   Future<Tuple2<ResponseStatusModel, CommentModel>> updateComment(
       CommentModel comment);
+  Future<void> incrementNumberOfComments(String articleId);
+  Future<void> decrementNumberOfComments(String articleId);
 }
 
 class CommentsRestRepository implements ICommentsRepository {
@@ -36,11 +38,11 @@ class CommentsRestRepository implements ICommentsRepository {
 
     await FirebaseFirestore.instance.collection('comments').doc(docId).set({
       "comment": comment.toJson(),
-      "user_id": UserService.instance.user.id,
+      "userId": UserService.instance.user.id,
       "email": UserService.instance.user.email,
-      "created_at": DateTime.now().millisecondsSinceEpoch,
-      "doc_id": docId,
-      "article_id": ArticleService.currentlyArticleId,
+      "createdAt": DateTime.now().millisecondsSinceEpoch,
+      "docId": docId,
+      "articleId": ArticleService.currentlyArticleId,
     }).onError((error, stackTrace) {
       response = WeException.handle(error);
     });
@@ -60,7 +62,7 @@ class CommentsRestRepository implements ICommentsRepository {
 
     await FirebaseFirestore.instance
         .collection('comments')
-        .where("article_id", isEqualTo: articleId)
+        .where("articleId", isEqualTo: articleId)
         .get()
         .then((snpashot) {
       if (snpashot.docs.isNotEmpty) {
@@ -111,5 +113,25 @@ class CommentsRestRepository implements ICommentsRepository {
       response,
       comment,
     );
+  }
+
+  @override
+  Future<void> incrementNumberOfComments(String articleId) {
+    return FirebaseFirestore.instance
+        .collection('articles')
+        .doc(articleId)
+        .update({
+      "numberOfComments": FieldValue.increment(1),
+    });
+  }
+
+  @override
+  Future<void> decrementNumberOfComments(String articleId) {
+    return FirebaseFirestore.instance
+        .collection('articles')
+        .doc(articleId)
+        .update({
+      "numberOfComments": FieldValue.increment(-1),
+    });
   }
 }

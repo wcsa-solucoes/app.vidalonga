@@ -2,8 +2,7 @@
 <!-- uses internet -->
 <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="app_vida_longa"
-        android:name="${applicationName}"
+        android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:requestLegacyExternalStorage="true"

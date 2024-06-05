@@ -1,12 +1,11 @@
 import 'dart:async';
-
-import 'package:app_vida_longa/core/helpers/app_helper.dart';
-import 'package:app_vida_longa/core/helpers/field_format_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';
+import 'package:app_vida_longa/core/services/subscription_service.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/custom_exceptions_codes_enum.dart';
+import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
@@ -31,26 +30,32 @@ class UserService {
 
   UserServiceStatusEnum get status => _status;
 
-  final StreamController<UserModel> _userController =
-      StreamController<UserModel>.broadcast();
+  final SubscriptionService _subscriptionService = SubscriptionService();
 
-  Stream<UserModel> get userStream => _userController.stream;
+  Stream<UserModel> get userStream => _userRepository.userStream;
 
   late bool _hasSentValidationEmail = false;
+  StreamSubscription<UserModel>? subscription;
 
-  static void init() {
-    if (!_hasInit) {
-      _hasInit = true;
+  void _registerListener() {
+    if (subscription != null) {
+      subscription!.cancel();
     }
+    subscription = _userRepository.userStream.listen(
+      (event) {
+        _instance._setUser(event);
+      },
+    );
   }
 
   Future<void> uploadPhoto(String url) async {
-    _user.photoUrl = url;
+    _user = user.copyWith(photoUrl: url);
     _userRepository.update(_user);
   }
 
   void handleUserLogout() {
     _user = UserModel();
+    _hasInit = false;
 
     if (_status != UserServiceStatusEnum.accountedCreated) {
       _status = UserServiceStatusEnum.loggedOut;
@@ -63,7 +68,6 @@ class UserService {
   void handleCallBack() async {
     if (_status == UserServiceStatusEnum.accountedCreated) {
       _handleValidate();
-      // TODO(any): redirecionar para pagina de conta criada e depoois pra login
       return;
     }
 
@@ -71,8 +75,10 @@ class UserService {
 
     if (response.status == ResponseStatusEnum.failed) {
       if (response.code == WeExceptionCodesEnum.firebaseAuthUserNotFound) {
-        user.id = FirebaseAuth.instance.currentUser!.uid;
-        user.email = FirebaseAuth.instance.currentUser!.email!;
+        _user = user.copyWith(
+          id: FirebaseAuth.instance.currentUser!.uid,
+          email: FirebaseAuth.instance.currentUser!.email!,
+        );
 
         unawaited(_handleSendEmail());
       }
@@ -83,7 +89,8 @@ class UserService {
 
   Future<ResponseStatusModel> create(UserModel user) async {
     _status = UserServiceStatusEnum.accountedCreated;
-    user.id = FirebaseAuth.instance.currentUser!.uid;
+    user = user.copyWith(id: FirebaseAuth.instance.currentUser!.uid);
+
     _setUser(user);
     return await _userRepository.create(user);
   }
@@ -109,27 +116,15 @@ class UserService {
     }
     _status = UserServiceStatusEnum.valid;
 
-    if (!FirebaseAuth.instance.currentUser!.emailVerified) {
-      AppHelper.displayAlertInfo("Verifique seu e-mail para ativar sua conta");
-      return;
-    }
+    // if (!FirebaseAuth.instance.currentUser!.emailVerified) {
+    //   AppHelper.displayAlertInfo("Verifique seu e-mail para ativar sua conta");
+    //   return;
+    // }
   }
 
   Future<void> _handleValidate() async {
     _validateUser();
     _handleRedirectStatus();
-  }
-
-  Future<ResponseStatusModel> validateRegister(String register) async {
-    final Tuple2<ResponseStatusModel, bool> data = await _userRepository
-        .verifyRegister(FieldFormatHelper.register(register: register));
-
-    if (data.item2) {
-      data.item1.status = ResponseStatusEnum.failed;
-      AppHelper.displayAlertError("CPF já cadastrado");
-    }
-
-    return data.item1;
   }
 
   Future<void> _handleSendEmail() async {
@@ -158,8 +153,9 @@ class UserService {
   }
 
   Future<ResponseStatusModel> update(UserModel user) async {
-    user.phone = FieldFormatHelper.phone(phone: user.phone);
-    user.document = FieldFormatHelper.register(register: user.document);
+    user = user.copyWith(
+      phone: user.phone,
+    );
 
     final ResponseStatusModel response = await _userRepository.update(user);
 
@@ -172,7 +168,12 @@ class UserService {
     return response;
   }
 
-  void initUser() {
+  void initUser() async {
+    if (_hasInit) {
+      return;
+    }
+    _hasInit = true;
+    _registerListener();
     _userRepository.updateListener();
     IFavoritesRepository favoritesRepository =
         FavoritesRepositoryImpl(FirebaseFirestore.instance);
@@ -181,10 +182,25 @@ class UserService {
 
     favoritesService.init(favoritesRepository, user.id);
 
-    NavigationController.to(routes.app.profile.path);
+    for (var route in Modular.to.navigateHistory) {
+      if (route.name.contains(routes.app.home.path)) {
+        return;
+      }
+    }
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    NavigationController.to(routes.app.home.path);
   }
 
   void _handleRecentUserRegister() {
     Modular.to.navigate(routes.app.profile.path);
+  }
+
+  Future<void> updateSubscriberStatusFromRoles(
+      SubscriptionEnum subscriptionType, String platform) async {
+    _user = _user.copyWith(subscriptionLevel: subscriptionType);
+    _setUser(_user);
+    await _subscriptionService.updateSubscriberStatusFromRoles(
+        subscriptionType, platform);
   }
 }

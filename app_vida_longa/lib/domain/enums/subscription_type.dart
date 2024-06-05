@@ -1,10 +1,8 @@
-enum SubscriptionTypeEnum {
-  free("free"),
-  basic("basic"),
-  premium("premium"),
-  custom("custom"),
-  paid("paid");
+enum SubscriptionEnum {
+  paying("paying", "Assinante"),
+  nonPaying("nonpaying", "Não assinante");
 
   final String name;
-  const SubscriptionTypeEnum(this.name);
+  final String value;
+  const SubscriptionEnum(this.name, this.value);
 }

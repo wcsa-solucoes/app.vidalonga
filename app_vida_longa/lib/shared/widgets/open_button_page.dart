@@ -1,5 +1,4 @@
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
-import 'package:app_vida_longa/shared/widgets/button_list.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -17,6 +16,7 @@ class OpenPageButtonWiget extends StatelessWidget {
         borderRadius: BorderRadius.circular(0.0),
       ),
       child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
         width: MediaQuery.sizeOf(context).width * 1.0,
         height: 50.0,
         decoration: BoxDecoration(
@@ -36,31 +36,31 @@ class OpenPageButtonWiget extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 4.0, 0.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                text,
-                style: GoogleFonts.getFont(
-                  'Urbanist',
-                  color: AppColors.secondaryText,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0,
+          child: InkWell(
+            onTap: onPressed,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    text,
+                    style: GoogleFonts.getFont(
+                      'Urbanist',
+                      color: AppColors.primaryText,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              ButtonList(
-                borderColor: Colors.transparent,
-                borderRadius: 30.0,
-                buttonSize: 46.0,
-                icon: const Icon(
+                const Icon(
                   Icons.chevron_right_rounded,
                   color: AppColors.unselectedTextStyleColor,
                   size: 30.0,
                 ),
-                onPressed: onPressed,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

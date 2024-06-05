@@ -1,9 +1,12 @@
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
-import 'package:app_vida_longa/shared/article_card_widget.dart';
+import 'package:app_vida_longa/domain/models/categorie_chip_model.dart';
+import 'package:app_vida_longa/shared/widgets/article_card_widget.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_chip.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/src/home/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +27,22 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     _homeBloc = Modular.get<HomeBloc>();
     super.initState();
+    _searchController.addListener(_onSearchChanged);
   }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _homeBloc.close();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    final text = _searchController.text;
+    _homeBloc.add(HomeSearchEvent(searchTerm: text));
+  }
+
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,23 +51,16 @@ class _HomeViewState extends State<HomeView> {
       listener: (context, state) {},
       builder: (BuildContext context, HomeState state) {
         return CustomAppScaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            backgroundColor: AppColors.white,
-            title: const DefaultText(
-              "Início",
-              fontSize: 20,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
+          appBar: const DefaultAppBar(title: "Ínicio"),
           body: SizedBox(
             width: MediaQuery.sizeOf(context).width,
             height: MediaQuery.sizeOf(context).height,
             child: Builder(builder: (context) {
               return state.when(
                 initial: () => Container(),
-                loading: _loadingState,
+                loading: (HomeLoadingState state) => _loadingState(state),
                 loaded: _loadedState,
+                articlesSearched: _searchedState,
                 error: (state) => _errorState(),
                 categoriesSelected: _categoriesSelectedState,
               );
@@ -61,6 +72,40 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
+  Widget _searchedState(ArticlesSearchedState state) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _handleSearch(),
+          _handleArticles(state.articlesByCategory!),
+        ],
+      ),
+    );
+  }
+
+  Widget _handleSearch() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: DecoratedTextFieldWidget(
+        controller: _searchController,
+        hintText: "Buscar por título...",
+        labelText: "Buscar por título...",
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.close, color: AppColors.dimGray),
+          onPressed: _onRestart,
+        ),
+        textInputAction: TextInputAction.search,
+        onSubmitted: (value) {
+          if (value.isEmpty) {
+            _homeBloc.add(RestartHomeEvent());
+          } else {
+            _homeBloc.add(HomeSearchEvent(searchTerm: value));
+          }
+        },
+      ),
+    );
+  }
+
   Widget _loadingState(HomeLoadingState state) {
     return const Center(
       child: CircularProgressIndicator(),
@@ -69,17 +114,12 @@ class _HomeViewState extends State<HomeView> {
 
   Widget _loadedState(HomeLoadedState state) {
     if (state.articlesByCategory!.isEmpty) {
-      return const SizedBox(
-          child: Center(
-              child: Padding(
-        padding: EdgeInsets.only(bottom: 100),
-        child: DefaultText("Nenhum artigo encontrado :("),
-      )));
+      return _handleEmptyArticles();
     }
     return SingleChildScrollView(
       child: Column(
         children: [
-          // search(),
+          _handleSearch(),
           SizedBox(
               height: 50,
               width: MediaQuery.of(context).size.width,
@@ -88,6 +128,35 @@ class _HomeViewState extends State<HomeView> {
           _handleArticles(state.articlesByCategory!),
         ],
       ),
+    );
+  }
+
+  void _onRestart() {
+    _searchController.clear();
+    _homeBloc.add(RestartHomeEvent());
+  }
+
+  Widget _handleEmptyArticles() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.8,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 100),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const DefaultText("Nenhum artigo encontrado :("),
+            _handleReload(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _handleReload() {
+    return TextButton(
+      onPressed: _onRestart,
+      child: const Text("Recarregar"),
     );
   }
 
@@ -101,34 +170,34 @@ class _HomeViewState extends State<HomeView> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // search(),
           SizedBox(
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              child: _handleChips(
-                state.chipsCategorie!,
-                state.articlesByCategory!,
-              )),
+            height: 50,
+            width: MediaQuery.of(context).size.width,
+            child: _handleChips(
+              state.chipsCategorie!,
+              state.articlesByCategory!,
+            ),
+          ),
           _handleArticles(state.articlesByCategorySelected!),
         ],
       ),
     );
   }
 
-  Widget _handleChips(List<ChipCategorie> chipsCategorie,
+  Widget _handleChips(List<ChipCategorieModel> chipsCategorie,
       List<List<ArticleModel>> articlesByCategorySelectedAll) {
     return ListView.builder(
-      padding: const EdgeInsets.all(8.0),
       scrollDirection: Axis.horizontal,
       itemCount: chipsCategorie.length,
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.only(left: 10),
+          padding: const EdgeInsets.only(right: 10),
           child: IconChoiceChip(
             isSelected: chipsCategorie[index].selected,
             label: chipsCategorie[index].label,
             onSelected: (bool selected) {
-              chipsCategorie[index].selected = selected;
+              chipsCategorie[index] =
+                  chipsCategorie[index].copyWith(selected: selected);
 
               var selectedChips =
                   chipsCategorie.where((chip) => chip.selected).toList();
@@ -142,8 +211,8 @@ class _HomeViewState extends State<HomeView> {
                 );
               } else {
                 var selectedArticles = articlesByCategorySelectedAll
-                    .where((articles) => selectedChips
-                        .any((chip) => articles.first.category == chip.label))
+                    .where((articles) => selectedChips.any(
+                        (chip) => articles.first.categoryUuid == chip.uuid))
                     .toList();
 
                 _homeBloc.add(
@@ -161,7 +230,11 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _handleArticles(List<List<ArticleModel>> articlesByCategory) {
-    return ListView.separated(
+    if (articlesByCategory.isEmpty) {
+      return _handleEmptyArticles();
+    }
+
+    return ListView.builder(
       physics:
           const NeverScrollableScrollPhysics(), // Add this to keep the ListView from scrolling
       shrinkWrap: true,
@@ -170,18 +243,19 @@ class _HomeViewState extends State<HomeView> {
 
       itemBuilder: (BuildContext context, int categoryIndex) {
         final categoryArticles = articlesByCategory[categoryIndex];
+
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(2),
-            color: AppColors.white,
+            color: Colors.transparent,
           ),
           child: Column(
             // crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.all(4.0),
+                padding: const EdgeInsets.only(top: 20),
                 child: Text(
-                  categoryArticles.first.category.toUpperCase(),
+                  categoryArticles.first.categoryTitle.toUpperCase(),
                   style: GoogleFonts.getFont(
                     'Poppins',
                     fontWeight: FontWeight.w500,
@@ -190,30 +264,18 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ),
-              // Row(
-              //   children: categoryArticles.first.subCategories.map((e) {
-              //     return Padding(
-              //       padding: const EdgeInsets.all(8.0),
-              //       child: IconChoiceChip(
-              //         isSelected: false,
-              //         label: e.name,
-              //         onSelected: (bool selected) {},
-              //       ),
-              //     );
-              //   }).toList(),
-              // ),
               Container(
-                color: AppColors.white,
+                color: Colors.transparent,
                 height: 250,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: categoryArticles.length,
-                  padding: const EdgeInsets.only(right: 20),
+                  // padding: const EdgeInsets.only(right: 20),
                   itemBuilder: (BuildContext context, int articleIndex) {
                     final article = categoryArticles[articleIndex];
                     return Padding(
                       padding: const EdgeInsets.only(
-                          left: 10, top: 0, bottom: 0, right: 15),
+                          left: 0, top: 4, bottom: 0, right: 15),
                       child: ArticleCard(article: article),
                     );
                   },
@@ -223,61 +285,6 @@ class _HomeViewState extends State<HomeView> {
           ),
         );
       },
-      separatorBuilder: (BuildContext context, int index) {
-        return const Divider(
-          thickness: 0,
-          color: AppColors.dimGray,
-        );
-      },
-    );
-  }
-
-  Widget search() {
-    return TextFormField(
-      controller: TextEditingController(),
-      autofocus: false,
-      obscureText: false,
-      decoration: InputDecoration(
-        labelText: 'Buscar aqui...',
-        // labelStyle: FlutterFlowTheme.of(context).labelMedium,
-        // hintStyle: FlutterFlowTheme.of(context).labelMedium,
-        enabledBorder: UnderlineInputBorder(
-          borderSide: const BorderSide(
-            // color: FlutterFlowTheme.of(context).alternate,
-            width: 4.0,
-          ),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: const BorderSide(
-            // color: FlutterFlowTheme.of(context).primary,
-            width: 4.0,
-          ),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        errorBorder: UnderlineInputBorder(
-          borderSide: const BorderSide(
-            // color: FlutterFlowTheme.of(context).error,
-            width: 4.0,
-          ),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        focusedErrorBorder: UnderlineInputBorder(
-          borderSide: const BorderSide(
-            // color: FlutterFlowTheme.of(context).error,
-            width: 4.0,
-          ),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        prefixIcon: const Icon(
-          Icons.search,
-          size: 15.0,
-        ),
-        suffixIcon: const Icon(
-          Icons.close,
-        ),
-      ),
-      // style: FlutterFlowTheme.of(context).bodyMedium,
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
@@ -7,13 +9,14 @@ import 'package:app_vida_longa/domain/models/response_model.dart';
 abstract class IFavoritesService {
   late IFavoritesRepository _repository;
   Future<void> init(IFavoritesRepository repository, String userId);
-  Future<List<String>> get();
   Future<void> add(String articleId);
   Future<void> remove(String articleId);
   List<ArticleModel> favorites = [];
   late List<String> favoritesIds = [];
   // ignore: unused_element
   set _setIds(List<String> ids);
+
+  Stream<List<ArticleModel>> get favoritesStream;
 
   // ignore: prefer_final_fields
   bool _hasInit = false;
@@ -32,6 +35,13 @@ class FavoritesServiceImpl extends IFavoritesService {
   final ArticleService _articleService = ArticleService.instance;
 
   @override
+  Stream<List<ArticleModel>> get favoritesStream =>
+      _favoritesStreamController.stream;
+
+  final StreamController<List<ArticleModel>> _favoritesStreamController =
+      StreamController.broadcast();
+
+  @override
   Future<void> init(IFavoritesRepository repository, String userId) async {
     if (hasInit) {
       return;
@@ -42,7 +52,7 @@ class FavoritesServiceImpl extends IFavoritesService {
     _userId = userId;
 
     final ({List<String> ids, ResponseStatusModel response}) result =
-        await repository.favorites(userId);
+        await repository.getAll(userId);
 
     if (result.response.status == ResponseStatusEnum.success) {
       _setIds = result.ids;
@@ -55,6 +65,8 @@ class FavoritesServiceImpl extends IFavoritesService {
         favorites.add(article);
       }
     }
+
+    _setArticleIds(favorites);
   }
 
   @override
@@ -68,11 +80,19 @@ class FavoritesServiceImpl extends IFavoritesService {
 
     if (response.status == ResponseStatusEnum.success) {
       favoritesIds.add(articleId);
-      favorites.add(_articleService.articles
-          .firstWhere((element) => element.uuid == articleId));
+      final ArticleModel article = _articleService.articles
+          .firstWhere((element) => element.uuid == articleId);
+
+      favorites.add(article);
+
+      _setArticleIds(favorites);
     } else {
       AppHelper.displayAlertError("Erro ao adicionar artigo aos favoritos!");
     }
+  }
+
+  void _setArticleIds(List<ArticleModel> favoritesArticles) {
+    _favoritesStreamController.add(favoritesArticles);
   }
 
   @override
@@ -88,20 +108,10 @@ class FavoritesServiceImpl extends IFavoritesService {
     if (response.status == ResponseStatusEnum.success) {
       favoritesIds.remove(articleId);
       favorites.removeWhere((element) => element.uuid == articleId);
+      _setArticleIds(favorites);
     } else {
       AppHelper.displayAlertError("Erro ao remover artigo dos favoritos!");
     }
-  }
-
-  @override
-  Future<List<String>> get() async {
-    await _repository.favorites(userId).then((result) {
-      if (result.response.status == ResponseStatusEnum.success) {
-        _setIds = result.ids;
-      }
-    });
-
-    return favoritesIds;
   }
 
   @override

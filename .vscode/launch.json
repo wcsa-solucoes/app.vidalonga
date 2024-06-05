@@ -27,5 +27,39 @@
             ],
             "program": "app_vida_longa/lib/main.dart"
         },
+        {
+            "name": "Gprod",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "prod",
+                "--dart-define=MODE=prod",
+            ],
+            "program": "app_vida_longa/lib/main.dart",
+            "deviceId": "emulator-5554" //"4e30a6a2"
+        },
+        {
+            "name": "Aprod",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "prod",
+                "--dart-define=MODE=prod",
+            ],
+            "program": "app_vida_longa/lib/main.dart",
+            "deviceId": "6DC52216-A38A-467D-9AB4-4BAB02F7882F"
+        },
+    ],
+    "compounds": [
+        {
+            "name": "All",
+            "configurations": [
+                "Gprod",
+                "Aprod",
+                // "dev"
+            ]
+        }
     ]
 }

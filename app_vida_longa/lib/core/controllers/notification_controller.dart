@@ -20,7 +20,6 @@ abstract class NotificationController {
       data = response ?? ResponseStatusModel();
     }
 
-    // _appWrapBloc.alert(data, duration: duration);
     _appWrapBloc.add(AppWrapAlertEvent(
       alertResponse: data,
       duration: duration,
@@ -43,11 +42,6 @@ abstract class NotificationController {
       data = response ?? ResponseStatusModel();
     }
 
-    // _appWrapBloc.snackBar(
-    //   data,
-    //   duration: duration,
-    //   canClose: canClose,
-    // );
     _appWrapBloc.add(AppWrapSnackEvent(
       snackBarResponse: data,
       duration: duration,

@@ -44,7 +44,7 @@ abstract class WeExceptionHelper {
             "Credenciais inválidas. Verifique os dados e tente novamente.";
         break;
       case WeExceptionCodesEnum.firebaseAuthInvalidEmail:
-        message = "Error : WeExceptionCodesEnum.firebaseAuthInvalidEmail";
+        message = "Email inválido";
         break;
       case WeExceptionCodesEnum.firebaseAuthUserNotFound:
         message = "Usuário ou senha inválidos";
@@ -57,7 +57,7 @@ abstract class WeExceptionHelper {
             "Error : WeExceptionCodesEnum.firebaseAuthOperationNotAllowed";
         break;
       case WeExceptionCodesEnum.firebaseAuthWeakPassword:
-        message = "Error : WeExceptionCodesEnum.firebaseAuthWeakPassword";
+        message = "Senha fraca";
         break;
       case WeExceptionCodesEnum.firebaseAuthUserDisabled:
         message = "Error : WeExceptionCodesEnum.firebaseAuthUserDisabled";
@@ -66,19 +66,19 @@ abstract class WeExceptionHelper {
         message = "Error : WeExceptionCodesEnum.firebaseAuthNetworkFailed";
         break;
       case WeExceptionCodesEnum.firebaseAuthTooManyRequests:
-        message = "Error : WeExceptionCodesEnum.firebaseAuthTooManyRequests";
+        message = "Muitas tentativas. Tente novamente mais tarde.";
         break;
       case WeExceptionCodesEnum.firebaseAuthNotMapped:
-        message = "Error : WeExceptionCodesEnum.firebaseAuthNotMapped";
+        message = "Erro de autenticação não mapeado";
         break;
       case WeExceptionCodesEnum.exceptionTimeout:
-        message = "Error : WeExceptionCodesEnum.exceptionTimeout";
+        message = "Tempo de espera excedido";
         break;
       case WeExceptionCodesEnum.exceptionNotMapped:
-        message = "Error : WeExceptionCodesEnum.exceptionNotMapped";
+        message = "Erro não mapeado";
         break;
       case WeExceptionCodesEnum.firebaseAuthEmailNotVerified:
-        message = "Error : WeExceptionCodesEnum.firebaseAuthEmailNotVerified";
+        message = "Email não verificado";
         break;
       case WeExceptionCodesEnum.coreTypeError:
         message = "Error : WeExceptionCodesEnum.coreTypeError";
@@ -189,7 +189,7 @@ abstract class WeExceptionHelper {
         message = "Error : WeExceptionCodesEnum.ioExceptionNotMapped";
         break;
       default:
-        message = "Error : ";
+        message = "Erro desconhecido ";
         break;
     }
 

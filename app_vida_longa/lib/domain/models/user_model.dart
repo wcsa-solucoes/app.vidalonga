@@ -1,34 +1,29 @@
+import "package:app_vida_longa/domain/enums/subscription_type.dart";
 import "package:json_annotation/json_annotation.dart";
 
 part "user_model.g.dart";
 
-enum SubscriptionLevelEnum {
-  free("GRATUITO"),
-  premium("ASSINANTE");
-
-  final String name;
-  const SubscriptionLevelEnum(this.name);
-}
-
 @JsonSerializable()
 class UserModel {
-  late String id;
-  late String name;
-  late String email;
-  late String phone;
-  late String document;
+  final String id;
+  final String name;
+  final String email;
+  final String phone;
   @JsonKey(name: "photo_url")
-  late String photoUrl;
-  late SubscriptionLevelEnum subscriptionLevel;
+  final String photoUrl;
+  @JsonKey(
+      fromJson: subscriptionEnumFromJson, includeToJson: false, name: "roles")
+  final SubscriptionEnum subscriptionLevel;
+  final String? lastSubscriptionPlatform;
 
   UserModel({
     this.id = "",
     this.name = "",
     this.email = "",
     this.phone = "",
-    this.document = "",
     this.photoUrl = "",
-    this.subscriptionLevel = SubscriptionLevelEnum.free,
+    this.subscriptionLevel = SubscriptionEnum.nonPaying,
+    this.lastSubscriptionPlatform,
   });
 
   static UserModel empty() {
@@ -37,9 +32,20 @@ class UserModel {
       name: "",
       email: "",
       phone: "",
-      document: "",
       photoUrl: "",
-      subscriptionLevel: SubscriptionLevelEnum.free,
+      subscriptionLevel: SubscriptionEnum.nonPaying,
+    );
+  }
+
+  static SubscriptionEnum subscriptionEnumFromJson(Map<String, dynamic> roles) {
+    final subscriptionType = roles["subscriptionType"] as String?;
+
+    if (subscriptionType == null) {
+      return SubscriptionEnum.nonPaying;
+    }
+    return SubscriptionEnum.values.firstWhere(
+      (e) => e.name == subscriptionType.toLowerCase(),
+      orElse: () => SubscriptionEnum.nonPaying,
     );
   }
 
@@ -47,4 +53,22 @@ class UserModel {
       _$UserModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
+
+  UserModel copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? phone,
+    String? photoUrl,
+    SubscriptionEnum? subscriptionLevel,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      photoUrl: photoUrl ?? this.photoUrl,
+      subscriptionLevel: subscriptionLevel ?? this.subscriptionLevel,
+    );
+  }
 }

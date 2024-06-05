@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.appVidaLonga</string>
+	<string>app.vidalongaapp.com</string>
 	<key>PROJECT_ID</key>
 	<string>vidalonga-7be23</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:307746117848:ios:63f93b76eb48e35f1ddfad</string>
+	<string>1:307746117848:ios:48535993e406d92b1ddfad</string>
 </dict>
 </plist>

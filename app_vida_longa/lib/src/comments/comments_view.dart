@@ -1,7 +1,7 @@
 import 'package:app_vida_longa/core/services/user_service.dart';
-import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
+import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
 import 'package:app_vida_longa/src/comments/bloc/comments_bloc.dart';
 import 'package:flutter/material.dart';
@@ -29,21 +29,7 @@ class _CommentsViewState extends State<CommentsView> {
     final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
     return CustomAppScaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.white,
-        title: const DefaultText(
-          "Comentários",
-          fontSize: 20,
-          fontWeight: FontWeight.w300,
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.matterhorn),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar: const DefaultAppBar(title: "Comentários", isWithBackButton: true),
       body: BlocBuilder<CommentsBloc, CommentsState>(
         bloc: _commentsBloc,
         builder: (context, state) {

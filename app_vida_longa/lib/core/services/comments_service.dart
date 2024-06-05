@@ -26,6 +26,9 @@ class CommentService {
   Future<Tuple2<ResponseStatusModel, CommentModel>> createComment(
       String comment) async {
     final response = await _repository.createComment(comment);
+    if (response.item1.status == ResponseStatusEnum.success) {
+      _repository.incrementNumberOfComments(response.item2.articleId);
+    }
     _addComment(response.item2);
     return response;
   }
@@ -47,6 +50,9 @@ class CommentService {
 
   Future<ResponseStatusModel> deleteComment(CommentModel comment) async {
     final response = await _repository.deleteComment(comment);
+    if (response.status == ResponseStatusEnum.success) {
+      _repository.decrementNumberOfComments(comment.articleId);
+    }
     _articles.remove(comment);
     return response;
   }

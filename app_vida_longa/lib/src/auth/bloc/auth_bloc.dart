@@ -31,7 +31,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     add(AuthLoadingEvent());
 
     if (!_isEnabled) {
-      // _handleWaitSnackBar();//aguarde
       return;
     }
     _isEnabled = false;
@@ -44,30 +43,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     if (response.status == ResponseStatusEnum.failed) {
       _displaySnackBar(response);
+      emit(AuthInitial());
     } else {
       _isEnabled = true;
+      emit(AuthSuccess(newUser: _user, canPop: event.canPop));
     }
-    emit(AuthInitial(newUser: _user));
   }
 
   FutureOr<void> _register(
       AuthSignUpEvent event, Emitter<AuthState> emit) async {
     add(AuthLoadingEvent()); // _setLoading();
 
-    final ResponseStatusModel hasRegister =
-        await _userService.validateRegister(event.cpf);
-
-    if (hasRegister.status == ResponseStatusEnum.failed) {
-      emit(AuthInitial(newUser: UserModel.empty()));
-      return;
-    }
-
     _user = _userService.user;
 
-    _user.name = event.name;
-    _user.phone = FieldFormatHelper.phone(phone: event.phone);
-    _user.document = FieldFormatHelper.register(register: event.cpf);
-    _user.email = event.email;
+    _user = _user.copyWith(
+      name: event.name,
+      phone: FieldFormatHelper.phone(phone: event.phone),
+      // document: FieldFormatHelper.register(register: event.cpf),
+      email: event.email,
+    );
+
+    // _user.name = event.name;
+    // _user.phone = FieldFormatHelper.phone(phone: event.phone);
+    // _user.document = FieldFormatHelper.register(register: event.cpf);
+    // _user.email = event.email;
 
     final ResponseStatusModel response =
         await _authService.register(_user, event.password, _user.name);

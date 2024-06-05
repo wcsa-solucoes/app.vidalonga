@@ -6,10 +6,12 @@ sealed class AuthEvent {}
 final class AuthSignInEvent extends AuthEvent {
   final String email;
   final String password;
-
+  //from page
+  final bool? canPop;
   AuthSignInEvent({
     required this.email,
     required this.password,
+    this.canPop = false,
   });
 }
 
