@@ -1,13 +1,18 @@
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/services/partners_and_benefits/benefits_service.dart';
 import 'package:app_vida_longa/core/services/partners_and_benefits/partners_service.dart';
+import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/enums/social_media_enum.dart';
 import 'package:app_vida_longa/domain/models/benefit_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BenefitsDetailsView extends StatefulWidget {
@@ -48,33 +53,87 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                DefaultText(
-                  _partnerService.selectedPartner.name,
-                  maxLines: 2,
-                  fontSize: 20,
-                  textAlign: TextAlign.center,
+                Row(
+                  children: [
+                    _partnerService.selectedPartner.urlLogo != null
+                        ? Container(
+                            height: 80,
+                            decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10),
+                                  bottomLeft: Radius.circular(10),
+                                  bottomRight: Radius.circular(10),
+                                ),
+                                color: AppColors.white,
+                                image: DecorationImage(
+                                    image: CachedNetworkImageProvider(
+                                        _partnerService
+                                            .selectedPartner.urlLogo!),
+                                    fit: BoxFit.fill)),
+                            width: MediaQuery.of(context).size.width / 3.5,
+                          )
+                        : Container(),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Text(
+                        _partnerService.selectedPartner.name,
+                        maxLines: 5,
+                        style: GoogleFonts.getFont(
+                          'Poppins',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 19,
+                          color: AppColors.backgroundDark,
+                        ),
+                        textAlign: TextAlign.center,
+                        softWrap: true,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
-                DefaultText(
-                  _partnerService.selectedPartner.presentationText,
-                  maxLines: 20,
-                  fontSize: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: DefaultText(
-                    "Endereço: ${_partnerService.selectedPartner.fullAddress}",
-                    fontSize: 20,
-                    maxLines: 4,
-                  ),
-                ),
+                _partnerService.selectedPartner.presentationText != ""
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 25),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                _partnerService
+                                    .selectedPartner.presentationText,
+                                maxLines: 20,
+                                style: GoogleFonts.getFont(
+                                  'Poppins',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 15,
+                                  color: AppColors.backgroundDark,
+                                ),
+                                textAlign: TextAlign.justify,
+                                softWrap: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : const SizedBox(
+                        height: 20,
+                      ),
                 _partnerService
                             .selectedPartner.presentationImagesUrl?.isEmpty ??
                         false
                     ? const SizedBox.shrink()
                     : Column(
                         children: [
-                          const DefaultText("Fotos", fontSize: 20),
+                          Text(
+                            "Fotos",
+                            style: GoogleFonts.getFont(
+                              'Poppins',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 19,
+                              color: AppColors.backgroundDark,
+                            ),
+                          ),
                           SizedBox(
                             height: 200,
                             child: Scrollbar(
@@ -114,6 +173,19 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
                           ),
                         ],
                       ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Endereço: ${_partnerService.selectedPartner.fullAddress}",
+                  style: GoogleFonts.getFont(
+                    'Poppins',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 15,
+                    color: AppColors.backgroundDark,
+                  ),
+                  textAlign: TextAlign.justify,
+                ),
                 StreamBuilder<List<BenefitModel>>(
                   initialData: const [],
                   stream: _benefitsService.benefitsStream,
@@ -127,46 +199,33 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
                       );
                     }
 
-                    if (snapshot.data!.isEmpty) {
-                      return const Padding(
-                        padding: EdgeInsets.only(top: 30),
-                        child: Center(
-                          child: DefaultText(
-                            "Nenhum benefício encontrado.",
-                            fontSize: 20,
-                          ),
-                        ),
-                      );
-                    }
                     return _handleBenefitsWidget(snapshot.data!);
                   },
                 ),
                 //social medias links
                 const SizedBox(height: 20),
-                const Padding(
-                  padding: EdgeInsets.only(left: 10),
+                Padding(
+                  padding: const EdgeInsets.only(left: 3),
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: DefaultText(
-                      "Redes sociais",
-                      fontSize: 20,
+                    child: Text(
+                      "Redes Sociais",
+                      style: GoogleFonts.getFont(
+                        'Poppins',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 19,
+                        color: AppColors.backgroundDark,
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
                 _partnerService.selectedPartner.socialMedias.isEmpty
-                    ? const DefaultText(
-                        "Nenhum link encontrado.",
-                        fontSize: 20,
-                      )
+                    ? Container()
                     : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: _partnerService.selectedPartner.socialMedias
                             .map((e) {
-                          //                final Uri url =
-                          //     Uri.parse('https://www.instagram.com/vidalongaapp/');
-                          // _launchUrl(url);
-
                           switch (e.type) {
                             case SocialMediaEnum.facebook:
                               return IconButton(
@@ -237,48 +296,67 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
     return Column(
       children: [
         const SizedBox(height: 20),
-        const Align(
+        Align(
           alignment: Alignment.centerLeft,
           child: Padding(
-            padding: EdgeInsets.only(top: 20),
-            child: DefaultText("Benefícios", fontSize: 22),
+            padding: const EdgeInsets.only(top: 20),
+            child: Text(
+              "Benefícios",
+              style: GoogleFonts.getFont(
+                'Poppins',
+                fontWeight: FontWeight.w500,
+                fontSize: 19,
+                color: AppColors.backgroundDark,
+              ),
+            ),
           ),
         ),
-        const Align(
+        Align(
             alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.only(top: 20, left: 10),
-              child: DefaultText("Em destaques:", fontSize: 20),
-            )),
+            child: benefitsHighlighted.isEmpty
+                ? Container()
+                : Padding(
+                    padding: const EdgeInsets.only(top: 20, left: 10),
+                    child: Text(
+                      "Em destaque:",
+                      style: GoogleFonts.getFont(
+                        'Poppins',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18,
+                        color: AppColors.backgroundDark,
+                      ),
+                    ),
+                  )),
         benefitsHighlighted.isEmpty
-            ? const DefaultText(
-                "Nenhum benefício em destaque.",
-                fontSize: 20,
-              )
+            ? Container()
             : Padding(
-                padding: const EdgeInsets.only(left: 10, top: 10),
+                padding: const EdgeInsets.only(left: 15, top: 10),
                 child: ListBenefitsWidget(
                   scrollController: _scrollController,
                   benefitsFromSelectedPartner: benefitsHighlighted,
                 ),
               ),
-        const Align(
+        Align(
           alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: EdgeInsets.only(top: 20, left: 10),
-            child: DefaultText(
-              "Outros benefícios",
-              fontSize: 22,
-            ),
-          ),
+          child: benefitsNotHighlighted.isEmpty
+              ? Container()
+              : Padding(
+                  padding: const EdgeInsets.only(top: 20, left: 10),
+                  child: Text(
+                    "Outros benefícios:",
+                    style: GoogleFonts.getFont(
+                      'Poppins',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                      color: AppColors.backgroundDark,
+                    ),
+                  ),
+                ),
         ),
         benefitsNotHighlighted.isEmpty
-            ? const DefaultText(
-                "Nenhum outro benefício.",
-                fontSize: 20,
-              )
+            ? Container()
             : Padding(
-                padding: const EdgeInsets.only(left: 10, top: 10),
+                padding: const EdgeInsets.only(left: 15, top: 10),
                 child: ListBenefitsWidget(
                   scrollController: _scrollController,
                   benefitsFromSelectedPartner: benefitsNotHighlighted,
@@ -308,10 +386,17 @@ class ListBenefitsWidget extends StatelessWidget {
       itemCount: _benefitsFromSelectedPartner.length,
       itemBuilder: (context, index) {
         final benefit = _benefitsFromSelectedPartner[index];
-        return DefaultText(
-          benefit.name,
-          fontSize: 18,
-          maxLines: 2,
+        return Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: Text(
+            "${benefit.name};",
+            style: GoogleFonts.getFont(
+              'Poppins',
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+              color: AppColors.backgroundDark,
+            ),
+          ),
         );
       },
     );

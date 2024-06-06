@@ -190,12 +190,14 @@ class _PartnersViewState extends State<PartnersView> {
   Widget _handleChips(List<ChipCategorieModel> chipsCategorie,
       List<List<PartnerCompanyModel>> partnersByBranchSelectedAll) {
     return ListView.builder(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       scrollDirection: Axis.horizontal,
       itemCount: chipsCategorie.length,
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.only(left: 10),
+          padding: index == 0
+              ? const EdgeInsets.only(left: 0)
+              : const EdgeInsets.only(left: 5),
           child: IconChoiceChip(
             isSelected: chipsCategorie[index].selected,
             label: chipsCategorie[index].label,
@@ -383,14 +385,15 @@ class _PartnerCardWidget extends StatelessWidget {
                     preferBelow: false,
                     child: Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(4.0),
+                        padding: const EdgeInsets.only(
+                            left: 15, top: 5, bottom: 5, right: 5),
                         child: Text(
                           partner.name,
                           maxLines: 1,
                           style: GoogleFonts.getFont(
                             'Poppins',
                             fontWeight: FontWeight.w500,
-                            fontSize: 20.0,
+                            fontSize: 19,
                             color: AppColors.titleColor,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -410,12 +413,12 @@ class _PartnerCardWidget extends StatelessWidget {
                       return InkWell(
                         onTap: () {},
                         child: Container(
-                          margin: const EdgeInsets.only(left: 20),
+                          margin: const EdgeInsets.only(left: 15),
                           height: 80,
-                          width: 80,
+                          width: 100,
                           decoration: BoxDecoration(
                             borderRadius: const BorderRadius.all(
-                              Radius.circular(10),
+                              Radius.circular(5),
                             ),
                             border: Border.all(
                               color: AppColors.borderColor,
@@ -439,17 +442,24 @@ class _PartnerCardWidget extends StatelessWidget {
                     // mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      DefaultText(
+                      Text(
                         "Telefone: ${partner.phoneNumber ?? "Sem telefone"}",
-                        fontSize: 16,
-                        // fontWeight: FontWeight.w700,
-                        color: AppColors.gray600,
+                        style: GoogleFonts.getFont(
+                          'Poppins',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: AppColors.backgroundDark,
+                        ),
                       ),
-                      DefaultText(
+                      Text(
                         partner.fullAddress ?? "Sem endereço",
-                        fontSize: 16,
-                        // fontWeight: FontWeight.w700,
-                        color: AppColors.gray600,
+                        style: GoogleFonts.getFont(
+                          'Poppins',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: AppColors.backgroundDark,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -462,12 +472,13 @@ class _PartnerCardWidget extends StatelessWidget {
                 //text button to see all benefits
                 TextButton(
                   onPressed: () => onPressed.call(),
-                  child: const Text(
+                  child: Text(
                     "Ver benefícios",
-                    style: TextStyle(
+                    style: GoogleFonts.getFont(
+                      'Poppins',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
                       color: AppColors.selectedColor,
-                      fontSize: 16,
-                      decoration: TextDecoration.underline,
                     ),
                   ),
                 ),
