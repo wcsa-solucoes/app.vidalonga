@@ -41,13 +41,16 @@ class ArticleCard extends StatelessWidget {
             Row(
               children: [
                 article.subscriptionType == SubscriptionTypeArticleEnum.paid
-                    ? const CircleAvatar(
-                        backgroundColor: Colors.amber,
-                        radius: 12,
-                        child: Icon(
-                          Icons.lock_outlined,
-                          color: Colors.white,
-                          size: 16.0,
+                    ? const Padding(
+                        padding: EdgeInsets.only(left: 6),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.amber,
+                          radius: 12,
+                          child: Icon(
+                            Icons.lock_outlined,
+                            color: Colors.white,
+                            size: 16.0,
+                          ),
                         ),
                       )
                     : const SizedBox.shrink(),
@@ -57,14 +60,14 @@ class ArticleCard extends StatelessWidget {
                     preferBelow: false,
                     child: Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(4.0),
+                        padding: const EdgeInsets.all(6.0),
                         child: Text(
                           article.title,
                           maxLines: 1,
                           style: GoogleFonts.getFont(
                             'Poppins',
                             fontWeight: FontWeight.w500,
-                            fontSize: 20.0,
+                            fontSize: 19.0,
                             color: AppColors.titleColor,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -117,18 +120,25 @@ class ArticleCard extends StatelessWidget {
                         "article": article
                       });
                     },
-                    child: Container(
-                      height: 190,
-                      decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(10),
-                            bottomRight: Radius.circular(10),
-                          ),
-                          color: AppColors.white,
-                          image: DecorationImage(
-                              image: CachedNetworkImageProvider(article.image),
-                              fit: BoxFit.fill)),
-                      width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      child: Container(
+                        height: 190,
+                        decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10),
+                            ),
+                            color: AppColors.white,
+                            image: DecorationImage(
+                                image:
+                                    CachedNetworkImageProvider(article.image),
+                                fit: BoxFit.fill)),
+                        width: MediaQuery.of(context).size.width,
+                      ),
                     ),
                   );
                 }),
