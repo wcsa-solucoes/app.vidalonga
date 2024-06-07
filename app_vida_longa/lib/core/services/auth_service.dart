@@ -7,7 +7,9 @@ import "package:app_vida_longa/domain/contants/routes.dart";
 import "package:app_vida_longa/domain/models/response_model.dart";
 import "package:app_vida_longa/domain/models/user_model.dart";
 import "package:app_vida_longa/src/core/navigation_controller.dart";
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
+import "package:firebase_messaging/firebase_messaging.dart";
 
 class AuthService {
   AuthService._internal();
@@ -28,6 +30,7 @@ class AuthService {
   final UserService _userService = UserService.instance;
   final AuthRepository _authRepository = AuthRepository();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   User? get getCurrentUser => _auth.currentUser;
 
@@ -40,6 +43,8 @@ class AuthService {
 
     if (response.status == ResponseStatusEnum.success) {
       await _userService.get();
+      await storeDeviceToken();
+      monitorSessionChanges();
     } else {
       NotificationController.alert(response: response);
     }
@@ -107,6 +112,37 @@ class AuthService {
         return;
       }
       _userService.handleCallBack();
+    });
+  }
+
+  Future<void> storeDeviceToken() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    if (token != null) {
+      String userId = _auth.currentUser!.uid;
+      await _firestore.collection('users').doc(userId).set({
+        'deviceToken': token,
+        'lastLogin': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    }
+  }
+
+  void monitorSessionChanges() {
+    String userId = _auth.currentUser!.uid;
+    _firestore
+        .collection('users')
+        .doc(userId)
+        .snapshots()
+        .listen((snapshot) async {
+      if (snapshot.exists) {
+        String? currentToken = snapshot.data()!['deviceToken'];
+        String? myToken = await FirebaseMessaging.instance.getToken();
+        if (currentToken != myToken) {
+          AppHelper.displayAlertWarning(
+              "Você será deslogado pois logou em outro aparelho!");
+          Future.delayed(const Duration(seconds: 3), () {});
+          logout();
+        }
+      }
     });
   }
 
