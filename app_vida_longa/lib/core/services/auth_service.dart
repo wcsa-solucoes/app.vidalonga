@@ -1,6 +1,7 @@
 import "dart:async";
 import "package:app_vida_longa/core/controllers/notification_controller.dart";
 import "package:app_vida_longa/core/helpers/app_helper.dart";
+import "package:app_vida_longa/core/helpers/print_colored_helper.dart";
 import "package:app_vida_longa/core/repositories/auth_repository.dart";
 import "package:app_vida_longa/core/services/user_service.dart";
 import "package:app_vida_longa/domain/contants/routes.dart";
@@ -42,9 +43,9 @@ class AuthService {
         .signInUsingEmailPassword(email: email, password: password);
 
     if (response.status == ResponseStatusEnum.success) {
+      PrintColoredHelper.printPink("SIGN SUCCESS");
       await _userService.get();
-      await storeDeviceToken();
-      monitorSessionChanges();
+      // await storeDeviceToken();
     } else {
       NotificationController.alert(response: response);
     }
@@ -112,37 +113,6 @@ class AuthService {
         return;
       }
       _userService.handleCallBack();
-    });
-  }
-
-  Future<void> storeDeviceToken() async {
-    String? token = await FirebaseMessaging.instance.getToken();
-    if (token != null) {
-      String userId = _auth.currentUser!.uid;
-      await _firestore.collection('users').doc(userId).set({
-        'deviceToken': token,
-        'lastLogin': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
-    }
-  }
-
-  void monitorSessionChanges() {
-    String userId = _auth.currentUser!.uid;
-    _firestore
-        .collection('users')
-        .doc(userId)
-        .snapshots()
-        .listen((snapshot) async {
-      if (snapshot.exists) {
-        String? currentToken = snapshot.data()!['deviceToken'];
-        String? myToken = await FirebaseMessaging.instance.getToken();
-        if (currentToken != myToken) {
-          AppHelper.displayAlertWarning(
-              "Você será deslogado pois logou em outro aparelho!");
-          Future.delayed(const Duration(seconds: 3), () {});
-          logout();
-        }
-      }
     });
   }
 

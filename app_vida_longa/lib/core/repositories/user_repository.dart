@@ -1,13 +1,17 @@
 import "dart:async";
 
+import "package:app_vida_longa/core/helpers/app_helper.dart";
 import "package:app_vida_longa/core/helpers/async_helper.dart";
 import 'package:app_vida_longa/core/controllers/we_exception.dart';
 import "package:app_vida_longa/core/helpers/date_time_helper.dart";
+import "package:app_vida_longa/core/helpers/print_colored_helper.dart";
+import "package:app_vida_longa/core/services/auth_service.dart";
 import "package:app_vida_longa/domain/enums/custom_exceptions_codes_enum.dart";
 import "package:app_vida_longa/domain/models/response_model.dart";
 import "package:app_vida_longa/domain/models/user_model.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
+import "package:firebase_messaging/firebase_messaging.dart";
 import "package:tuple/tuple.dart";
 
 class UserRepository {
@@ -187,13 +191,46 @@ class UserRepository {
 
   void _handleStreamUpdate(
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
+    PrintColoredHelper.printWhite("_handleStreamUpdate");
     if (!documentSnapshot.exists) {
       var data = documentSnapshot.data();
       if (data == null) {
         return;
       }
     }
+
+    if (documentSnapshot.exists) {
+      PrintColoredHelper.printGreen("check");
+      String? currentToken = documentSnapshot.data()!['deviceToken'];
+
+      if (myToken != null) {
+        PrintColoredHelper.printGreen("myToken: $myToken");
+
+        if (currentToken != myToken) {
+          AppHelper.displayAlertWarning(
+              "Você será deslogado pois logou em outro aparelho!");
+          Future.delayed(const Duration(seconds: 3), () {});
+          AuthService.logout();
+        }
+      }
+    }
     final UserModel userModel = UserModel.fromJson(documentSnapshot.data()!);
     _userController.sink.add(userModel);
+  }
+
+  String? myToken;
+
+  Future<void> storeDeviceToken() async {
+    myToken = await FirebaseMessaging.instance.getToken();
+
+    PrintColoredHelper.printCyan("STORE DEVICE ${_auth.currentUser!.uid}");
+    if (myToken != null) {
+      String userId = _auth.currentUser!.uid;
+      await _instance.collection('users').doc(userId).set({
+        'deviceToken': myToken,
+        'lastLogin': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+      PrintColoredHelper.printOrange("STORE DEVICE: new token save!");
+    }
   }
 }
