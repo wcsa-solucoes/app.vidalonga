@@ -173,8 +173,10 @@ class UserService {
       return;
     }
     _hasInit = true;
+    await _userRepository.storeDeviceToken();
     _registerListener();
     _userRepository.updateListener();
+
     IFavoritesRepository favoritesRepository =
         FavoritesRepositoryImpl(FirebaseFirestore.instance);
 
