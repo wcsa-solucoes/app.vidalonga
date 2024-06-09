@@ -8,9 +8,7 @@ import "package:app_vida_longa/domain/contants/routes.dart";
 import "package:app_vida_longa/domain/models/response_model.dart";
 import "package:app_vida_longa/domain/models/user_model.dart";
 import "package:app_vida_longa/src/core/navigation_controller.dart";
-import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
-import "package:firebase_messaging/firebase_messaging.dart";
 
 class AuthService {
   AuthService._internal();
@@ -31,7 +29,6 @@ class AuthService {
   final UserService _userService = UserService.instance;
   final AuthRepository _authRepository = AuthRepository();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   User? get getCurrentUser => _auth.currentUser;
 
@@ -43,9 +40,7 @@ class AuthService {
         .signInUsingEmailPassword(email: email, password: password);
 
     if (response.status == ResponseStatusEnum.success) {
-      PrintColoredHelper.printPink("SIGN SUCCESS");
       await _userService.get();
-      // await storeDeviceToken();
     } else {
       NotificationController.alert(response: response);
     }

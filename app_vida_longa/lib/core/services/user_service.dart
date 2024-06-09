@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
+import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';
 import 'package:app_vida_longa/core/services/subscription_service.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
@@ -61,6 +63,7 @@ class UserService {
       _status = UserServiceStatusEnum.loggedOut;
     }
     _status = UserServiceStatusEnum.loggedOut;
+    _userRepository.closeListener();
 
     _hasSentValidationEmail = false;
   }
@@ -173,7 +176,7 @@ class UserService {
       return;
     }
     _hasInit = true;
-    await _userRepository.storeDeviceToken();
+    await _updateToken();
     _registerListener();
     _userRepository.updateListener();
 
@@ -196,6 +199,15 @@ class UserService {
 
   void _handleRecentUserRegister() {
     Modular.to.navigate(routes.app.profile.path);
+  }
+
+  String? myDeviceToken;
+
+  Future<void> _updateToken() async {
+    String? token = await _userRepository.storeDeviceToken();
+    if (token != "") {
+      myDeviceToken = token;
+    }
   }
 
   Future<void> updateSubscriberStatusFromRoles(

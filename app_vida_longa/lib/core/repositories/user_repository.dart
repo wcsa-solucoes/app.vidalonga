@@ -6,6 +6,7 @@ import 'package:app_vida_longa/core/controllers/we_exception.dart';
 import "package:app_vida_longa/core/helpers/date_time_helper.dart";
 import "package:app_vida_longa/core/helpers/print_colored_helper.dart";
 import "package:app_vida_longa/core/services/auth_service.dart";
+import "package:app_vida_longa/core/services/user_service.dart";
 import "package:app_vida_longa/domain/enums/custom_exceptions_codes_enum.dart";
 import "package:app_vida_longa/domain/models/response_model.dart";
 import "package:app_vida_longa/domain/models/user_model.dart";
@@ -26,6 +27,7 @@ class UserRepository {
       StreamController<UserModel>.broadcast();
 
   Stream<UserModel> get userStream => _userController.stream;
+  final UserService _userService = UserService.instance;
 
   Future<ResponseStatusModel> create(UserModel user) async {
     late ResponseStatusModel response = ResponseStatusModel();
@@ -191,7 +193,6 @@ class UserRepository {
 
   void _handleStreamUpdate(
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
-    PrintColoredHelper.printWhite("_handleStreamUpdate");
     if (!documentSnapshot.exists) {
       var data = documentSnapshot.data();
       if (data == null) {
@@ -200,16 +201,13 @@ class UserRepository {
     }
 
     if (documentSnapshot.exists) {
-      PrintColoredHelper.printGreen("check");
       String? currentToken = documentSnapshot.data()!['deviceToken'];
 
-      if (myToken != null) {
-        PrintColoredHelper.printGreen("myToken: $myToken");
+      if (_userService.myDeviceToken != null) {
 
-        if (currentToken != myToken) {
+        if (currentToken != _userService.myDeviceToken) {
           AppHelper.displayAlertWarning(
               "Você será deslogado pois logou em outro aparelho!");
-          Future.delayed(const Duration(seconds: 3), () {});
           AuthService.logout();
         }
       }
@@ -218,19 +216,16 @@ class UserRepository {
     _userController.sink.add(userModel);
   }
 
-  String? myToken;
+  Future<String> storeDeviceToken() async {
+    String? myToken = await FirebaseMessaging.instance.getToken();
 
-  Future<void> storeDeviceToken() async {
-    myToken = await FirebaseMessaging.instance.getToken();
-
-    PrintColoredHelper.printCyan("STORE DEVICE ${_auth.currentUser!.uid}");
     if (myToken != null) {
       String userId = _auth.currentUser!.uid;
       await _instance.collection('users').doc(userId).set({
         'deviceToken': myToken,
         'lastLogin': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-      PrintColoredHelper.printOrange("STORE DEVICE: new token save!");
     }
+    return myToken ?? "";
   }
 }
