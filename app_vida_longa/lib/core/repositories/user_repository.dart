@@ -47,7 +47,7 @@ class UserRepository {
           },
           "lastSignatureId": null,
           "profile": "client",
-        })
+        }, SetOptions(merge: true))
         .then((value) => null)
         .onError((error, stackTrace) {
           response = WeException.handle(error);
@@ -203,7 +203,7 @@ class UserRepository {
     if (documentSnapshot.exists) {
       String? currentToken = documentSnapshot.data()!['deviceToken'];
 
-      if (_userService.myDeviceToken != null) {
+      if (_userService.myDeviceToken != null && currentToken != null) {
 
         if (currentToken != _userService.myDeviceToken) {
           AppHelper.displayAlertWarning(

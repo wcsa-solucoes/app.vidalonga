@@ -54,4 +54,16 @@ class ArticleModel {
       }).toList(),
     );
   }
+
+  // Map<String, dynamic> newBriefArticleModels(String docId, String title,
+  //     List<String> category, String image, List<String> subCategories, String subscriptionType) {
+  //   return {
+  //     'uuid': docId,
+  //     'title': title,
+  //     'image': image,
+  //     'categories': category,
+  //     'subCategories': subCategories,
+  //     'subscriptionType': subscriptionType
+  //   };
+  // }
 }

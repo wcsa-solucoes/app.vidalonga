@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:app_vida_longa/core/helpers/date_time_helper.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
+import 'package:app_vida_longa/core/services/plans_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/models/coupon_model.dart';
+import 'package:app_vida_longa/domain/models/plan_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -51,12 +53,21 @@ class CouponsRepositoryImpl implements ICouponsRepository {
   Future<({ResponseStatusModel response, List<CouponModel> coupons})>
       getCoupons() async {
     ResponseStatusModel response = ResponseStatusModel();
+    IPlansService _plansService = PlansServiceImpl.instance;
 
-    await firestore.collection('coupons').get().then((querySnapshot) {
+    await firestore.collection('coupons').get().then((querySnapshot) async {
       final List<CouponModel> tempCoupons = [];
 
       for (var doc in querySnapshot.docs) {
-        tempCoupons.add(CouponModel.fromMap(doc.data()));
+        var coupon = CouponModel.fromMap(doc.data());
+
+        _plansService.plans.forEach((element) {
+          if (element.uuid == coupon.planUuid) {
+            coupon.applePlanId = element.applePlanId;
+            coupon.googlePlanId = element.googlePlanId;
+          }
+        });
+        tempCoupons.add(coupon);
       }
       _setCoupons(tempCoupons);
     }).catchError((error) {
@@ -117,9 +128,18 @@ class CouponsRepositoryImpl implements ICouponsRepository {
           .snapshots()
           .listen((QuerySnapshot<Map<String, dynamic>> event) {
         final List<CouponModel> tempCoupons = [];
+        IPlansService _plansService = PlansServiceImpl.instance;
 
         for (var doc in event.docs) {
-          tempCoupons.add(CouponModel.fromMap(doc.data()));
+          var coupon = CouponModel.fromMap(doc.data());
+
+          _plansService.plans.forEach((element) {
+            if (element.uuid == coupon.planUuid) {
+              coupon.applePlanId = element.applePlanId;
+              coupon.googlePlanId = element.googlePlanId;
+            }
+          });
+          tempCoupons.add(coupon);
         }
         _setCoupons(tempCoupons);
       });

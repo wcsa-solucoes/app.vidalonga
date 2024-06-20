@@ -4,6 +4,7 @@ import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
+import 'package:app_vida_longa/domain/models/brief_article_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 
 abstract class IFavoritesService {
@@ -11,12 +12,12 @@ abstract class IFavoritesService {
   Future<void> init(IFavoritesRepository repository, String userId);
   Future<void> add(String articleId);
   Future<void> remove(String articleId);
-  List<ArticleModel> favorites = [];
+  List<BriefArticleModel> favorites = [];
   late List<String> favoritesIds = [];
   // ignore: unused_element
   set _setIds(List<String> ids);
 
-  Stream<List<ArticleModel>> get favoritesStream;
+  Stream<List<BriefArticleModel>> get favoritesStream;
 
   // ignore: prefer_final_fields
   bool _hasInit = false;
@@ -35,10 +36,10 @@ class FavoritesServiceImpl extends IFavoritesService {
   final ArticleService _articleService = ArticleService.instance;
 
   @override
-  Stream<List<ArticleModel>> get favoritesStream =>
+  Stream<List<BriefArticleModel>> get favoritesStream =>
       _favoritesStreamController.stream;
 
-  final StreamController<List<ArticleModel>> _favoritesStreamController =
+  final StreamController<List<BriefArticleModel>> _favoritesStreamController =
       StreamController.broadcast();
 
   @override
@@ -80,7 +81,7 @@ class FavoritesServiceImpl extends IFavoritesService {
 
     if (response.status == ResponseStatusEnum.success) {
       favoritesIds.add(articleId);
-      final ArticleModel article = _articleService.articles
+      final BriefArticleModel article = _articleService.articles
           .firstWhere((element) => element.uuid == articleId);
 
       favorites.add(article);
@@ -91,7 +92,7 @@ class FavoritesServiceImpl extends IFavoritesService {
     }
   }
 
-  void _setArticleIds(List<ArticleModel> favoritesArticles) {
+  void _setArticleIds(List<BriefArticleModel> favoritesArticles) {
     _favoritesStreamController.add(favoritesArticles);
   }
 

@@ -1,6 +1,7 @@
 import 'package:app_vida_longa/core/repositories/categories_repository.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
+import 'package:app_vida_longa/domain/models/brief_article_model.dart';
 import 'package:app_vida_longa/domain/models/category_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,9 +31,9 @@ class CategoriesService {
   final List<SubCategoryModel> _subCategoriesSelected = <SubCategoryModel>[];
   List<SubCategoryModel> get subCategories => _subCategoriesSelected;
 
-  final List<ArticleModel> _articlesFromSubcategories = <ArticleModel>[];
+  final List<BriefArticleModel> _articlesFromSubcategories = <BriefArticleModel>[];
 
-  List<ArticleModel> get articlesFromSubcategories =>
+  List<BriefArticleModel> get articlesFromSubcategories =>
       _articlesFromSubcategories;
 
   static Future<void> init(ArticleService articleService) async {
@@ -61,7 +62,7 @@ class CategoriesService {
 
     for (var article in _articleService.articles) {
       for (var sc in article.subCategories) {
-        if (sc.uuid == subCategory.uuid) {
+        if (sc == subCategory.uuid) {
           _articlesFromSubcategories.add(article);
         }
       }
@@ -75,13 +76,13 @@ class CategoriesService {
       _categoriesCollection.addAll(response.categories);
     }
 
-    Map<String, Set<ArticleModel>> subCategoryArticlesMap = {};
+    Map<String, Set<BriefArticleModel>> subCategoryArticlesMap = {};
 
     for (var article in _articleService.articles) {
       for (var subCategory in article.subCategories) {
-        String key = '${article.categoryTitle}|${subCategory.uuid}';
+        String key = '${article.categoryTitle}|$subCategory';
         subCategoryArticlesMap
-            .putIfAbsent(key, () => <ArticleModel>{})
+            .putIfAbsent(key, () => <BriefArticleModel>{})
             .add(article);
       }
     }

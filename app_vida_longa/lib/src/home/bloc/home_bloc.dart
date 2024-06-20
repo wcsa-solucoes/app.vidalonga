@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/core/utils/string_util.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
+import 'package:app_vida_longa/domain/models/brief_article_model.dart';
 import 'package:app_vida_longa/domain/models/categorie_chip_model.dart';
 import 'package:app_vida_longa/domain/models/category_model.dart';
 import 'package:collection/collection.dart';
@@ -14,7 +15,7 @@ part 'home_state.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final ArticleService _articleService = ArticleService.instance;
 
-  late final StreamSubscription<(List<ArticleModel>, List<CategoryModel>)>
+  late final StreamSubscription<(List<BriefArticleModel>, List<CategoryModel>)>
       _subscription;
   @override
   Future<void> close() {
@@ -65,11 +66,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       HomeSearchEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoadingState());
 
-    final List<List<ArticleModel>> tempArticles = [];
+    final List<List<BriefArticleModel>> tempArticles = [];
 
     for (var element in _articles) {
       final String normalizedSearchTerm = removeDiacritics(event.searchTerm);
-      final List<ArticleModel> temp = element.where((element) {
+      final List<BriefArticleModel> temp = element.where((element) {
         final String normalizedTitle = removeDiacritics(element.title);
         return normalizedTitle.toLowerCase().contains(normalizedSearchTerm);
       }).toList();
@@ -96,17 +97,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ));
   }
 
-  List<List<ArticleModel>> get _articles => _articleService.articles
-          .fold<List<List<ArticleModel>>>(<List<ArticleModel>>[],
+  List<List<BriefArticleModel>> get _articles => _articleService.articles
+          .fold<List<List<BriefArticleModel>>>(<List<BriefArticleModel>>[],
               (previousValue, element) {
-        final List<ArticleModel>? foundList = previousValue.firstWhereOrNull(
+        final List<BriefArticleModel>? foundList = previousValue.firstWhereOrNull(
           (list) => list.first.categoryUuid == element.categoryUuid,
         );
 
         if (foundList != null) {
           foundList.add(element);
         } else {
-          previousValue.add(<ArticleModel>[element]);
+          previousValue.add(<BriefArticleModel>[element]);
         }
         return previousValue;
       });

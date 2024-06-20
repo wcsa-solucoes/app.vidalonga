@@ -1,7 +1,7 @@
 part of 'home_bloc.dart';
 
 class HomeState {
-  final List<List<ArticleModel>>? articlesByCategory;
+  final List<List<BriefArticleModel>>? articlesByCategory;
   final List<ChipCategorieModel>? chipsCategorie;
   final bool? isLoading;
   HomeState({
@@ -58,7 +58,7 @@ class HomeErrorState extends HomeState {
 }
 
 class HomeCategoriesSelectedState extends HomeState {
-  final List<List<ArticleModel>>? articlesByCategorySelected;
+  final List<List<BriefArticleModel>>? articlesByCategorySelected;
   HomeCategoriesSelectedState({
     required this.articlesByCategorySelected,
     super.isLoading,

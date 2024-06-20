@@ -1,13 +1,14 @@
 import 'package:app_vida_longa/domain/models/article_model.dart';
+import 'package:app_vida_longa/domain/models/brief_article_model.dart';
 
 class SubCategoryModel {
   late String name = "";
   late String uuid = "";
-  late List<ArticleModel>? articles;
+  late List<BriefArticleModel>? articles;
 
   SubCategoryModel({
     this.name = "",
-    this.articles = const <ArticleModel>[],
+    this.articles = const <BriefArticleModel>[],
     this.uuid = "",
   });
 
@@ -20,7 +21,7 @@ class SubCategoryModel {
 
   SubCategoryModel copyWith({
     String? name,
-    List<ArticleModel>? articles,
+    List<BriefArticleModel>? articles,
     String? uuid,
   }) {
     return SubCategoryModel(

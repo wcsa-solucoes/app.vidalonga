@@ -4,8 +4,8 @@ class CouponModel {
   final bool haveUsageLimit;
   final int limit;
   final String name;
-  final String? applePlanId;
-  final String? googlePlanId;
+  late String? applePlanId;
+  late String? googlePlanId;
   final String uuid;
   final int usageQuantity;
   final int? expiryDateTimestamp;

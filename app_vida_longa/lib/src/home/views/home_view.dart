@@ -1,5 +1,6 @@
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
+import 'package:app_vida_longa/domain/models/brief_article_model.dart';
 import 'package:app_vida_longa/domain/models/categorie_chip_model.dart';
 import 'package:app_vida_longa/shared/widgets/article_card_widget.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
@@ -185,7 +186,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _handleChips(List<ChipCategorieModel> chipsCategorie,
-      List<List<ArticleModel>> articlesByCategorySelectedAll) {
+      List<List<BriefArticleModel>> articlesByCategorySelectedAll) {
     return ListView.builder(
       scrollDirection: Axis.horizontal,
       itemCount: chipsCategorie.length,
@@ -229,7 +230,7 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _handleArticles(List<List<ArticleModel>> articlesByCategory) {
+  Widget _handleArticles(List<List<BriefArticleModel>> articlesByCategory) {
     if (articlesByCategory.isEmpty) {
       return _handleEmptyArticles();
     }
@@ -276,7 +277,10 @@ class _HomeViewState extends State<HomeView> {
                     return Padding(
                       padding: const EdgeInsets.only(
                           left: 0, top: 4, bottom: 0, right: 15),
-                      child: ArticleCard(article: article),
+                      child: ArticleCard(
+                        article: article,
+                        containerHeight: 190,
+                      ),
                     );
                   },
                 ),

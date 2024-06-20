@@ -5,19 +5,26 @@ import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/domain/models/article_model.dart';
+import 'package:app_vida_longa/domain/models/brief_article_model.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ArticleCard extends StatelessWidget {
-  const ArticleCard({
-    super.key,
-    required this.article,
-  });
+class ArticleCard extends StatefulWidget {
+  const ArticleCard(
+      {super.key, required this.article, required this.containerHeight});
 
-  final ArticleModel article;
+  final BriefArticleModel article;
+  final double containerHeight;
+
+  @override
+  State<ArticleCard> createState() => _ArticleCardState();
+}
+
+class _ArticleCardState extends State<ArticleCard> {
+  final ArticleService _articleService = ArticleService.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +47,8 @@ class ArticleCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                article.subscriptionType == SubscriptionTypeArticleEnum.paid
+                widget.article.subscriptionType ==
+                        SubscriptionTypeArticleEnum.paid
                     ? const Padding(
                         padding: EdgeInsets.only(left: 6),
                         child: CircleAvatar(
@@ -56,13 +64,14 @@ class ArticleCard extends StatelessWidget {
                     : const SizedBox.shrink(),
                 Expanded(
                   child: Tooltip(
-                    message: article.title,
+                    message: widget.article.title,
                     preferBelow: false,
                     child: Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(6.0),
+                        padding: const EdgeInsets.only(
+                            left: 6.0, right: 6.0, top: 6.0, bottom: 6.0),
                         child: Text(
-                          article.title,
+                          widget.article.title,
                           maxLines: 1,
                           style: GoogleFonts.getFont(
                             'Poppins',
@@ -83,20 +92,18 @@ class ArticleCard extends StatelessWidget {
                 stream: UserService.instance.userStream,
                 builder: (context, AsyncSnapshot<UserModel> snapshot) {
                   return InkWell(
-                    onTap: () {
+                    onTap: () async {
                       var user = AuthService.instance.getCurrentUser;
 
-                      ArticleService.setCurrentlyArticleId(
-                        article.uuid,
-                        article,
-                      );
+                      await _articleService
+                          .setCurrentlyArticleId(widget.article.uuid);
                       //verify if the article is paid if not go to the article
-                      if (article.subscriptionType ==
+                      if (widget.article.subscriptionType ==
                           SubscriptionTypeArticleEnum.free) {
                         var path = routes.app.home.article.path;
                         NavigationController.push(path, arguments: {
-                          "articleId": article.uuid,
-                          "article": article
+                          "articleId": widget.article.uuid,
+                          "article": widget.article
                         });
                         return;
                       }
@@ -105,7 +112,7 @@ class ArticleCard extends StatelessWidget {
                         NavigationController.to(routes.app.auth.login.path);
                         return;
                       }
-                      if (article.subscriptionType ==
+                      if (widget.article.subscriptionType ==
                               SubscriptionTypeArticleEnum.paid &&
                           snapshot.data?.subscriptionLevel !=
                               SubscriptionEnum.paying) {
@@ -116,15 +123,15 @@ class ArticleCard extends StatelessWidget {
 
                       var path = routes.app.home.article.path;
                       NavigationController.push(path, arguments: {
-                        "articleId": article.uuid,
-                        "article": article
+                        "articleId": widget.article.uuid,
+                        "article": widget.article
                       });
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 6, vertical: 2),
                       child: Container(
-                        height: 190,
+                        height: widget.containerHeight,
                         decoration: BoxDecoration(
                             borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(10),
@@ -134,8 +141,8 @@ class ArticleCard extends StatelessWidget {
                             ),
                             color: AppColors.white,
                             image: DecorationImage(
-                                image:
-                                    CachedNetworkImageProvider(article.image),
+                                image: CachedNetworkImageProvider(
+                                    widget.article.image),
                                 fit: BoxFit.fill)),
                         width: MediaQuery.of(context).size.width,
                       ),

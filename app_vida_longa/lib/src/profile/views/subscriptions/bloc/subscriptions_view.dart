@@ -62,7 +62,7 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
           if (snapshot.data == null) {
             return SizedBox(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
+              height: MediaQuery.of(context).size.height * 0.7,
               child: const Center(
                 child: CircularProgressIndicator(),
               ),
@@ -158,7 +158,7 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
 
               return SizedBox(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
+                height: MediaQuery.of(context).size.height * 0.8,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -187,7 +187,7 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.9,
+        height: MediaQuery.of(context).size.height * 1,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
