@@ -79,10 +79,10 @@ Future<void> startServices() async {
 
   Future.wait([
     AuthService.init(),
-    CouponsServiceImpl.instance.init(),
     QAServiceImpl.instance.init(QARepositoryImpl(FirebaseFirestore.instance)),
     PlansServiceImpl.instance.getPlans().then((value) {
       paymentService.init(InAppPurchase.instance);
+      CouponsServiceImpl.instance.init();
     }),
     BranchsServiceImpl.instance.init(),
     PartnerServiceImpl.instance.init(),
