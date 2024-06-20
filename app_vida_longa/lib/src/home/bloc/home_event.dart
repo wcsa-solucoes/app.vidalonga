@@ -4,7 +4,7 @@ part of 'home_bloc.dart';
 sealed class HomeEvent {}
 
 class HomeInitialEvent extends HomeEvent {
-  final List<List<ArticleModel>>? articles;
+  final List<List<BriefArticleModel>>? articles;
 
   HomeInitialEvent({
     this.articles,
@@ -28,7 +28,7 @@ class RestartHomeEvent extends HomeEvent {
 }
 
 class HomeLoadedEvent extends HomeEvent {
-  final List<List<ArticleModel>>? articles;
+  final List<List<BriefArticleModel>>? articles;
   final List<ChipCategorieModel>? chipsCategorie;
 
   HomeLoadedEvent({
@@ -38,7 +38,7 @@ class HomeLoadedEvent extends HomeEvent {
 }
 
 class HomeCategoriesSelectedEvent extends HomeEvent {
-  final List<List<ArticleModel>>? articles;
+  final List<List<BriefArticleModel>>? articles;
   final List<ChipCategorieModel>? chipsCategorie;
 
   HomeCategoriesSelectedEvent({this.articles, this.chipsCategorie});
