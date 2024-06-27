@@ -141,7 +141,7 @@ class _DetailState extends State<Detail> {
                                         child: IconButton(
                                           color: AppColors.selectedColor,
                                           icon: const FaIcon(
-                                              FontAwesomeIcons.twitter),
+                                              FontAwesomeIcons.phone),
                                           onPressed: () {
                                             _launchCaller(_partnerService
                                                 .selectedPartner.phoneNumber!);
