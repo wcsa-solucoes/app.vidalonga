@@ -28,6 +28,8 @@ class PartnersView extends StatefulWidget {
 
 class _PartnersViewState extends State<PartnersView> {
   late final PartnersBloc _partnersBloc;
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     _partnersBloc = PartnersBloc();
@@ -54,34 +56,36 @@ class _PartnersViewState extends State<PartnersView> {
     return CustomAppScaffold(
       appBar: const DefaultAppBar(title: "Parceiros"),
       bottomNavigationBar: const CustomBottomNavigationBar(),
-      body: SizedBox(
-        width: MediaQuery.sizeOf(context).width,
-        height: MediaQuery.sizeOf(context).height,
-        child: BlocBuilder<PartnersBloc, PartnersState>(
-          bloc: _partnersBloc,
-          builder: (context, state) {
-            return Builder(builder: (context) {
-              if (state is PartnersLoadingState) {
-                return const Center(child: CircularProgressIndicator());
-              }
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: SizedBox(
+          width: MediaQuery.sizeOf(context).width,
+          child: BlocBuilder<PartnersBloc, PartnersState>(
+            bloc: _partnersBloc,
+            builder: (context, state) {
+              return Builder(builder: (context) {
+                if (state is PartnersLoadingState) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              if (state is PartnersLoadedState) {
-                return _loadedState(state);
-              }
+                if (state is PartnersLoadedState) {
+                  return _loadedState(state);
+                }
 
-              if (state is BranchsSelectedLoadedState) {
-                return _branchsSelectedState(state);
-              }
+                if (state is BranchsSelectedLoadedState) {
+                  return _branchsSelectedState(state);
+                }
 
-              if (state is PartnersErrorState) {
-                return Center(
-                  child: DefaultText(state.message),
-                );
-              }
+                if (state is PartnersErrorState) {
+                  return Center(
+                    child: DefaultText(state.message),
+                  );
+                }
 
-              return Container();
-            });
-          },
+                return Container();
+              });
+            },
+          ),
         ),
       ),
     );
@@ -90,9 +94,9 @@ class _PartnersViewState extends State<PartnersView> {
   Widget _handleEmptyPartners() {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.7,
+      height: MediaQuery.of(context).size.height * 0.8,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 100),
+        padding: const EdgeInsets.only(bottom: 50),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -122,18 +126,16 @@ class _PartnersViewState extends State<PartnersView> {
   }
 
   Widget _loadedState(PartnersLoadedState state) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _handleSearchWidget(),
-          SizedBox(
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              child: _handleChips(state.branchsChip, state.partners)),
-          _handleHighlightedPartners(state.highlightedPartners),
-          _handlePartnersWidget(state.partners),
-        ],
-      ),
+    return Column(
+      children: [
+        _handleSearchWidget(),
+        SizedBox(
+            height: 50,
+            width: MediaQuery.of(context).size.width,
+            child: _handleChips(state.branchsChip, state.partners)),
+        _handleHighlightedPartners(state.highlightedPartners),
+        _handlePartnersWidget(state.partners),
+      ],
     );
   }
 
@@ -269,14 +271,14 @@ class _PartnersViewState extends State<PartnersView> {
           const NeverScrollableScrollPhysics(), // Add this to keep the ListView from scrolling
       shrinkWrap: true,
       itemCount: partners.length,
-      padding: const EdgeInsets.only(bottom: 200),
+      padding: const EdgeInsets.only(bottom: 50),
 
       itemBuilder: (BuildContext context, int categoryIndex) {
         final partnersCompany = partners[categoryIndex];
 
         return Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(2),
+            borderRadius: BorderRadius.circular(5),
             color: Colors.transparent,
           ),
           child: Column(
@@ -306,16 +308,16 @@ class _PartnersViewState extends State<PartnersView> {
   Widget _handlePartnerCard(List<PartnerCompanyModel> partnersCompany) {
     return Container(
       color: Colors.transparent,
-      height: 180,
+      height: 175,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: partnersCompany.length,
-        padding: const EdgeInsets.only(right: 20),
+        padding: const EdgeInsets.only(right: 10),
         itemBuilder: (BuildContext context, int articleIndex) {
           final partner = partnersCompany[articleIndex];
           return Padding(
             padding:
-                const EdgeInsets.only(left: 10, top: 4, bottom: 0, right: 15),
+                const EdgeInsets.only(left: 4, top: 4, bottom: 0, right: 15),
             child: StreamBuilder<UserModel>(
                 initialData: UserService.instance.user,
                 stream: UserService.instance.userStream,
@@ -363,14 +365,14 @@ class _PartnerCardWidget extends StatelessWidget {
     return Material(
       borderRadius: BorderRadius.circular(10),
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.8,
+        width: MediaQuery.of(context).size.width * 0.84,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           color: AppColors.white,
           boxShadow: [
             BoxShadow(
-              blurRadius: 1.0,
-              color: Colors.grey.withOpacity(0.5),
+              blurRadius: 5,
+              color: Colors.grey.withOpacity(0.9),
               offset: const Offset(2.0, 3.0),
             )
           ],
@@ -378,107 +380,112 @@ class _PartnerCardWidget extends StatelessWidget {
         child: Column(
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Expanded(
-                  child: Tooltip(
-                    message: partner.name,
-                    preferBelow: false,
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 7.0, left: 8.0, right: 8.0),
+                  child: SizedBox(
+                    width: 290,
                     child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15, top: 5, bottom: 5, right: 5),
-                        child: Text(
-                          partner.name,
-                          maxLines: 1,
-                          style: GoogleFonts.getFont(
-                            'Poppins',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 19,
-                            color: AppColors.titleColor,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                      child: Text(
+                        partner.name,
+                        maxLines: 1,
+                        style: GoogleFonts.getFont(
+                          'Poppins',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          color: AppColors.titleColor,
                         ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
                 ),
               ],
             ),
-            Row(
-              children: [
-                StreamBuilder<UserModel>(
-                    initialData: UserService.instance.user,
-                    stream: UserService.instance.userStream,
-                    builder: (context, AsyncSnapshot<UserModel> snapshot) {
-                      return InkWell(
-                        onTap: () {},
-                        child: Container(
-                          margin: const EdgeInsets.only(left: 15),
-                          height: 80,
-                          width: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(5),
+            Padding(
+              padding: const EdgeInsets.all(0),
+              child: Row(
+                children: [
+                  StreamBuilder<UserModel>(
+                      initialData: UserService.instance.user,
+                      stream: UserService.instance.userStream,
+                      builder: (context, AsyncSnapshot<UserModel> snapshot) {
+                        return InkWell(
+                          onTap: () {},
+                          child: Container(
+                            margin: const EdgeInsets.only(left: 8, top: 10),
+                            height: 75,
+                            width: 90,
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(5),
+                              ),
+                              border: Border.all(
+                                color: AppColors.borderColor,
+                              ),
+                              color: AppColors.white,
+                              image: partner.urlLogo != null
+                                  ? DecorationImage(
+                                      image: CachedNetworkImageProvider(
+                                        //any image from web
+                                        partner.urlLogo!,
+                                      ),
+                                      fit: BoxFit.fill)
+                                  : null,
                             ),
-                            border: Border.all(
-                              color: AppColors.borderColor,
-                            ),
-                            color: AppColors.white,
-                            image: partner.urlLogo != null
-                                ? DecorationImage(
-                                    image: CachedNetworkImageProvider(
-                                      //any image from web
-                                      partner.urlLogo!,
-                                    ),
-                                    fit: BoxFit.fill)
-                                : null,
+                          ),
+                        );
+                      }),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Telefone: ${partner.phoneNumber ?? "Sem telefone"}",
+                          style: GoogleFonts.getFont(
+                            'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            color: AppColors.backgroundDark,
                           ),
                         ),
-                      );
-                    }),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: Column(
-                    // mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Telefone: ${partner.phoneNumber ?? "Sem telefone"}",
-                        style: GoogleFonts.getFont(
-                          'Poppins',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: AppColors.backgroundDark,
+                        Text(
+                          partner.fullAddress != null
+                              ? "Endereço: ${partner.fullAddress}"
+                              : "Sem endereço",
+                          style: GoogleFonts.getFont(
+                            'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            color: AppColors.backgroundDark,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Text(
-                        partner.fullAddress ?? "Sem endereço",
-                        style: GoogleFonts.getFont(
-                          'Poppins',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: AppColors.backgroundDark,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                //text button to see all benefits
-                TextButton(
-                  onPressed: () => onPressed.call(),
-                  child: Text(
-                    "Ver benefícios",
-                    style: GoogleFonts.getFont(
-                      'Poppins',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15,
-                      color: AppColors.selectedColor,
+                Center(
+                  child: TextButton(
+                    onPressed: () => onPressed.call(),
+                    child: Text(
+                      "VER BENEFÍCIOS",
+                      style: GoogleFonts.getFont(
+                        'Urbanist',
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14,
+                        color: const Color(0xFF3B81DC),
+                      ),
                     ),
                   ),
                 ),
