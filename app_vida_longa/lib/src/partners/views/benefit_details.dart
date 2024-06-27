@@ -510,7 +510,7 @@ class SocialMediaIconWidget extends StatelessWidget {
       case SocialMediaEnum.facebook:
         return IconButton(
           color: AppColors.selectedColor,
-          icon: const FaIcon(FontAwesomeIcons.whatsapp),
+          icon: const FaIcon(FontAwesomeIcons.facebook),
           onPressed: () {
             var url = Uri.parse(_url);
             _launchUrl(url);
