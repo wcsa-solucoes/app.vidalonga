@@ -137,11 +137,15 @@ class _DetailState extends State<Detail> {
                                             .withOpacity(0.1),
                                         shape: BoxShape.circle,
                                       ),
-                                      child: const Center(
-                                        child: Icon(
-                                          FontAwesomeIcons.phone,
+                                      child: Center(
+                                        child: IconButton(
                                           color: AppColors.selectedColor,
-                                          size: 20,
+                                          icon: const FaIcon(
+                                              FontAwesomeIcons.twitter),
+                                          onPressed: () {
+                                            _launchCaller(_partnerService
+                                                .selectedPartner.phoneNumber!);
+                                          },
                                         ),
                                       ),
                                     ),
@@ -510,6 +514,15 @@ class _DetailState extends State<Detail> {
           ),
         ));
   }
+
+  Future<void> _launchCaller(String phoneNumber) async {
+    var url = "tel:$phoneNumber";
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 }
 
 class SocialMediaIconWidget extends StatelessWidget {
@@ -595,15 +608,6 @@ class SocialMediaIconWidget extends StatelessWidget {
       AppHelper.displayAlertError("Erro ao abrir link");
     }
     return;
-  }
-
-  Future<void> _launchCaller(String phoneNumber) async {
-    var url = "tel:$phoneNumber";
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 
   @override
