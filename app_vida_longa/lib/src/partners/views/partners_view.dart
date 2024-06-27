@@ -385,7 +385,7 @@ class _PartnerCardWidget extends StatelessWidget {
                   padding:
                       const EdgeInsets.only(top: 7.0, left: 8.0, right: 8.0),
                   child: SizedBox(
-                    width: 310,
+                    width: 290,
                     child: Center(
                       child: Text(
                         partner.name,

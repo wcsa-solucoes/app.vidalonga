@@ -7,9 +7,7 @@ import 'package:app_vida_longa/domain/enums/social_media_enum.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -129,9 +127,27 @@ class _DetailState extends State<Detail> {
                                 ),
                                 Row(
                                   children: [
+                                    Container(
+                                      height: 40,
+                                      width: 40,
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 10.0),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.selectedColor
+                                            .withOpacity(0.1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          FontAwesomeIcons.phone,
+                                          color: AppColors.selectedColor,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
                                     SizedBox(
                                       height: 45,
-                                      width: 215,
+                                      width: 180,
                                       child: Scrollbar(
                                         thumbVisibility: false,
                                         controller:
@@ -158,14 +174,15 @@ class _DetailState extends State<Detail> {
                                               ),
                                               child: Center(
                                                 child: SocialMediaIconWidget(
-                                                    type: _partnerService
-                                                        .selectedPartner
-                                                        .socialMedias[index]
-                                                        .type,
-                                                    url: _partnerService
-                                                        .selectedPartner
-                                                        .socialMedias[index]
-                                                        .url),
+                                                  type: _partnerService
+                                                      .selectedPartner
+                                                      .socialMedias[index]
+                                                      .type,
+                                                  url: _partnerService
+                                                      .selectedPartner
+                                                      .socialMedias[index]
+                                                      .url,
+                                                ),
                                               ),
                                             );
                                           },
@@ -272,7 +289,7 @@ class _DetailState extends State<Detail> {
                             SizedBox(
                               width: size.width * 0.7,
                               child: Text(
-                                "Endereço: São José, Rua Campos Nº 609 - CEP: 49015-220 Aracaju, Sergipe",
+                                "Endereço: ${_partnerService.selectedPartner.fullAddress}",
                                 style: GoogleFonts.getFont(
                                   'Poppins',
                                   fontStyle: FontStyle.italic,
@@ -287,42 +304,6 @@ class _DetailState extends State<Detail> {
                           ],
                         ),
                       ),
-                      _partnerService.selectedPartner.phoneNumber != null
-                          ? Padding(
-                              padding: const EdgeInsets.only(
-                                right: 20,
-                                left: 15,
-                                bottom: 20,
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.phone,
-                                    color: AppColors.selectedColor,
-                                    size: 22,
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  SizedBox(
-                                    width: size.width * 0.7,
-                                    child: Text(
-                                      "${_partnerService.selectedPartner.phoneNumber}",
-                                      style: GoogleFonts.getFont(
-                                        'Poppins',
-                                        fontStyle: FontStyle.italic,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 14,
-                                        color: Colors.grey[600],
-                                      ),
-                                      textAlign: TextAlign.justify,
-                                      overflow: TextOverflow.visible,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : const SizedBox.shrink(),
                       _partnerService.selectedPartner.presentationText != ""
                           ? Padding(
                               padding: const EdgeInsets.only(
@@ -496,6 +477,17 @@ class _DetailState extends State<Detail> {
 
   Widget buildPhoto(BuildContext context, String url) {
     return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: AppColors.white,
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 5,
+              color: Colors.grey.withOpacity(0.9),
+              offset: const Offset(2.0, 3.0),
+            )
+          ],
+        ),
         width: 140,
         margin: const EdgeInsets.only(right: 15),
         child: Padding(
@@ -544,8 +536,8 @@ class SocialMediaIconWidget extends StatelessWidget {
           color: AppColors.selectedColor,
           icon: const FaIcon(FontAwesomeIcons.instagram),
           onPressed: () {
-            var url = Uri.parse('');
-            _launchCaller('+5533999999999');
+            var url = Uri.parse(_url);
+            _launchUrl(url);
           },
         );
       case SocialMediaEnum.twitter:
@@ -606,7 +598,7 @@ class SocialMediaIconWidget extends StatelessWidget {
   }
 
   Future<void> _launchCaller(String phoneNumber) async {
-    const url = "tel:86994324465";
+    var url = "tel:$phoneNumber";
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     } else {
