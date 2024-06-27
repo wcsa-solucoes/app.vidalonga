@@ -28,6 +28,8 @@ class PartnersView extends StatefulWidget {
 
 class _PartnersViewState extends State<PartnersView> {
   late final PartnersBloc _partnersBloc;
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     _partnersBloc = PartnersBloc();
@@ -54,34 +56,36 @@ class _PartnersViewState extends State<PartnersView> {
     return CustomAppScaffold(
       appBar: const DefaultAppBar(title: "Parceiros"),
       bottomNavigationBar: const CustomBottomNavigationBar(),
-      body: SizedBox(
-        width: MediaQuery.sizeOf(context).width,
-        height: MediaQuery.sizeOf(context).height,
-        child: BlocBuilder<PartnersBloc, PartnersState>(
-          bloc: _partnersBloc,
-          builder: (context, state) {
-            return Builder(builder: (context) {
-              if (state is PartnersLoadingState) {
-                return const Center(child: CircularProgressIndicator());
-              }
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: SizedBox(
+          width: MediaQuery.sizeOf(context).width,
+          child: BlocBuilder<PartnersBloc, PartnersState>(
+            bloc: _partnersBloc,
+            builder: (context, state) {
+              return Builder(builder: (context) {
+                if (state is PartnersLoadingState) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              if (state is PartnersLoadedState) {
-                return _loadedState(state);
-              }
+                if (state is PartnersLoadedState) {
+                  return _loadedState(state);
+                }
 
-              if (state is BranchsSelectedLoadedState) {
-                return _branchsSelectedState(state);
-              }
+                if (state is BranchsSelectedLoadedState) {
+                  return _branchsSelectedState(state);
+                }
 
-              if (state is PartnersErrorState) {
-                return Center(
-                  child: DefaultText(state.message),
-                );
-              }
+                if (state is PartnersErrorState) {
+                  return Center(
+                    child: DefaultText(state.message),
+                  );
+                }
 
-              return Container();
-            });
-          },
+                return Container();
+              });
+            },
+          ),
         ),
       ),
     );
@@ -122,18 +126,16 @@ class _PartnersViewState extends State<PartnersView> {
   }
 
   Widget _loadedState(PartnersLoadedState state) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _handleSearchWidget(),
-          SizedBox(
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              child: _handleChips(state.branchsChip, state.partners)),
-          _handleHighlightedPartners(state.highlightedPartners),
-          _handlePartnersWidget(state.partners),
-        ],
-      ),
+    return Column(
+      children: [
+        _handleSearchWidget(),
+        SizedBox(
+            height: 50,
+            width: MediaQuery.of(context).size.width,
+            child: _handleChips(state.branchsChip, state.partners)),
+        _handleHighlightedPartners(state.highlightedPartners),
+        _handlePartnersWidget(state.partners),
+      ],
     );
   }
 
