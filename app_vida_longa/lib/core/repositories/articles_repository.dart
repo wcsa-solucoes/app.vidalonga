@@ -9,9 +9,11 @@ class ArticlesRepository {
   Future<Tuple2<ResponseStatusModel, List<BriefArticleModel>>> getAll() async {
     ResponseStatusModel response = ResponseStatusModel();
     final List<BriefArticleModel> articles = <BriefArticleModel>[];
-  
+
     await FirebaseFirestore.instance
         .collection('briefArticles')
+        .where('status', isEqualTo: 'published')
+        .orderBy('createdAt', descending: true)
         .get()
         .then((snpashot) {
       final tempArticles = snpashot.docs
@@ -29,10 +31,11 @@ class ArticlesRepository {
     );
   }
 
-  Future<({ResponseStatusModel response, ArticleModel article})> getArticle(String uuid) async {
+  Future<({ResponseStatusModel response, ArticleModel article})> getArticle(
+      String uuid) async {
     ResponseStatusModel response = ResponseStatusModel();
     late ArticleModel article;
-  
+
     await FirebaseFirestore.instance
         .collection('articles')
         .where('uuid', isEqualTo: uuid)
@@ -47,9 +50,6 @@ class ArticlesRepository {
       response = WeException.handle(error);
     });
 
-    return (
-      response: response,
-      article: article
-    );
+    return (response: response, article: article);
   }
 }
