@@ -21,6 +21,12 @@ class AddedCouponEvent extends SubscriptionsEvent {
   AddedCouponEvent(this.couponName);
 }
 
+class AddedFullSubscriptionDiscountEvent extends SubscriptionsEvent {
+  final String couponName;
+
+  AddedFullSubscriptionDiscountEvent(this.couponName);
+}
+
 class RestorePurchaseEvent extends SubscriptionsEvent {}
 
 class LoadingViewEvent extends SubscriptionsEvent {

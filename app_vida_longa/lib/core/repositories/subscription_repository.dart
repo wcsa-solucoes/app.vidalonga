@@ -7,7 +7,7 @@ abstract class ISubscriptionRepository implements IUpdateUserStatusFromRoles {}
 
 abstract class IUpdateUserStatusFromRoles {
   Future<ResponseStatusModel> updateSubscriberStatusFromRoles(
-      SubscriptionEnum subscription, String platform);
+      SubscriptionEnum subscription, String? platform);
 }
 
 class SubscriptionRepositoryImpl implements ISubscriptionRepository {
@@ -19,7 +19,7 @@ class SubscriptionRepositoryImpl implements ISubscriptionRepository {
 
   @override
   Future<ResponseStatusModel> updateSubscriberStatusFromRoles(
-      SubscriptionEnum subscriptionType, String platform) async {
+      SubscriptionEnum subscriptionType, String? platform) async {
     ResponseStatusModel responseStatusModel = ResponseStatusModel();
 
     await firestore.collection('users').doc(UserService.instance.user.id).set(

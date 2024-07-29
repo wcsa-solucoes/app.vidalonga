@@ -84,18 +84,20 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    FlatButton(
-                      textLabel: "Mais informações",
-                      onPressed: () {
-                        if (Platform.isAndroid) {
-                          LaunchUtil.call(
-                              "https://play.google.com/store/account/subscriptions");
-                        } else if (Platform.isIOS) {
-                          LaunchUtil.call(
-                              "https://apps.apple.com/account/subscriptions");
-                        }
-                      },
-                    ),
+                    snapshot.data!.lastSubscriptionPlatform != null
+                        ? FlatButton(
+                            textLabel: "Mais informações",
+                            onPressed: () {
+                              if (Platform.isAndroid) {
+                                LaunchUtil.call(
+                                    "https://play.google.com/store/account/subscriptions");
+                              } else if (Platform.isIOS) {
+                                LaunchUtil.call(
+                                    "https://apps.apple.com/account/subscriptions");
+                              }
+                            },
+                          )
+                        : Container(),
                   ],
                 ));
           }
@@ -110,7 +112,8 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                 );
               }
 
-              if (state is SubscriptionPurchased &&
+              if ((state is SubscriptionPurchased ||
+                      state is AddedFullSubscriptionDiscountState) &&
                   snapshot.data!.subscriptionLevel == SubscriptionEnum.paying) {
                 return SizedBox(
                   width: MediaQuery.of(context).size.width,

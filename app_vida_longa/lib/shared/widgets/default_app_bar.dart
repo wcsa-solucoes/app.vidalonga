@@ -37,7 +37,7 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               isWithBackButton
                   ? const SizedBox(
-                      width: 60,
+                      width: 35,
                     )
                   : Image.asset(
                       "assets/images/AVATAR_(1).png",
@@ -49,9 +49,13 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                 fontSize: 24,
                 fontWeight: FontWeight.w600,
               ),
-              const SizedBox(
-                width: 60,
-              ),
+              isWithBackButton
+                  ? const SizedBox(
+                      width: 10,
+                    )
+                  : const SizedBox(
+                      width: 60,
+                    ),
             ],
           ),
         ),
