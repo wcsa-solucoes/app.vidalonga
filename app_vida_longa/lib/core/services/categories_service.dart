@@ -1,6 +1,5 @@
 import 'package:app_vida_longa/core/repositories/categories_repository.dart';
 import 'package:app_vida_longa/core/services/articles_service.dart';
-import 'package:app_vida_longa/domain/models/article_model.dart';
 import 'package:app_vida_longa/domain/models/brief_article_model.dart';
 import 'package:app_vida_longa/domain/models/category_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';

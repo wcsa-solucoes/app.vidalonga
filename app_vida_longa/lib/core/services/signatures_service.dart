@@ -17,7 +17,6 @@ class SignaturesService {
     FirebaseFirestore.instance,
   );
 
-  @override
   Future<ResponseStatusModel> addSignature(String couponId) async {
     DateTime now = DateTime.now();
     DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');

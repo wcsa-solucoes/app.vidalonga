@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/favorites_repository.dart';
 import 'package:app_vida_longa/core/repositories/user_repository.dart';
-import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/favorites_service.dart';
 import 'package:app_vida_longa/core/services/subscription_service.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
