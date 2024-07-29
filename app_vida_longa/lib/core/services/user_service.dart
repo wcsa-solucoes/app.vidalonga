@@ -211,7 +211,7 @@ class UserService {
   }
 
   Future<void> updateSubscriberStatusFromRoles(
-      SubscriptionEnum subscriptionType, String platform) async {
+      SubscriptionEnum subscriptionType, String? platform) async {
     _user = _user.copyWith(subscriptionLevel: subscriptionType);
     _setUser(_user);
     await _subscriptionService.updateSubscriberStatusFromRoles(

@@ -9,7 +9,7 @@ class SubscriptionService {
   );
 
   Future<void> updateSubscriberStatusFromRoles(
-      SubscriptionEnum subscription, String platform) async {
+      SubscriptionEnum subscription, String? platform) async {
     await _subscriptionRepository.updateSubscriberStatusFromRoles(
         subscription, platform);
     return;

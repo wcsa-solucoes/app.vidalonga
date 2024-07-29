@@ -18,7 +18,7 @@ class PlanModel {
       name: json['name'],
       applePlanId: json['applePlanId'],
       googlePlanId: json['googlePlanId'],
-      price: json['price'],
+      price: json['price'].toDouble(),
       uuid: json['uuid'],
     );
   }

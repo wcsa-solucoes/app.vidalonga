@@ -45,6 +45,12 @@ final class CouponAddedState extends SubscriptionsState {
   CouponAddedState({required this.coupon, required this.productDetails});
 }
 
+final class AddedFullSubscriptionDiscountState extends SubscriptionsState {
+  final CouponModel coupon;
+
+  AddedFullSubscriptionDiscountState({required this.coupon});
+}
+
 final class SubscriptionPurchasedError extends SubscriptionsState {
   final String message;
 

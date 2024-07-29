@@ -6,6 +6,7 @@ import 'package:app_vida_longa/core/services/iap_service/iap_purchase_apple_serv
 import 'package:app_vida_longa/core/services/iap_service/iap_purchase_google_service.dart';
 import 'package:app_vida_longa/core/services/iap_service/interface/iap_purchase_service_interface.dart';
 import 'package:app_vida_longa/core/services/plans_service.dart';
+import 'package:app_vida_longa/core/services/signatures_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/domain/models/coupon_model.dart';
@@ -24,6 +25,7 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
   final UserService _userService = UserService.instance;
   final ICouponsService _couponsService = CouponsServiceImpl.instance;
   final IPlansService _plansService = PlansServiceImpl.instance;
+  final SignaturesService _signatgureService = SignaturesService.instance;
 
   late StreamSubscription<List<PurchaseDetails>> _subscription;
   late final StreamSubscription<UserModel> _userSubscription;
@@ -34,6 +36,7 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
   ProductDetails? _defaultProductDetails;
 
   ProductDetails? _productWithCoupon;
+  final String _fullDiscountPlan = "RWGwlWCN1FyOkZfO9map";
 
   SubscriptionsBloc() : super(SubscriptionsLoading()) {
     if (Platform.isAndroid) {
@@ -102,7 +105,7 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
     }
   }
 
-  void _handleOnCouponAdded(
+  FutureOr<void> _handleOnCouponAdded(
       AddedCouponEvent event, Emitter<SubscriptionsState> emit) async {
     final int index = _couponsService.coupons.indexWhere((element) {
       final res = element.name.toUpperCase() == event.couponName.toUpperCase();
@@ -136,17 +139,33 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
         },
       );
 
-      if (_productWithCoupon == null) {
+      if (_productWithCoupon == null &&
+          _couponsService.coupons[index].planUuid != _fullDiscountPlan) {
         AppHelper.displayAlertError('Cupom inválido');
         return;
       }
 
-      emit(
-        CouponAddedState(
-          coupon: _couponsService.coupons[index],
-          productDetails: _productWithCoupon!,
-        ),
-      );
+      if (_couponsService.coupons[index].planUuid == _fullDiscountPlan) {
+        await _signatgureService
+            .addSignature(_couponsService.coupons[index].uuid);
+        await _userService.updateSubscriberStatusFromRoles(
+            SubscriptionEnum.paying, null);
+        await _couponsService
+            .incrementUsageQuantityOfCoupon(_couponsService.coupons[index]);
+
+        emit(
+          AddedFullSubscriptionDiscountState(
+              coupon: _couponsService.coupons[index]),
+        );
+      } else {
+        emit(
+          CouponAddedState(
+            coupon: _couponsService.coupons[index],
+            productDetails: _productWithCoupon!,
+          ),
+        );
+      }
+
       return;
     }
 
