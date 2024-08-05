@@ -15,6 +15,7 @@ class UserModel {
       fromJson: subscriptionEnumFromJson, includeToJson: false, name: "roles")
   final SubscriptionEnum subscriptionLevel;
   final String? lastSubscriptionPlatform;
+  final String? signInFrom;
 
   UserModel({
     this.id = "",
@@ -24,6 +25,7 @@ class UserModel {
     this.photoUrl = "",
     this.subscriptionLevel = SubscriptionEnum.nonPaying,
     this.lastSubscriptionPlatform,
+    this.signInFrom = ""
   });
 
   static UserModel empty() {
@@ -34,6 +36,7 @@ class UserModel {
       phone: "",
       photoUrl: "",
       subscriptionLevel: SubscriptionEnum.nonPaying,
+      signInFrom: ""
     );
   }
 
@@ -61,6 +64,7 @@ class UserModel {
     String? phone,
     String? photoUrl,
     SubscriptionEnum? subscriptionLevel,
+    String? signInFrom
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -69,6 +73,7 @@ class UserModel {
       phone: phone ?? this.phone,
       photoUrl: photoUrl ?? this.photoUrl,
       subscriptionLevel: subscriptionLevel ?? this.subscriptionLevel,
+      signInFrom: signInFrom ?? this.signInFrom
     );
   }
 }
