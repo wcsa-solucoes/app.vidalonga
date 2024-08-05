@@ -15,6 +15,22 @@ final class AuthSignInEvent extends AuthEvent {
   });
 }
 
+final class AuthGoogleSocialLoginEvent extends AuthEvent {  
+  final bool? canPop;
+
+  AuthGoogleSocialLoginEvent({
+    this.canPop = false,
+  });
+}
+
+final class AuthAppleSocialLoginEvent extends AuthEvent {  
+  final bool? canPop;
+
+  AuthAppleSocialLoginEvent({
+    this.canPop = false,
+  });
+}
+
 class AuthLoadingEvent extends AuthEvent {}
 
 final class AuthSignOutEvent extends AuthEvent {}

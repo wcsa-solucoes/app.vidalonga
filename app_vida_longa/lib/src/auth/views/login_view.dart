@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
@@ -15,6 +17,7 @@ import 'package:app_vida_longa/src/auth/bloc/auth_bloc.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
@@ -76,7 +79,7 @@ class _LoginViewState extends State<LoginView>
       child: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess && state.canPop!) {
-            PrintColoredHelper.printGreen(" AuthSuccess");
+            PrintColoredHelper.printGreen("AuthSuccess");
 
             if (UserService.instance.user.subscriptionLevel ==
                 SubscriptionEnum.nonPaying) {
@@ -121,7 +124,7 @@ class _LoginViewState extends State<LoginView>
               if (state is AuthSuccess) {
                 return const Center(
                   child: DefaultText(
-                    "Login realizado com sucesso! Clique na seta para voltar.",
+                    "Login realizado com sucesso! Navegue nas opções do menu abaixo!.",
                   ),
                 );
               }
@@ -296,6 +299,108 @@ class _LoginViewState extends State<LoginView>
             );
           },
         ),
+        const SizedBox(
+          height: 10,
+        ),
+        SizedBox(
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              bool canPop = false;
+              for (var element in Modular.to.navigateHistory) {
+                if (element.name.contains(routes.app.home.path)) {
+                  canPop = true;
+                }
+              }
+
+              _authBloc.add(AuthGoogleSocialLoginEvent(
+                canPop: canPop,
+              ));
+            },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              shadowColor: Colors.black54,
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50.0),
+              ),
+            ),
+            child: const Padding(
+              padding: EdgeInsets.all(0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image(
+                    image: AssetImage("assets/images/google_logo.webp"),
+                    height: 24.0,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: DefaultText(
+                      "Continuar com o Google",
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+        Platform.isIOS
+            ? Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: SizedBox(
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      bool canPop = false;
+                      for (var element in Modular.to.navigateHistory) {
+                        if (element.name.contains(routes.app.home.path)) {
+                          canPop = true;
+                        }
+                      }
+
+                      _authBloc.add(AuthAppleSocialLoginEvent(
+                        canPop: canPop,
+                      ));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.black,
+                      backgroundColor: Colors.white,
+                      shadowColor: Colors.black54,
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50.0),
+                      ),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Image(
+                            image: AssetImage("assets/images/apple_logo.png"),
+                            height: 24.0,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: DefaultText(
+                              "Continuar com a Apple",
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : Container(),
         TextButton(
           onPressed: () {
             if (_emailLoginController.text.isNotEmpty) {

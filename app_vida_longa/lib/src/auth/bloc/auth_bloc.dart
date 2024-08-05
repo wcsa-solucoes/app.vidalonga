@@ -14,6 +14,8 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial(newUser: UserService.instance.user)) {
     on<AuthSignInEvent>(_signIn);
+    on<AuthGoogleSocialLoginEvent>(_googleSignIn);
+    on<AuthAppleSocialLoginEvent>(_appleSignIn);
     on<AuthLoadingEvent>(_setLoading);
     on<AuthSignUpEvent>(_register);
     on<AuthSignOutEvent>(_signOut);
@@ -40,6 +42,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       email: event.email,
       password: event.password,
     );
+
+    if (response.status == ResponseStatusEnum.failed) {
+      _displaySnackBar(response);
+      emit(AuthInitial());
+    } else {
+      _isEnabled = true;
+      emit(AuthSuccess(newUser: _user, canPop: event.canPop));
+    }
+  }
+
+  FutureOr<void> _googleSignIn(
+      AuthGoogleSocialLoginEvent event, Emitter<AuthState> emit) async {
+    add(AuthLoadingEvent());
+
+    final ResponseStatusModel response = await _authService.googleSignIn();
+
+    if (response.status == ResponseStatusEnum.failed) {
+      _displaySnackBar(response);
+      emit(AuthInitial());
+    } else {
+      _isEnabled = true;
+      emit(AuthSuccess(newUser: _user, canPop: event.canPop));
+    }
+  }
+
+  FutureOr<void> _appleSignIn(
+      AuthAppleSocialLoginEvent event, Emitter<AuthState> emit) async {
+    add(AuthLoadingEvent());
+
+    final ResponseStatusModel response = await _authService.appleSignIn();
 
     if (response.status == ResponseStatusEnum.failed) {
       _displaySnackBar(response);

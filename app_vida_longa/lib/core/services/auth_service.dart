@@ -83,6 +83,52 @@ class AuthService {
     return response;
   }
 
+  Future<ResponseStatusModel> googleSignIn() async {
+    final result = await _authRepository.googleSignIn();
+
+    if (result.response.status == ResponseStatusEnum.success) {
+      final sourceResult = await _userService.loggedInFromTheRightSource(result.user.email, 'signInFromGoogle');
+      if (sourceResult.item2 == true) {
+        final response = await _userService.userAlreadyRegistered(result.user);
+      
+        //enter if the user doesn't exist yet
+        if (!response.item2){
+          await _userService.create(result.user);
+        }
+      }
+      else {
+        NotificationController.alert(response: sourceResult.item1);
+      }
+    } else {
+      NotificationController.alert(response: result.response);
+    }
+
+    return result.response;
+  }
+
+  Future<ResponseStatusModel> appleSignIn() async {
+   final result = await _authRepository.appleSignIn();
+
+    if (result.response.status == ResponseStatusEnum.success) {
+      final sourceResult = await _userService.loggedInFromTheRightSource(result.user.email, 'signInFromApple');
+      if (sourceResult.item2 == true) {
+        final response = await _userService.userAlreadyRegistered(result.user);
+      
+        //enter if the user doesn't exist yet
+        if (!response.item2){
+          await _userService.create(result.user);
+        }
+      }
+      else {
+        NotificationController.alert(response: sourceResult.item1);
+      }
+    } else {
+      NotificationController.alert(response: result.response);
+    }
+
+    return result.response;
+  }
+
   static void logout() async {
     try {
       await FirebaseAuth.instance

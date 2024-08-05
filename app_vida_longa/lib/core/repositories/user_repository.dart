@@ -80,6 +80,63 @@ class UserRepository {
     return Tuple2(response, user);
   }
 
+  Future<Tuple2<ResponseStatusModel, bool>> userAlreadyRegistered(String email) async {
+    late ResponseStatusModel response = ResponseStatusModel();
+    late bool userAlreadyRegistered = false;
+
+    await _instance
+        .collection("users")
+        .where('email', isEqualTo: email)
+        .get()
+        .then((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        userAlreadyRegistered = true;
+      } else {
+        userAlreadyRegistered = false;
+      }
+    }).onError((error, stackTrace) {
+      response.status = ResponseStatusEnum.failed;
+      response = WeException.handle(error);
+    });
+
+    return Tuple2(response, userAlreadyRegistered);
+  }
+
+  /// checking that the login source is correct because the same email should not be used to log in to google and apple signIn.
+  Future<Tuple2<ResponseStatusModel, bool>> loggedInFromTheRightSource(String email, String source) async {
+    late ResponseStatusModel response = ResponseStatusModel();
+    late UserModel user = UserModel();
+    late bool isTheRightSource = false;
+
+    await _instance
+        .collection("users")
+        .where('email', isEqualTo: email)
+        .get()
+        .then((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        user = UserModel.fromJson(snapshot.docs.first.data());
+        if (user.signInFrom == source) {
+          isTheRightSource = true;
+        }
+        else {
+          isTheRightSource = false;
+
+          //I was inverted because the user must log in with the other alternative
+          final sourceName = source == 'signInFromApple' ? 'google' : 'apple';
+          response.message = "Você deve logar com $sourceName";
+          response.status = ResponseStatusEnum.warning;
+        }
+      } else {
+        isTheRightSource = true;
+      }
+    }).onError((error, stackTrace) {
+      response.status = ResponseStatusEnum.failed;
+      response = WeException.handle(error);
+    });
+
+    return Tuple2(response, isTheRightSource);
+  }
+
   Future<ResponseStatusModel> update(UserModel user) async {
     late ResponseStatusModel response = ResponseStatusModel();
 

@@ -78,7 +78,7 @@ class UserService {
       if (response.code == WeExceptionCodesEnum.firebaseAuthUserNotFound) {
         _user = user.copyWith(
           id: FirebaseAuth.instance.currentUser!.uid,
-          email: FirebaseAuth.instance.currentUser!.email!,
+          email: FirebaseAuth.instance.currentUser!.email ?? "${FirebaseAuth.instance.currentUser!.uid.substring(0, 4)}@privaterelay.appleid.com",
         );
 
         unawaited(_handleSendEmail());
@@ -107,6 +107,22 @@ class UserService {
     return data.item1;
   }
 
+  Future<Tuple2<ResponseStatusModel, bool>> userAlreadyRegistered(UserModel user) async {
+    final Tuple2<ResponseStatusModel, bool> data =
+        await _userRepository.userAlreadyRegistered(user.email);
+
+    //_setUser(user);
+
+    return Tuple2(data.item1, data.item2);
+  }
+
+  Future<Tuple2<ResponseStatusModel, bool>> loggedInFromTheRightSource(String email, String source) async {
+    final Tuple2<ResponseStatusModel, bool> data =
+        await _userRepository.loggedInFromTheRightSource(user.email, source);
+
+    return Tuple2(data.item1, data.item2);
+  }
+
   void _setUser(UserModel user) {
     _user = user;
   }
@@ -129,7 +145,7 @@ class UserService {
   }
 
   Future<void> _handleSendEmail() async {
-    if (!_hasSentValidationEmail) {
+    if (!_hasSentValidationEmail && FirebaseAuth.instance.currentUser!.email != null) {
       _hasSentValidationEmail = true;
 
       await FirebaseAuth.instance.currentUser!
