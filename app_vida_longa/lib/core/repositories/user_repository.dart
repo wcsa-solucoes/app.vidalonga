@@ -4,7 +4,6 @@ import "package:app_vida_longa/core/helpers/app_helper.dart";
 import "package:app_vida_longa/core/helpers/async_helper.dart";
 import 'package:app_vida_longa/core/controllers/we_exception.dart';
 import "package:app_vida_longa/core/helpers/date_time_helper.dart";
-import "package:app_vida_longa/core/helpers/print_colored_helper.dart";
 import "package:app_vida_longa/core/services/auth_service.dart";
 import "package:app_vida_longa/core/services/user_service.dart";
 import "package:app_vida_longa/domain/enums/custom_exceptions_codes_enum.dart";

@@ -1,4 +1,3 @@
-import 'package:app_vida_longa/domain/models/article_model.dart';
 import 'package:app_vida_longa/domain/models/brief_article_model.dart';
 
 class SubCategoryModel {
