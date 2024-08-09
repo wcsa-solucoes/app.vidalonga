@@ -106,7 +106,6 @@ class AuthRepository {
           id: result.user!.uid,
           name: result.user!.displayName,
           email: result.user!.email,
-          phone: result.user!.phoneNumber,
           photoUrl: result.user!.photoURL,
           signInFrom: 'signInFromGoogle'
         );

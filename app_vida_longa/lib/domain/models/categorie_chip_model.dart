@@ -4,10 +4,13 @@ class ChipCategorieModel extends Equatable {
   final String label;
   final bool selected;
   final String uuid;
+  final String? createdAt;
+  
   const ChipCategorieModel({
     this.label = "",
     this.selected = false,
     this.uuid = "",
+    this.createdAt,
   });
 
   @override
@@ -26,6 +29,7 @@ class ChipCategorieModel extends Equatable {
       label: label ?? this.label,
       selected: selected ?? this.selected,
       uuid: uuid ?? this.uuid,
+      createdAt: createdAt ?? this.createdAt
     );
   }
 }

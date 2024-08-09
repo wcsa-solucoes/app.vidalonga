@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:app_vida_longa/core/repositories/partners_and_benefits/partner_companies_repository.dart';
+import 'package:app_vida_longa/domain/models/branch_model.dart';
+import 'package:app_vida_longa/domain/models/categorie_chip_model.dart';
 import 'package:app_vida_longa/domain/models/partner_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,6 +15,8 @@ abstract class IPartnerService {
   PartnerCompanyModel get selectedPartner;
   Stream<List<PartnerCompanyModel>> get companiesStream;
   bool get hasLoaded;
+  void setPartnersByBranch(BranchModel branch);
+  List<PartnerCompanyModel> get partnersByBranch;
 }
 
 class PartnerServiceImpl extends IPartnerService {
@@ -59,6 +63,19 @@ class PartnerServiceImpl extends IPartnerService {
 
   @override
   PartnerCompanyModel get selectedPartner => _selectedPartner;
+
+  late List<PartnerCompanyModel> _partnersByBranch = [];
+
+  @override
+  void setPartnersByBranch(BranchModel branch) {
+    _partnersByBranch.clear();
+
+    List<PartnerCompanyModel> partners = partnerCompanies.where((element) => element.branchesId.contains(branch.id)).toList();
+    _partnersByBranch = partners;
+  }
+
+  @override
+  List<PartnerCompanyModel> get partnersByBranch => _partnersByBranch;
 
   final StreamController<List<PartnerCompanyModel>> _selectedPartnerController =
       StreamController<List<PartnerCompanyModel>>.broadcast();

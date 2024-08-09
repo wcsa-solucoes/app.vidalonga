@@ -20,7 +20,6 @@ class PartnersBloc extends Bloc<PartnersEvent, PartnersState> {
   PartnersBloc() : super(PartnersLoadingState()) {
     on<PartnersLoadingEvent>(_handleLoading);
     on<PartnersLoadedEvent>(_handleLoaded);
-    on<PartnerBranchSelectedEvent>(_handleBranchSelected);
     on<PartnersSearchEvent>(_handleSearchFromTitle);
     on<RestartPartnersEvent>(_handleRestartPartners);
     on<SelectPartnerEvent>(_handleSelectPartner);
@@ -34,7 +33,7 @@ class PartnersBloc extends Bloc<PartnersEvent, PartnersState> {
           if (_partnerService.partnerCompanies.isNotEmpty) {
             add(PartnersLoadedEvent(
               partners: _partners,
-              branchsChip: _allBranchesChip,
+              branchs: _allBranchesChip,
               highlightedPartners: _highlightedPartners,
             ));
           }
@@ -50,7 +49,7 @@ class PartnersBloc extends Bloc<PartnersEvent, PartnersState> {
       if (_partnerService.partnerCompanies.isNotEmpty) {
         add(PartnersLoadedEvent(
           partners: _partners,
-          branchsChip: _allBranchesChip,
+          branchs: _allBranchesChip,
           highlightedPartners: _highlightedPartners,
         ));
       } else {
@@ -93,12 +92,14 @@ class PartnersBloc extends Bloc<PartnersEvent, PartnersState> {
     return _branchsService.branchs
         .map(
           (e) => ChipCategorieModel(
-            label: e.name,
-            selected: false,
-            uuid: e.id,
-          ),
+              label: e.name,
+              selected: false,
+              uuid: e.id,
+              createdAt: e.createdAt),
         )
-        .toList();
+        .toList()
+      ..sort((a, b) =>
+          DateTime.parse(b.createdAt!).compareTo(DateTime.parse(a.createdAt!)));
   }
 
   String getBranchName(String branchId) {
@@ -115,19 +116,8 @@ class PartnersBloc extends Bloc<PartnersEvent, PartnersState> {
     emit(
       PartnersLoadedState(
         partners: event.partners,
-        branchsChip: event.branchsChip,
+        branchs: event.branchs,
         highlightedPartners: event.highlightedPartners,
-      ),
-    );
-  }
-
-  void _handleBranchSelected(
-      PartnerBranchSelectedEvent event, Emitter<PartnersState> emit) {
-    emit(
-      BranchsSelectedLoadedState(
-        branchsChip: event.branchsChip,
-        parntersByBranch: _partners,
-        partnersByBranchSelected: event.partners,
       ),
     );
   }
@@ -165,9 +155,9 @@ class PartnersBloc extends Bloc<PartnersEvent, PartnersState> {
       rethrow;
     }
 
-    emit(PartnersLoadedState(
+    emit(PartnersSearchedState(
       partners: tempPartners,
-      branchsChip: tempPartners.isEmpty ? [] : _allBranchesChip,
+      branchs: tempPartners.isEmpty ? [] : _allBranchesChip,
       highlightedPartners: const [],
     ));
   }
@@ -176,7 +166,7 @@ class PartnersBloc extends Bloc<PartnersEvent, PartnersState> {
       RestartPartnersEvent event, Emitter<PartnersState> emit) {
     emit(PartnersLoadedState(
       partners: _partners,
-      branchsChip: _allBranchesChip,
+      branchs: _allBranchesChip,
       highlightedPartners: _highlightedPartners,
     ));
   }

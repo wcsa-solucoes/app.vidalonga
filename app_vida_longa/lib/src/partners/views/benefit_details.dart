@@ -386,21 +386,33 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
         margin: const EdgeInsets.only(right: 15),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Image.network(
-            url,
-            width: 180,
-            errorBuilder: (context, error, stackTrace) {
-              return const SizedBox(
-                width: 80,
-                child: Center(
-                  child: DefaultText(
-                    "Erro ao carregar imagem",
-                    fontSize: 18,
-                    maxLines: 4,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ImageZoomScreen(
+                    imagePath: url,
                   ),
                 ),
               );
             },
+            child: Image.network(
+              url,
+              width: 180,
+              errorBuilder: (context, error, stackTrace) {
+                return const SizedBox(
+                  width: 80,
+                  child: Center(
+                    child: DefaultText(
+                      "Erro ao carregar imagem",
+                      fontSize: 18,
+                      maxLines: 4,
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ));
   }
@@ -622,6 +634,39 @@ class ListBenefitsWidget extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class ImageZoomScreen extends StatelessWidget {
+  final String imagePath;
+
+  const ImageZoomScreen({super.key, required this.imagePath});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomAppScaffold(
+      appBar: const DefaultAppBar(
+          title: "Zoom na Imagem", isWithBackButton: true),
+      body: Center(
+        child: InteractiveViewer(
+          child: Image.network(
+            imagePath,
+            errorBuilder: (context, error, stackTrace) {
+              return const SizedBox(
+                width: 80,
+                child: Center(
+                  child: DefaultText(
+                    "Erro ao carregar imagem",
+                    fontSize: 18,
+                    maxLines: 4,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

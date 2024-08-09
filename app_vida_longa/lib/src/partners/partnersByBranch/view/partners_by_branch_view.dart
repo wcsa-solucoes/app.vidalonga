@@ -1,12 +1,11 @@
+import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/subscription_type.dart';
-import 'package:app_vida_longa/domain/models/categorie_chip_model.dart';
 import 'package:app_vida_longa/domain/models/partner_model.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
-import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
 import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
@@ -19,22 +18,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class PartnersView extends StatefulWidget {
-  const PartnersView({super.key});
+class PartnersByBranchView extends StatefulWidget {
+  const PartnersByBranchView({super.key});
 
   @override
-  State<PartnersView> createState() => _PartnersViewState();
+  State<PartnersByBranchView> createState() => _PartnersByBranchViewState();
 }
 
-class _PartnersViewState extends State<PartnersView> {
-  late final PartnersBloc _partnersBloc;
-  late final PartnersByBranchBloc _partnersByBranchBloc;
+class _PartnersByBranchViewState extends State<PartnersByBranchView> {
+  final PartnersByBranchBloc _partnersByBranchBloc = PartnersByBranchBloc();
+  final PartnersBloc _partnersBloc = PartnersBloc();
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
-    _partnersBloc = PartnersBloc();
-    _partnersByBranchBloc = PartnersByBranchBloc();
     super.initState();
     _searchController.addListener(_onSearchChanged);
   }
@@ -44,41 +41,49 @@ class _PartnersViewState extends State<PartnersView> {
   @override
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
-    _partnersBloc.close();
     super.dispose();
   }
 
   void _onSearchChanged() {
     final text = _searchController.text;
-    _partnersBloc.add(PartnersSearchEvent(text));
+    if (text != "") {
+      _partnersByBranchBloc.add(PartnersByBranchSearchEvent(text));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-      appBar: const DefaultAppBar(title: "Parceiros"),
-      bottomNavigationBar: const CustomBottomNavigationBar(),
+      appBar: const DefaultAppBar(
+          title: "Parceiros por Categoria", isWithBackButton: true),
       body: SingleChildScrollView(
         controller: _scrollController,
         child: SizedBox(
           width: MediaQuery.sizeOf(context).width,
-          child: BlocBuilder<PartnersBloc, PartnersState>(
-            bloc: _partnersBloc,
+          child: BlocBuilder<PartnersByBranchBloc, PartnersByBranchState>(
+            bloc: _partnersByBranchBloc,
             builder: (context, state) {
               return Builder(builder: (context) {
-                if (state is PartnersLoadingState) {
+                if (state is PartnersByBranchLoadingState) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (state is PartnersLoadedState) {
+                if (state is PartnersByBranchEmptyState) {
+                  return const Center(
+                    child:
+                        DefaultText("Essa categoria ainda não tem parceiros!"),
+                  );
+                }
+
+                if (state is PartnersByBranchLoadedState) {
                   return _loadedState(state);
                 }
 
-                if (state is PartnersSearchedState) {
+                if (state is PartnersByBranchSearchedState) {
                   return _searchedState(state);
                 }
 
-                if (state is PartnersErrorState) {
+                if (state is PartnersByBranchErrorState) {
                   return Center(
                     child: DefaultText(state.message),
                   );
@@ -93,55 +98,32 @@ class _PartnersViewState extends State<PartnersView> {
     );
   }
 
-  Widget _handleEmptyPartners() {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.8,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 50),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const DefaultText("Nenhum benefício encontrado :("),
-            _handleReload(),
-          ],
-        ),
-      ),
+  Widget _loadedState(PartnersByBranchLoadedState state) {
+    return Column(
+      children: [
+        _handleSearchWidget(),
+        _handleHighlightedPartners(state.partners
+            .where((element) => element.isHighlighted == true)
+            .toList()),
+        _handlePartners(state.partners
+            .where((element) => element.isHighlighted == false)
+            .toList()),
+      ],
     );
   }
 
-  Widget _handleReload() {
-    return TextButton(
-      onPressed: _onRestart,
-      child: const Text(
-        "Recarregar",
-        style: TextStyle(
-          decoration: TextDecoration.underline,
-        ),
-      ),
+  Widget _searchedState(PartnersByBranchSearchedState state) {
+    return Column(
+      children: [
+        _handleSearchWidget(),
+        _handlePartners(state.partners),
+      ],
     );
   }
 
   void _onRestart() {
     _searchController.clear();
-    _partnersBloc.add(RestartPartnersEvent());
-  }
-
-  Widget _loadedState(PartnersLoadedState state) {
-    return Column(
-      children: [
-        _handleSearchWidget(),
-        _handleHighlightedPartners(state.highlightedPartners),
-        _branchesTitle(),
-        _buildBranches(state.branchs, state.partners),
-      ],
-    );
-  }
-
-  Widget _searchedState(PartnersSearchedState state) {
-    return Column(
-      children: [_handleSearchWidget(), _handlePartnersWidget(state.partners)],
-    );
+    _partnersByBranchBloc.add(RestartPartnersByBranchEvent());
   }
 
   Widget _handleSearchWidget() {
@@ -161,56 +143,12 @@ class _PartnersViewState extends State<PartnersView> {
         textInputAction: TextInputAction.search,
         onSubmitted: (value) {
           if (value.isEmpty) {
-            _partnersBloc.add(RestartPartnersEvent());
+            _partnersByBranchBloc.add(RestartPartnersByBranchEvent());
           } else {
-            _partnersBloc.add(PartnersSearchEvent(value));
+            _partnersByBranchBloc.add(PartnersByBranchSearchEvent(value));
           }
         },
       ),
-    );
-  }
-
-  Widget _handlePartnersWidget(List<List<PartnerCompanyModel>> partners) {
-    if (partners.isEmpty) {
-      return _handleEmptyPartners();
-    }
-
-    return ListView.builder(
-      physics:
-          const NeverScrollableScrollPhysics(), // Add this to keep the ListView from scrolling
-      shrinkWrap: true,
-      itemCount: partners.length,
-      padding: const EdgeInsets.only(bottom: 50),
-
-      itemBuilder: (BuildContext context, int categoryIndex) {
-        final partnersCompany = partners[categoryIndex];
-
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: Colors.transparent,
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: Text(
-                  // partnersCompany.first.categoryTitle.toUpperCase(),
-                  _partnersBloc
-                      .getBranchName(partnersCompany.first.branchesId.first),
-                  style: GoogleFonts.getFont(
-                    'Poppins',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 18,
-                    color: AppColors.secondaryText,
-                  ),
-                ),
-              ),
-              _handlePartnerCard(partnersCompany),
-            ],
-          ),
-        );
-      },
     );
   }
 
@@ -226,17 +164,15 @@ class _PartnersViewState extends State<PartnersView> {
         color: Colors.transparent,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 5.0, top: 10, bottom: 2),
+            padding: const EdgeInsets.only(top: 20),
             child: Text(
-              textAlign: TextAlign.left,
-              "Parceiros em destaque",
+              "Destaques",
               style: GoogleFonts.getFont(
                 'Poppins',
                 fontWeight: FontWeight.w500,
-                fontSize: 17,
+                fontSize: 18,
                 color: AppColors.secondaryText,
               ),
             ),
@@ -293,68 +229,59 @@ class _PartnersViewState extends State<PartnersView> {
     );
   }
 
-  Widget _branchesTitle() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 5.0, top: 15, bottom: 5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                "Navegar por todas as categorias",
-                textAlign: TextAlign.left,
-                style: GoogleFonts.getFont(
-                  'Poppins',
-                  fontWeight: FontWeight.w500,
-                  fontSize: 17,
-                  color: AppColors.secondaryText,
-                ),
-              ),
-            ],
-          ),
+  Widget _handleEmptyPartners() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.8,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 50),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(),
+          ],
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildBranches(List<ChipCategorieModel> branches,
-      List<List<PartnerCompanyModel>> partnersByBranchSelectedAll) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Wrap(
-        spacing: 10,
-        runSpacing: 4,
-        alignment: WrapAlignment.start,
-        crossAxisAlignment: WrapCrossAlignment.start,
-        direction: Axis.horizontal,
-        runAlignment: WrapAlignment.start,
-        verticalDirection: VerticalDirection.down,
-        clipBehavior: Clip.none,
-        children: branches
-            .map(
-              (branch) => _BranchCard(
-                branch: branch,
-                onPressed: () {
-                  var user = AuthService.instance.getCurrentUser;
+  Widget _handlePartners(List<PartnerCompanyModel> partners) {
+    if (partners.isEmpty) {
+      return _handleEmptyPartners();
+    }
 
-                  if (user == null) {
-                    NavigationController.to(routes.app.auth.login.path);
-                    return;
-                  }
+    return ListView.builder(
+      physics:
+          const NeverScrollableScrollPhysics(), // Add this to keep the ListView from scrolling
+      shrinkWrap: true,
+      itemCount: 1,
+      padding: const EdgeInsets.only(bottom: 50),
 
-                  _partnersByBranchBloc.add(
-                    PartnersByBranchLoadingEvent(branch.uuid),
-                  );
-                  NavigationController.push(
-                    routes.app.partners.partnersByBranch.path,
-                  );
-                },
+      itemBuilder: (BuildContext context, int categoryIndex) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.transparent,
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Text(
+                  _partnersBloc.getBranchName(partners.first.branchesId.first),
+                  style: GoogleFonts.getFont(
+                    'Poppins',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                    color: AppColors.secondaryText,
+                  ),
+                ),
               ),
-            )
-            .toList(),
-      ),
+              _handlePartnerCard(partners),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -362,7 +289,6 @@ class _PartnersViewState extends State<PartnersView> {
 class _PartnerCardWidget extends StatelessWidget {
   final PartnerCompanyModel partner;
   final Function onPressed;
-
   const _PartnerCardWidget({
     required this.onPressed,
     required this.partner,
@@ -393,7 +319,7 @@ class _PartnerCardWidget extends StatelessWidget {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.only(top: 2.0, left: 8.0, right: 8.0),
+                      const EdgeInsets.only(top: 7.0, left: 8.0, right: 8.0),
                   child: SizedBox(
                     width: 290,
                     child: Center(
@@ -492,7 +418,7 @@ class _PartnerCardWidget extends StatelessWidget {
                         'Urbanist',
                         fontWeight: FontWeight.w800,
                         fontSize: 14,
-                        color: AppColors.blueHighlightedText,
+                        color: const Color(0xFF3B81DC),
                       ),
                     ),
                   ),
@@ -500,95 +426,6 @@ class _PartnerCardWidget extends StatelessWidget {
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _BranchCard extends StatelessWidget {
-  final ChipCategorieModel branch;
-  final Function onPressed;
-
-  const _BranchCard({required this.onPressed, required this.branch});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 12),
-      child: GestureDetector(
-        onTap: () => onPressed.call(),
-        child: Container(
-          width: MediaQuery.sizeOf(context).width * 0.29,
-          height: 120,
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            boxShadow: const [
-              BoxShadow(
-                blurRadius: 4,
-                color: Color(0x33000000),
-                offset: Offset(0, 2),
-              )
-            ],
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(4),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        SizedBox(
-                          width: 105,
-                          child: Text(
-                            branch.label,
-                            style: GoogleFonts.getFont(
-                              'Poppins',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                              color: AppColors.blueHighlightedText,
-                            ),
-                            textAlign: TextAlign.start,
-                            overflow: TextOverflow.visible,
-                            maxLines: null,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 50),
-                      child: Center(
-                        child: Transform.rotate(
-                          angle: -0.6,
-                          child: SizedBox(
-                            width: 40,
-                            height: 50,
-                            child: FittedBox(
-                              child:
-                                  Image.asset('assets/images/AVATAR_(1).png'),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );
