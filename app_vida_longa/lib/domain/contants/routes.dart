@@ -34,6 +34,7 @@ const routes = (
     ),
     partners: (
       path: "/app/partners/",
+      partnersByBranch: (path: "/app/partners/partnersByBranch"),
       benefitDetails: (path: "/app/partners/benefitDetails"),
     )
   )

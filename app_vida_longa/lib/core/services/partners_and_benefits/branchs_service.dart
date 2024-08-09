@@ -7,6 +7,8 @@ abstract class IBranchsService {
   List<BranchModel> get branchs;
   Future<void> init();
   Future<void> getAllBranchs();
+  void selectBranch(BranchModel branch);
+  BranchModel get selectedBranch;
 }
 
 class BranchsServiceImpl extends IBranchsService {
@@ -37,6 +39,16 @@ class BranchsServiceImpl extends IBranchsService {
       _setBranchs(branchs);
     }
   }
+
+  late BranchModel _selectedBranch;
+
+  @override
+  void selectBranch(BranchModel branch) {
+    _selectedBranch = branch;
+  }
+
+  @override
+  BranchModel get selectedBranch => _selectedBranch;
 
   void _setBranchs(List<BranchModel> branchs) {
     _branchs.clear();

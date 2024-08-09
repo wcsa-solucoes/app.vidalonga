@@ -49,7 +49,10 @@ class AppColors {
   static const Color unselectedTextStyleColor = Color(0xFF3A96D0);
   static const Color selectedTextStyleColor = Color(0xBB115AC6);
   static const Color turquoise = Color(0xFF39D2C0);
+  static const Color blueHighlightedText = Color(0xFF3B81DC);
   static const Color buttonText = primary;
+  
+  static const Color clearBackgroundCard = Color.fromARGB(255, 235, 238, 242);
 
   static const Color gray600 = Color(0xFF57636C); //L/D 0xFF57636C
   static const Color lineGray = Color(0xFFE1EDF9); //dark 0xFF262D34

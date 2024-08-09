@@ -17,7 +17,7 @@ class SomeQuestionView extends StatefulWidget {
 }
 
 class _SomeQuestionViewState extends State<SomeQuestionView> {
-  double fontSize = 16.0;
+  double fontSize = 16.5;
   List<Widget> answers = [];
 
   final StreamController<double> _streamControllerFontSize =
@@ -36,7 +36,9 @@ class _SomeQuestionViewState extends State<SomeQuestionView> {
                 style: {
                   "body": Style(
                     fontSize: FontSize(snapshot.data!),
-                    color: AppColors.selectedTextStyleColor,
+                    color: AppColors.blackCard,
+                    textAlign: TextAlign.justify,
+                    fontWeight: FontWeight.w400,
                   ),
                 },
                 data: item.answer,
