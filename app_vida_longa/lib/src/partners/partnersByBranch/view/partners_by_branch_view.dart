@@ -1,6 +1,5 @@
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/services/auth_service.dart';
-import 'package:app_vida_longa/core/services/partners_and_benefits/partners_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
@@ -41,7 +40,6 @@ class _PartnersByBranchViewState extends State<PartnersByBranchView> {
 
   @override
   void dispose() {
-    PrintColoredHelper.printGreen('disposed in partners by branch');
     _searchController.removeListener(_onSearchChanged);
     super.dispose();
   }

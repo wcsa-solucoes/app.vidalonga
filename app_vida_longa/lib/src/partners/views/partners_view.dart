@@ -344,13 +344,6 @@ class _PartnersViewState extends State<PartnersView> {
                     return;
                   }
 
-                  if (UserService.instance.user.subscriptionLevel !=
-                      SubscriptionEnum.paying) {
-                    NavigationController.push(
-                        routes.app.profile.subscriptions.path);
-                    return;
-                  }
-
                   _partnersByBranchBloc.add(
                     PartnersByBranchLoadingEvent(branch.uuid),
                   );
