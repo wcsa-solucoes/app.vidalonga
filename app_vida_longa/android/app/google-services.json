@@ -12,7 +12,28 @@
           "package_name": "app.vidalongaapp.com"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "307746117848-1it5lkpsoghqkr65sv12c3ek7sak4oka.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.vidalongaapp.com",
+            "certificate_hash": "4fe26875bae18659cc7870b7505f0c528649277d"
+          }
+        },
+        {
+          "client_id": "307746117848-9ba62emvdsr464nn6gt1pllhmie25nlg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.vidalongaapp.com",
+            "certificate_hash": "24fc3e2b59a2b1e5fcc3bc1669332238718e51f9"
+          }
+        },
+        {
+          "client_id": "307746117848-lfbhtjaj2h4rsesmts1t90nstq97i6qp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBjcWNhDt2dKkS_s1Vb19NQ3PMCO1Z1v-g"
@@ -20,7 +41,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "307746117848-lfbhtjaj2h4rsesmts1t90nstq97i6qp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "307746117848-5e4r4df4rm0e9da5kf5uk8bl5nc5ffql.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "app.vidalongaapp.com"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +64,28 @@
           "package_name": "com.vidalonga.appvidalonga"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "307746117848-7jddaiucpom9bdb9o0gcogajv2j20clp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vidalonga.appvidalonga",
+            "certificate_hash": "24fc3e2b59a2b1e5fcc3bc1669332238718e51f9"
+          }
+        },
+        {
+          "client_id": "307746117848-rgrot1uo3b9tv6tj42umaqgkl9kihk2j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vidalonga.appvidalonga",
+            "certificate_hash": "4fe26875bae18659cc7870b7505f0c528649277d"
+          }
+        },
+        {
+          "client_id": "307746117848-lfbhtjaj2h4rsesmts1t90nstq97i6qp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBjcWNhDt2dKkS_s1Vb19NQ3PMCO1Z1v-g"
@@ -39,7 +93,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "307746117848-lfbhtjaj2h4rsesmts1t90nstq97i6qp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "307746117848-5e4r4df4rm0e9da5kf5uk8bl5nc5ffql.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "app.vidalongaapp.com"
+              }
+            }
+          ]
         }
       }
     },
@@ -50,7 +116,28 @@
           "package_name": "com.vidalongaapp.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "307746117848-0jqgnbuku5vdoofou79mamqesre3nkvs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vidalongaapp.app",
+            "certificate_hash": "4fe26875bae18659cc7870b7505f0c528649277d"
+          }
+        },
+        {
+          "client_id": "307746117848-rsok3ausoealulmud604etq3lg0moguk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vidalongaapp.app",
+            "certificate_hash": "24fc3e2b59a2b1e5fcc3bc1669332238718e51f9"
+          }
+        },
+        {
+          "client_id": "307746117848-lfbhtjaj2h4rsesmts1t90nstq97i6qp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBjcWNhDt2dKkS_s1Vb19NQ3PMCO1Z1v-g"
@@ -58,7 +145,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "307746117848-lfbhtjaj2h4rsesmts1t90nstq97i6qp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "307746117848-5e4r4df4rm0e9da5kf5uk8bl5nc5ffql.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "app.vidalongaapp.com"
+              }
+            }
+          ]
         }
       }
     }
