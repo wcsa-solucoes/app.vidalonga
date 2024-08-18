@@ -519,8 +519,8 @@ class _BranchCard extends StatelessWidget {
       child: GestureDetector(
         onTap: () => onPressed.call(),
         child: Container(
-          width: MediaQuery.sizeOf(context).width * 0.29,
-          height: 120,
+          width: MediaQuery.sizeOf(context).width * 0.285,
+          height: 127,
           decoration: BoxDecoration(
             color: AppColors.white,
             boxShadow: const [
@@ -546,7 +546,7 @@ class _BranchCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         SizedBox(
-                          width: 105,
+                          width: MediaQuery.sizeOf(context).width * 0.23,
                           child: Text(
                             branch.label,
                             style: GoogleFonts.getFont(
