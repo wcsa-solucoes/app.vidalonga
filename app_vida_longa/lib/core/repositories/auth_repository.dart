@@ -3,6 +3,7 @@ import "package:app_vida_longa/core/controllers/we_exception.dart";
 import "package:app_vida_longa/core/helpers/print_colored_helper.dart";
 import "package:app_vida_longa/domain/models/response_model.dart";
 import "package:app_vida_longa/domain/models/user_model.dart";
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/services.dart";
 import "package:google_sign_in/google_sign_in.dart";
@@ -10,6 +11,7 @@ import "package:the_apple_sign_in/the_apple_sign_in.dart";
 
 class AuthRepository {
   late final FirebaseAuth _auth = FirebaseAuth.instance;
+  late final FirebaseFirestore _instance = FirebaseFirestore.instance;
 
   Future<ResponseStatusModel> register(
       UserModel user, String password, String name) async {
@@ -43,24 +45,6 @@ class AuthRepository {
   }) async {
     late ResponseStatusModel response = ResponseStatusModel();
 
-    // late List<String> signInMethods = [];
-
-    // await _auth.fetchSignInMethodsForEmail(email).then((data) {
-    //   signInMethods = data;
-    // }).onError((error, stackTrace) {
-    //   response = WeException.handle(error);
-    // });
-
-    // if (response.status == ResponseStatusEnum.failed) {
-    //   return response;
-    // }
-
-    // if (signInMethods.isEmpty) {
-    //   response.status = ResponseStatusEnum.failed;
-    //   response.code = WeExceptionCodesEnum.firebaseAuthUserNotFound;
-    //   return response;
-    // }
-
     await _auth
         .signInWithEmailAndPassword(email: email, password: password)
         .then((snapshot) => null)
@@ -90,25 +74,46 @@ class AuthRepository {
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
       if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth =
+        
+        late bool loggedInAnotherWay = false;
+
+        await _instance
+        .collection("users")
+        .where('email', isEqualTo: googleUser.email)
+        .get()
+        .then((snapshot) {
+        if (snapshot.docs.isNotEmpty) {
+          user = UserModel.fromJson(snapshot.docs.first.data());
+          if (user.signInFrom == "" || user.signInFrom != "signInFromGoogle") {
+            loggedInAnotherWay = true;
+          }  
+        }});
+
+        if (loggedInAnotherWay == false) {
+          final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-        // credentials for firebase
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
+          // credentials for firebase
+          final AuthCredential credential = GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken,
+          );
 
-        // login
-        final result = await _auth.signInWithCredential(credential);
+          // login
+          final result = await _auth.signInWithCredential(credential);
 
-        user = user.copyWith(
-          id: result.user!.uid,
-          name: result.user!.displayName,
-          email: result.user!.email,
-          photoUrl: result.user!.photoURL,
-          signInFrom: 'signInFromGoogle'
-        );
+          user = user.copyWith(
+            id: result.user!.uid,
+            name: result.user!.displayName,
+            email: result.user!.email,
+            photoUrl: result.user!.photoURL,
+            signInFrom: 'signInFromGoogle'
+          );
+        }
+        else {
+          response.message = "Logue de outra maneira, o seu e-mail já está cadastrado!";
+          response.status = ResponseStatusEnum.failed;
+        } 
       }
       else {
         response.message = "Prossiga até o fim para usar o login social!";

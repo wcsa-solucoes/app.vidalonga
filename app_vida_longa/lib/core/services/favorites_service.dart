@@ -73,17 +73,21 @@ class FavoritesServiceImpl extends IFavoritesService {
   Future<void> add(String articleId) async {
     ResponseStatusModel response = ResponseStatusModel();
 
-    List<String> tempIds = favoritesIds;
-    tempIds.add(articleId);
+    List<String> tempIds = favoritesIds.toSet().toList();
+    if (!tempIds.contains(articleId)) {
+      tempIds.add(articleId);
+    }
 
     response = await _repository.add(tempIds, userId);
 
     if (response.status == ResponseStatusEnum.success) {
-      favoritesIds.add(articleId);
       final BriefArticleModel article = _articleService.articles
           .firstWhere((element) => element.uuid == articleId);
 
-      favorites.add(article);
+      if (!favoritesIds.contains(articleId)) {
+        favoritesIds.add(articleId);
+        favorites.add(article);
+      }
 
       _setArticleIds(favorites);
     } else {
@@ -99,15 +103,14 @@ class FavoritesServiceImpl extends IFavoritesService {
   Future<void> remove(String articleId) async {
     ResponseStatusModel response = ResponseStatusModel();
 
-    List<String> tempIds = favoritesIds;
-    tempIds.add(articleId);
-    tempIds.remove(articleId);
+    List<String> tempIds = favoritesIds.toSet().toList();
+    tempIds.removeWhere((element) => element == articleId);
 
     response = await _repository.remove(tempIds, userId);
 
     if (response.status == ResponseStatusEnum.success) {
-      favoritesIds.remove(articleId);
       favorites.removeWhere((element) => element.uuid == articleId);
+      favoritesIds.removeWhere((element) => element == articleId);
       _setArticleIds(favorites);
     } else {
       AppHelper.displayAlertError("Erro ao remover artigo dos favoritos!");
