@@ -62,8 +62,7 @@ class AuthRepository {
 
     try {
       const List<String> scopes = <String>[
-        'email',
-        'https://www.googleapis.com/auth/contacts.readonly',
+        'email'
       ];
 
       GoogleSignIn googleSignIn = GoogleSignIn(

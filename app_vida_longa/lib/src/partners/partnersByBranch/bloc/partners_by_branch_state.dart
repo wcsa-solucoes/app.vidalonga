@@ -21,7 +21,7 @@ final class PartnersByBranchLoadedState extends PartnersByBranchState {
 
 class PartnersByBranchSearchedState extends PartnersByBranchState {
   final List<PartnerCompanyModel> partners;
-  final List<ChipCategorieModel> branchs;
+  final List<BranchModel> branchs;
   final List<PartnerCompanyModel> highlightedPartners;
 
   PartnersByBranchSearchedState({

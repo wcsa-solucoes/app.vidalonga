@@ -3,6 +3,7 @@ import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/subscription_type.dart';
+import 'package:app_vida_longa/domain/models/branch_model.dart';
 import 'package:app_vida_longa/domain/models/categorie_chip_model.dart';
 import 'package:app_vida_longa/domain/models/partner_model.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
@@ -319,7 +320,7 @@ class _PartnersViewState extends State<PartnersView> {
     );
   }
 
-  Widget _buildBranches(List<ChipCategorieModel> branches,
+  Widget _buildBranches(List<BranchModel> branches,
       List<List<PartnerCompanyModel>> partnersByBranchSelectedAll) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
@@ -345,7 +346,7 @@ class _PartnersViewState extends State<PartnersView> {
                   }
 
                   _partnersByBranchBloc.add(
-                    PartnersByBranchLoadingEvent(branch.uuid),
+                    PartnersByBranchLoadingEvent(branch.id),
                   );
                   NavigationController.push(
                     routes.app.partners.partnersByBranch.path,
@@ -507,13 +508,15 @@ class _PartnerCardWidget extends StatelessWidget {
 }
 
 class _BranchCard extends StatelessWidget {
-  final ChipCategorieModel branch;
+  final BranchModel branch;
   final Function onPressed;
 
   const _BranchCard({required this.onPressed, required this.branch});
 
   @override
   Widget build(BuildContext context) {
+    Color color = _convertHexToColor(branch.titleColor);
+
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 12),
       child: GestureDetector(
@@ -531,6 +534,12 @@ class _BranchCard extends StatelessWidget {
               )
             ],
             borderRadius: BorderRadius.circular(12),
+            image: branch.imageUrl != ""
+                ? DecorationImage(
+                    image: NetworkImage(branch.imageUrl),
+                    fit: BoxFit.cover,
+                  )
+                : null,
           ),
           child: Padding(
             padding: const EdgeInsets.all(4),
@@ -548,12 +557,12 @@ class _BranchCard extends StatelessWidget {
                         SizedBox(
                           width: MediaQuery.sizeOf(context).width * 0.23,
                           child: Text(
-                            branch.label,
+                            branch.name,
                             style: GoogleFonts.getFont(
                               'Poppins',
                               fontWeight: FontWeight.w600,
                               fontSize: 15,
-                              color: AppColors.blueHighlightedText,
+                              color: color,
                             ),
                             textAlign: TextAlign.start,
                             overflow: TextOverflow.visible,
@@ -564,33 +573,47 @@ class _BranchCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 50),
-                      child: Center(
-                        child: Transform.rotate(
-                          angle: -0.6,
-                          child: SizedBox(
-                            width: 40,
-                            height: 50,
-                            child: FittedBox(
-                              child:
-                                  Image.asset('assets/images/AVATAR_(1).png'),
+                branch.haveLogo
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: branch.logoSize == "small"
+                                ? const EdgeInsets.only(left: 75)
+                                : const EdgeInsets.only(left: 60),
+                            child: Center(
+                              child: Transform.rotate(
+                                angle: -0.6,
+                                child: SizedBox(
+                                  width: branch.logoSizeWidht,
+                                  height: branch.logoSizeHeight,
+                                  child: FittedBox(
+                                    child: Image.asset(
+                                        'assets/images/AVATAR_(1).png'),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Color _convertHexToColor(String hexColor) {
+    hexColor = hexColor.replaceAll("#", "");
+
+    if (hexColor.length == 6) {
+      hexColor = "FF$hexColor"; // Opacidade total
+    }
+
+    return Color(int.parse(hexColor, radix: 16));
   }
 }

@@ -56,17 +56,10 @@ class PartnersByBranchBloc
         return previousValue;
       });
 
-  List<ChipCategorieModel> get _allBranchesChip {
+  List<BranchModel> get _allBranchesChip {
     final branch = _branchsService.selectedBranch;
 
-    final chipCategory = ChipCategorieModel(
-      label: branch.name,
-      selected: false,
-      uuid: branch.id,
-      createdAt: branch.createdAt,
-    );
-
-    return [chipCategory];
+    return [branch];
   }
 
   String getBranchName(String branchId) {

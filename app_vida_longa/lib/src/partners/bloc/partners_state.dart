@@ -9,7 +9,7 @@ final class PartnersLoadingState extends PartnersState {}
 
 final class PartnersLoadedState extends PartnersState {
   final List<List<PartnerCompanyModel>> partners;
-  final List<ChipCategorieModel> branchs;
+  final List<BranchModel> branchs;
   final List<PartnerCompanyModel> highlightedPartners;
 
   PartnersLoadedState({
@@ -21,7 +21,7 @@ final class PartnersLoadedState extends PartnersState {
 
 class PartnersSearchedState extends PartnersState {
   final List<List<PartnerCompanyModel>> partners;
-  final List<ChipCategorieModel> branchs;
+  final List<BranchModel> branchs;
   final List<PartnerCompanyModel> highlightedPartners;
 
   PartnersSearchedState({

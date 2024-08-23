@@ -5,7 +5,7 @@ sealed class PartnersEvent {}
 
 class PartnersLoadedEvent extends PartnersEvent {
   final List<List<PartnerCompanyModel>> partners;
-  final List<ChipCategorieModel> branchs;
+  final List<BranchModel> branchs;
   final List<PartnerCompanyModel> highlightedPartners;
 
   PartnersLoadedEvent({

@@ -88,15 +88,8 @@ class PartnersBloc extends Bloc<PartnersEvent, PartnersState> {
         return previousValue;
       });
 
-  List<ChipCategorieModel> get _allBranchesChip {
+  List<BranchModel> get _allBranchesChip {
     return _branchsService.branchs
-        .map(
-          (e) => ChipCategorieModel(
-              label: e.name,
-              selected: false,
-              uuid: e.id,
-              createdAt: e.createdAt),
-        )
         .toList()
       ..sort((a, b) =>
           DateTime.parse(b.createdAt!).compareTo(DateTime.parse(a.createdAt!)));
