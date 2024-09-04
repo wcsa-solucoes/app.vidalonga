@@ -3,6 +3,7 @@ class BranchModel {
   final String id;
   final String name;
   final String titleColor;
+  final double? titleSize;
   final bool haveLogo;
   final String? logoSize;
   final double logoSizeWidht;
@@ -16,6 +17,7 @@ class BranchModel {
     required this.name,
     required this.createdAtUnixTimestamp,
     this.titleColor = "",
+    this.titleSize = 15,
     this.haveLogo = false,
     this.logoSize = "",
     this.logoSizeWidht = 0,
@@ -29,6 +31,7 @@ class BranchModel {
       id: map['uuid'],
       name: map['name'],
       titleColor: map['titleColor'],
+      titleSize: map['titleSize'].toDouble(),
       haveLogo: map['haveLogo'],
       logoSize: map['logoSize'],
       logoSizeWidht: map['logoSizeWidht'].toDouble(),
@@ -49,6 +52,7 @@ class BranchModel {
       id: id ?? this.id,
       name: name ?? this.name,
       titleColor: titleColor,
+      titleSize: titleSize,
       haveLogo: haveLogo,
       logoSize: logoSize,
       logoSizeWidht: logoSizeWidht,

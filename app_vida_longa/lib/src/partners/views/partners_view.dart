@@ -561,7 +561,7 @@ class _BranchCard extends StatelessWidget {
                             style: GoogleFonts.getFont(
                               'Poppins',
                               fontWeight: FontWeight.w600,
-                              fontSize: 15,
+                              fontSize: branch.titleSize ?? 15,
                               color: color,
                             ),
                             textAlign: TextAlign.start,
