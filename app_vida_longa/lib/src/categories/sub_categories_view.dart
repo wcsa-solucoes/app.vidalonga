@@ -29,6 +29,7 @@ class _SubCategoriesViewState extends State<SubCategoriesView> {
           height: MediaQuery.sizeOf(context).height,
           child: ListView.builder(
               itemCount: subCategories.length,
+              scrollDirection: Axis.vertical,
               itemBuilder: (context, index) {
                 SubCategoryModel subCategorie = subCategories[index];
 

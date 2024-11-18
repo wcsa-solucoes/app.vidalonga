@@ -4,7 +4,6 @@ import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/domain/enums/subscription_type.dart';
 import 'package:app_vida_longa/domain/models/branch_model.dart';
-import 'package:app_vida_longa/domain/models/categorie_chip_model.dart';
 import 'package:app_vida_longa/domain/models/partner_model.dart';
 import 'package:app_vida_longa/domain/models/user_model.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';

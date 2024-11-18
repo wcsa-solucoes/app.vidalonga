@@ -299,13 +299,18 @@ class _ProfileViewState extends State<ProfileView> {
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 30.0, 0.0, 0.0),
-                                  child: Text(
-                                    snapshot.data?.name ?? "name",
-                                    style: GoogleFonts.getFont(
-                                      'Roboto Mono',
-                                      color: AppColors.blackCard,
-                                      fontSize: 22.0,
-                                      fontWeight: FontWeight.w800,
+                                  child: SizedBox(
+                                    width:
+                                        MediaQuery.sizeOf(context).width * 0.76,
+                                    child: Text(
+                                      snapshot.data?.name ?? "Vida Longa",
+                                      style: GoogleFonts.getFont(
+                                        'Roboto Mono',
+                                        color: AppColors.blackCard,
+                                        fontSize: 22.0,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ),

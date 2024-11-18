@@ -114,16 +114,36 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
       body: body(),
       bottomNavigationBar: const CustomBottomNavigationBar(),
       floatingActionButton: AuthService.instance.getCurrentUser != null
-          ? FloatingActionButton(
-              backgroundColor: AppColors.white,
-              onPressed: () {
-                NavigationController.push(routes.app.qa.newQuestion.path,
-                    arguments: _qaBloc);
-              },
-              child: const FaIcon(
-                FontAwesomeIcons.plus,
-                color: AppColors.selectedColor,
-                size: 20,
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.selectedTextStyleColor.withOpacity(0.9),
+                      blurRadius: 6,
+                      offset: const Offset(0, 7),
+                    ),
+                  ],
+                ),
+                child: FloatingActionButton.extended(
+                  backgroundColor: AppColors.white,
+                  onPressed: () {
+                    NavigationController.push(routes.app.qa.newQuestion.path,
+                        arguments: _qaBloc);
+                  },
+                  label: const Text(
+                    "Nova Pergunta",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w900, fontSize: 16.5),
+                  ),
+                  icon: const Icon(Icons.add),
+                  foregroundColor: AppColors.selectedTextStyleColor,
+                  elevation: 0,
+                ),
+                
               ),
             )
           : null,

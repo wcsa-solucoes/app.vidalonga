@@ -33,20 +33,26 @@ class _CategoriesViewState extends State<CategoriesView> {
               child: DefaultText("Nenhuma categoria encontrada :("),
             ));
           }
-          return ListView.builder(
-            itemCount: categories.length,
-            itemBuilder: (context, index) {
-              var categorie = categories[index];
-              return OpenPageButtonWiget(
-                categorie.name,
-                onPressed: () {
-                  CategoriesService.setCurrentlyCategory(categories[index]);
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 170.0),
+            child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: categories.length,
+              itemBuilder: (context, index) {
+                var categorie = categories[index];
+                return OpenPageButtonWiget(
+                  categorie.name,
+                  onPressed: () {
+                    CategoriesService.setCurrentlyCategory(categories[index]);
 
-                  NavigationController.push(
-                      routes.app.categories.subCategories.path);
-                },
-              );
-            },
+                    NavigationController.push(
+                        routes.app.categories.subCategories.path);
+                  },
+                  
+                );
+              },
+            ),
+          
           );
         }),
       ),
