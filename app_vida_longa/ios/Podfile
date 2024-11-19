@@ -52,14 +52,6 @@ post_install do |installer|
       when 'Debug-dev', 'Debug-prod'
         config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] = '-Onone' # Nenhuma otimização
       end
-
-      if config.build_settings['OTHER_CFLAGS']
-        config.build_settings['OTHER_CFLAGS'] = config.build_settings['OTHER_CFLAGS'].reject { |flag| flag == '-G' }
-      end
-
-      if config.build_settings['OTHER_LDFLAGS']
-        config.build_settings['OTHER_LDFLAGS'] = config.build_settings['OTHER_LDFLAGS'].reject { |flag| flag == '-G' }
-      end
     end
     flutter_additional_ios_build_settings(target)
   end
