@@ -151,13 +151,13 @@ class _ProfileViewState extends State<ProfileView> {
       onPressed: () {
         _authBloc.add(AuthSignOutEvent());
       },
-      child: const Text(
+      child: Text(
         'Sair',
-        style: TextStyle(
-          fontFamily: 'Lexend Deca',
+        style: GoogleFonts.getFont(
+          'Roboto Mono',
           color: AppColors.blackCard,
-          fontSize: 14.0,
-          fontWeight: FontWeight.w500,
+          fontSize: 15.0,
+          fontWeight: FontWeight.w800,
         ),
       ),
     );
@@ -208,10 +208,10 @@ class _ProfileViewState extends State<ProfileView> {
                 children: [
                   Text(
                     name,
-                    style: const TextStyle(
-                      fontFamily: 'Lexend Deca',
+                    style: GoogleFonts.getFont(
+                      'Roboto Mono',
                       color: AppColors.blackCard,
-                      fontSize: 20.0,
+                      fontSize: 19.5,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -220,11 +220,11 @@ class _ProfileViewState extends State<ProfileView> {
                         0.0, 4.0, 0.0, 0.0),
                     child: Text(
                       email,
-                      style: const TextStyle(
-                        fontFamily: 'Lexend Deca',
+                      style: GoogleFonts.getFont(
+                        'Roboto Mono',
                         color: AppColors.blackCard,
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.normal,
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ),
@@ -247,101 +247,39 @@ class _ProfileViewState extends State<ProfileView> {
               _userInfos(snapshot.data?.name ?? "Nome",
                   snapshot.data?.email ?? "email"),
               Padding(
-                padding: const EdgeInsets.all(8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                padding: const EdgeInsets.all(12),
+                child: Column(
                   children: [
-                    Container(
-                      width: MediaQuery.sizeOf(context).width * 0.88,
-                      decoration: BoxDecoration(
-                        boxShadow: const [
-                          BoxShadow(
-                            blurRadius: 6.0,
-                            color: Color(0x4B1A1F24),
-                            offset: Offset(0.0, 2.0),
-                          )
-                        ],
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.white,
-                            snapshot.data!.subscriptionLevel ==
-                                    SubscriptionEnum.paying
-                                ? const Color(0xBB0F65D8)
-                                : Colors.orange,
-                          ],
-                          stops: const [0.0, 1.0],
-                          begin: const AlignmentDirectional(0.94, -1.0),
-                          end: const AlignmentDirectional(-0.94, 1.0),
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
+                    // Exibe o hint apenas fora do modo tela cheia
+                    Text(
+                      "Clique no cartão para ver em tela cheia!",
+                      style: TextStyle(
+                        fontSize: 11.0,
+                        color: Colors.grey[600],
+                        fontStyle: FontStyle.italic,
                       ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Image.asset(
-                                'assets/images/thumbnail_vidalonga4.png',
-                                width: 206.0,
-                                height: 80.0,
-                                fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 4),
+                    GestureDetector(
+                      onTap: () {
+                        // show the card in full screen
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                            insetPadding: EdgeInsets.zero,
+                            backgroundColor: Colors.transparent,
+                            child: Center(
+                              child: RotatedBox(
+                                quarterTurns: 1,
+                                child: _buildCard(context,
+                                    snapshot: snapshot, isFullScreen: true),
                               ),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                20.0, 0, 20.0, 0.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      0.0, 30.0, 0.0, 0.0),
-                                  child: SizedBox(
-                                    width:
-                                        MediaQuery.sizeOf(context).width * 0.76,
-                                    child: Text(
-                                      snapshot.data?.name ?? "Vida Longa",
-                                      style: GoogleFonts.getFont(
-                                        'Roboto Mono',
-                                        color: AppColors.blackCard,
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ),
-                              ],
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                20.0, 12.0, 20.0, 16.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  snapshot.data!.subscriptionLevel.value,
-                                  style: GoogleFonts.getFont(
-                                    'Roboto Mono',
-                                    color: snapshot.data!.subscriptionLevel ==
-                                            SubscriptionEnum.paying
-                                        ? AppColors.blackCard
-                                        : Colors
-                                            .red, //const Color.fromRGBO(87, 99, 108, 1),
-                                    fontSize: 14.0,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
+                      child: _buildCard(context,
+                          snapshot: snapshot, isFullScreen: false),
                     ),
                   ],
                 ),
@@ -349,5 +287,110 @@ class _ProfileViewState extends State<ProfileView> {
             ],
           );
         });
+  }
+
+  Widget _buildCard(BuildContext context,
+      {required snapshot, required bool isFullScreen}) {
+    final cardWidth = isFullScreen
+        ? MediaQuery.sizeOf(context).height
+        : MediaQuery.sizeOf(context).width * 0.88;
+    final cardHeight = isFullScreen ? MediaQuery.sizeOf(context).width : null;
+    final double leftPadding = isFullScreen ? 20 : 2;
+
+    return Container(
+      width: cardWidth,
+      height: cardHeight,
+      decoration: BoxDecoration(
+        boxShadow: const [
+          BoxShadow(
+            blurRadius: 6.0,
+            color: Color(0x4B1A1F24),
+            offset: Offset(0.0, 2.0),
+          )
+        ],
+        gradient: LinearGradient(
+          colors: [
+            Colors.white,
+            snapshot.data!.subscriptionLevel == SubscriptionEnum.paying
+                ? const Color(0xBB0F65D8)
+                : Colors.orange,
+          ],
+          stops: const [0.0, 1.0],
+          begin: const AlignmentDirectional(0.94, -1.0),
+          end: const AlignmentDirectional(-0.94, 1.0),
+        ),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: leftPadding),
+                child: Image.asset(
+                  'assets/images/thumbnail_vidalonga4.png',
+                  width: isFullScreen ? 288.4 : 206.0,
+                  height: isFullScreen ? 123.0 : 80.0,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(20.0, 0, 20.0, 0.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
+                  child: SizedBox(
+                    width: isFullScreen
+                        ? MediaQuery.sizeOf(context).width * 1.7
+                        : MediaQuery.sizeOf(context).width * 0.76,
+                    child: Text(
+                      snapshot.data?.name ?? "Vida Longa",
+                      style: GoogleFonts.getFont(
+                        'Roboto Mono',
+                        color: AppColors.blackCard,
+                        fontSize: isFullScreen ? 30.8 : 22.0,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      overflow: isFullScreen
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding:
+                const EdgeInsetsDirectional.fromSTEB(20.0, 12.0, 20.0, 16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  snapshot.data!.subscriptionLevel.value,
+                  style: GoogleFonts.getFont(
+                    'Roboto Mono',
+                    color: snapshot.data!.subscriptionLevel ==
+                            SubscriptionEnum.paying
+                        ? AppColors.blackCard
+                        : Colors.red,
+                    fontSize: isFullScreen ? 19.6 : 14.0,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

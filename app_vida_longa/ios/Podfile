@@ -38,12 +38,7 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings.delete('OTHER_CFLAGS')
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = ios_deployment_target
-      case config.name
-      when 'Debug-dev', 'Debug-prod'
-        config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] = '-Onone'
-      end
     end
     flutter_additional_ios_build_settings(target)
   end
