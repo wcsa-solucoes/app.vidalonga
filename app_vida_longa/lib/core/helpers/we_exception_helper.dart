@@ -245,6 +245,9 @@ abstract class WeExceptionHelper {
       case "42we-invalid-credential-type":
         response.code = WeExceptionCodesEnum.firebaseAuthInvalidCredentialType;
         break;
+      case "invalid-credential":
+        response.code = WeExceptionCodesEnum.firebaseAuthUserNotFound;
+        break;
       default:
         response.code = WeExceptionCodesEnum.firebaseAuthNotMapped;
         break;

@@ -114,21 +114,26 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
     if (index != -1) {
       var coupon = _couponsService.coupons[index];
 
+      if (!coupon.isActive) {
+        AppHelper.displayAlertError('Cupom desativado!');
+        return;
+      }
+
       if (coupon.activationDateTimestamp == null ||
           DateTime.now().millisecondsSinceEpoch <
               coupon.activationDateTimestamp!) {
-        AppHelper.displayAlertError('Cupom ainda não ativado');
+        AppHelper.displayAlertError('Cupom ainda não ativado!');
         return;
       }
 
       if (coupon.haveUsageLimit && coupon.usageQuantity >= coupon.limit) {
-        AppHelper.displayAlertError('Cupom esgotado');
+        AppHelper.displayAlertError('Cupom esgotado!');
         return;
       }
       var now = DateTime.now().millisecond;
       var res = now >= coupon.expiryDateTimestamp!;
       if (coupon.expiryDateTimestamp != null && res) {
-        AppHelper.displayAlertError('Cupom expirado');
+        AppHelper.displayAlertError('Cupom expirado!');
         return;
       }
 
@@ -141,7 +146,7 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
 
       if (_productWithCoupon == null &&
           _couponsService.coupons[index].planUuid != _fullDiscountPlan) {
-        AppHelper.displayAlertError('Cupom inválido');
+        AppHelper.displayAlertError('Cupom inválido!');
         return;
       }
 
@@ -169,7 +174,7 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
       return;
     }
 
-    AppHelper.displayAlertError('Cupom inválido');
+    AppHelper.displayAlertError('Cupom inválido!');
   }
 
   FutureOr<void> _handleOnProductSelected(

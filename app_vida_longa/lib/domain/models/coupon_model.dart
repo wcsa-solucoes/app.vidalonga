@@ -11,6 +11,7 @@ class CouponModel {
   final int? expiryDateTimestamp;
   final int? activationDateTimestamp;
   final String? planUuid;
+  final bool isActive;
 
   CouponModel({
     required this.createdAt,
@@ -25,6 +26,7 @@ class CouponModel {
     this.expiryDateTimestamp,
     this.activationDateTimestamp,
     this.planUuid,
+    this.isActive = true
   });
 
   factory CouponModel.fromMap(Map<String, dynamic> json) {
@@ -41,6 +43,7 @@ class CouponModel {
       expiryDateTimestamp: json['expiryDateTimestamp'],
       activationDateTimestamp: json['activationDateTimestamp'],
       planUuid: json['planUuid'],
+      isActive: json['isActive'],
     );
   }
 
@@ -58,6 +61,7 @@ class CouponModel {
       'expiryDateTimestamp': coupon.expiryDateTimestamp,
       'activationDateTimestamp': coupon.activationDateTimestamp,
       'planUuid': coupon.planUuid,
+      'isActive': coupon.isActive,
     };
   }
 
@@ -73,6 +77,7 @@ class CouponModel {
     String? googlePlanId,
     String? uuid,
     int? usageQuantity,
+    bool? isActive,
   }) {
     return CouponModel(
       createdAt: createdAt ?? this.createdAt,
@@ -84,6 +89,7 @@ class CouponModel {
       googlePlanId: googlePlanId ?? this.googlePlanId,
       uuid: uuid ?? this.uuid,
       usageQuantity: usageQuantity ?? this.usageQuantity,
+      isActive: isActive ?? this.isActive,
     );
   }
 }
