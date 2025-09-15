@@ -87,16 +87,16 @@ class AuthService {
     final result = await _authRepository.googleSignIn();
 
     if (result.response.status == ResponseStatusEnum.success) {
-      final sourceResult = await _userService.loggedInFromTheRightSource(result.user.email, 'signInFromGoogle');
+      final sourceResult = await _userService.loggedInFromTheRightSource(
+          result.user.email, 'signInFromGoogle');
       if (sourceResult.item2 == true) {
         final response = await _userService.userAlreadyRegistered(result.user);
-      
+
         //enter if the user doesn't exist yet
-        if (!response.item2){
+        if (!response.item2) {
           await _userService.create(result.user);
         }
-      }
-      else {
+      } else {
         NotificationController.alert(response: sourceResult.item1);
       }
     } else {
@@ -107,19 +107,19 @@ class AuthService {
   }
 
   Future<ResponseStatusModel> appleSignIn() async {
-   final result = await _authRepository.appleSignIn();
+    final result = await _authRepository.appleSignIn();
 
     if (result.response.status == ResponseStatusEnum.success) {
-      final sourceResult = await _userService.loggedInFromTheRightSource(result.user.email, 'signInFromApple');
+      final sourceResult = await _userService.loggedInFromTheRightSource(
+          result.user.email, 'signInFromApple');
       if (sourceResult.item2 == true) {
         final response = await _userService.userAlreadyRegistered(result.user);
-      
+
         //enter if the user doesn't exist yet
-        if (!response.item2){
+        if (!response.item2) {
           await _userService.create(result.user);
         }
-      }
-      else {
+      } else {
         NotificationController.alert(response: sourceResult.item1);
       }
     } else {

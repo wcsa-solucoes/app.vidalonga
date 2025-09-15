@@ -54,18 +54,17 @@ class _NewQuestionViewState extends State<NewQuestionView> {
       bloc: _qaBloc,
       builder: (context, state) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.6,
+          height: MediaQuery.of(context).size.height * 2,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              //
+              const SizedBox(height: 25),
               DecoratedTextFieldWidget(
                 controller: _newQuestionTxtEdtCtrl,
                 labelText: "Nova pergunta",
                 hintText: "Nova pergunta",
               ),
-              const SizedBox(height: 20),
-
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -145,6 +144,66 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                         );
                       }))
                 ],
+              ),
+              const SizedBox(height: 30),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.selectedColor, width: 2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 3,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: AppColors.selectedColor,
+                          size: 20,
+                        ),
+                        SizedBox(width: 8),
+                        DefaultText(
+                          "Importante:",
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.selectedColor,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    DefaultText(
+                      "• Você pode informar sua idade e gênero, solicitando sugestões de exames ou suplementos para melhorar sua saúde.",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      maxLines: 3,
+                      textAlign: TextAlign.justify,
+                    ),
+                    SizedBox(height: 8),
+                    DefaultText(
+                      "• Você pode fazer até 3 perguntas mensais.",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    SizedBox(height: 8),
+                    DefaultText(
+                      "• As informações não substituem uma consulta médica.",
+                      maxLines: 2,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

@@ -1,4 +1,3 @@
-import 'package:app_vida_longa/core/services/auth_service.dart';
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
 import 'package:app_vida_longa/domain/contants/routes.dart';
@@ -13,8 +12,8 @@ import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/questions_and_answers/bloc/qa_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../domain/enums/subscription_type.dart';
 
 class QuestionsAndAnswersView extends StatefulWidget {
   const QuestionsAndAnswersView({super.key});
@@ -113,7 +112,8 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
       ),
       body: body(),
       bottomNavigationBar: const CustomBottomNavigationBar(),
-      floatingActionButton: AuthService.instance.getCurrentUser != null
+      floatingActionButton: UserService.instance.user.subscriptionLevel ==
+              SubscriptionEnum.paying
           ? Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Container(
@@ -143,7 +143,6 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
                   foregroundColor: AppColors.selectedTextStyleColor,
                   elevation: 0,
                 ),
-                
               ),
             )
           : null,
@@ -204,31 +203,36 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
         UserService.instance.status != UserServiceStatusEnum.loggedOut;
     return !isSignIn
         ? const Center(child: DefaultText("Logue para ver as suas perguntas"))
-        : RefreshIndicator(
-            onRefresh: () async {
-              _qaBloc.add(FetchQuestionsEvent());
-            },
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: questions.length,
-                    itemBuilder: (context, index) {
-                      final question = questions[index];
+        : UserService.instance.user.subscriptionLevel ==
+                SubscriptionEnum.nonPaying
+            ? const Center(
+                child: DefaultText("Assine para conseguir fazer perguntas"))
+            : RefreshIndicator(
+                onRefresh: () async {
+                  _qaBloc.add(FetchQuestionsEvent());
+                },
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: questions.length,
+                        itemBuilder: (context, index) {
+                          final question = questions[index];
 
-                      return OpenPageButtonWiget(
-                        question.question,
-                        onPressed: () {
-                          NavigationController.push(routes.app.qa.question.path,
-                              arguments: question);
+                          return OpenPageButtonWiget(
+                            question.question,
+                            onPressed: () {
+                              NavigationController.push(
+                                  routes.app.qa.question.path,
+                                  arguments: question);
+                            },
+                          );
                         },
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              );
   }
 
   Widget allQuestions(List<QuestionAnswerModel> questions) {
