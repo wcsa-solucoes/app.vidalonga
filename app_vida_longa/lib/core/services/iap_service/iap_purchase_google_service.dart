@@ -184,7 +184,7 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
         changeSubscriptionParam: oldSubscription != null
             ? ChangeSubscriptionParam(
                 oldPurchaseDetails: oldSubscription,
-                prorationMode: ProrationMode.immediateWithTimeProration,
+                replacementMode: ReplacementMode.withTimeProration,
               )
             : null,
       );
