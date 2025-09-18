@@ -61,8 +61,8 @@ class _NewQuestionViewState extends State<NewQuestionView> {
               const SizedBox(height: 25),
               DecoratedTextFieldWidget(
                 controller: _newQuestionTxtEdtCtrl,
-                labelText: "Nova pergunta",
-                hintText: "Nova pergunta",
+                labelText: "Clique aqui para fazer sua pergunta",
+                hintText: "Clique aqui para fazer sua pergunta",
               ),
               const SizedBox(height: 10),
               Row(
@@ -105,7 +105,7 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                     ],
                   ),
                   Container(
-                      width: 90,
+                      width: 125,
                       height: 45.0,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
@@ -123,7 +123,7 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                           );
                         }
 
-                        return IconButton(
+                        return TextButton(
                           onPressed: () async {
                             if (_newQuestionTxtEdtCtrl.text.isEmpty) {
                               AppHelper.displayAlertInfo("Preencha a pergunta");
@@ -136,10 +136,13 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                               ),
                             );
                           },
-                          icon: const Icon(
-                            Icons.send,
-                            color: AppColors.white,
-                            size: 18,
+                          child: Text(
+                            "Enviar pergunta",
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                         );
                       }))
@@ -183,7 +186,7 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                     ),
                     SizedBox(height: 8),
                     DefaultText(
-                      "• Você pode informar sua idade e gênero, solicitando sugestões de exames ou suplementos para melhorar sua saúde.",
+                      "• Você pode fazer até 3 perguntas mensais.",
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       maxLines: 3,
@@ -191,8 +194,17 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                     ),
                     SizedBox(height: 8),
                     DefaultText(
-                      "• Você pode fazer até 3 perguntas mensais.",
+                      "• Tire suas dúvidas sobre saúde, medicamentos, exames, tratamentos ou sintomas.",
                       fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      maxLines: 3,
+                      textAlign: TextAlign.justify,
+                    ),
+                    SizedBox(height: 8),
+                    DefaultText(
+                      "• Você pode informar sua idade e sexo, solicitando sugestão de exames ou suplementos para ajudar no controle de peso, insônia, ansiedade ou imunidade.",
+                      fontSize: 14,
+                      maxLines: 4,
                       fontWeight: FontWeight.w500,
                     ),
                     SizedBox(height: 8),
