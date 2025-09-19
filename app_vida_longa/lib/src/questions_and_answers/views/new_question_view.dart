@@ -105,7 +105,7 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                     ],
                   ),
                   Container(
-                      width: 125,
+                      width: 145,
                       height: 45.0,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
@@ -209,7 +209,7 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                     ),
                     SizedBox(height: 8),
                     DefaultText(
-                      "• As informações não substituem uma consulta médica.",
+                      "• As informações obtidas poderão auxiliar durante uma consulta médica.",
                       maxLines: 2,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
