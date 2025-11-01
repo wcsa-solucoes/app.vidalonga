@@ -1,5 +1,6 @@
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
+import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/shared/widgets/custom_bottom_navigation_bar.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/src/core/navigation_controller.dart';
@@ -49,7 +50,7 @@ class _NavigationViewState extends State<NavigationView> {
                 const Text("Pagina de navegação"),
                 TextButton(
                   onPressed: () {
-                    NavigationController.to("/app/auth/login");
+                    NavigationController.to(routes.app.auth.login.path);
                   },
                   child: const Text(
                       "Usuario não logado, clique aqui para ir para login!"),

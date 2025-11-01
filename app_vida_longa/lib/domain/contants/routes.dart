@@ -3,8 +3,8 @@ const routes = (
   app: (
     path: "/app",
     auth: (
-      path: "/app/auth/",
-      login: (path: "/app/auth/"),
+      path: "/app/auth",
+      login: (path: "/app/auth"),
     ),
     home: (
       path: "/app/home/",
