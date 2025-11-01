@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
@@ -9,6 +10,7 @@ import 'package:app_vida_longa/core/services/plans_service.dart';
 import 'package:app_vida_longa/domain/models/coupon_model.dart';
 import 'package:app_vida_longa/domain/models/plan_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
@@ -70,7 +72,7 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
       }
     }
 
-    getProductsDetails(_kIds);
+    await getProductsDetails(_kIds);
 
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         _inAppPurchase.purchaseStream;
@@ -144,16 +146,22 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
     }
 
     final isStoreAvailable = await _inAppPurchase.isAvailable();
+    debugPrint('🚀 [IAP] isStoreAvailable: $isStoreAvailable');
 
     if (isStoreAvailable == false) return [];
 
-    final response = await _inAppPurchase.queryProductDetails(kIds);
+    try {
+      final response = await _inAppPurchase.queryProductDetails(kIds);
 
-    if (response.productDetails.isEmpty == true) return [];
+      if (response.productDetails.isEmpty == true) return [];
 
-    _setProductsDetails(response.productDetails);
+      _setProductsDetails(response.productDetails);
 
-    return response.productDetails;
+      return response.productDetails;
+    } catch (e) {
+      log('inAppPurchase.queryProductDetails(kIds);', error: e);
+      return [];
+    }
   }
 
   void _setProductsDetails(List<ProductDetails> newItens) {

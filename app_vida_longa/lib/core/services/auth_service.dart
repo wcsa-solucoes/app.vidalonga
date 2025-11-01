@@ -8,6 +8,7 @@ import "package:app_vida_longa/domain/models/response_model.dart";
 import "package:app_vida_longa/domain/models/user_model.dart";
 import "package:app_vida_longa/src/core/navigation_controller.dart";
 import "package:firebase_auth/firebase_auth.dart";
+import "package:flutter/material.dart";
 
 class AuthService {
   AuthService._internal();
@@ -147,17 +148,35 @@ class AuthService {
 
   void _authStatusListener() {
     FirebaseAuth.instance.authStateChanges().listen((user) {
-      if (user == null) {
-        _handleDisconnectedRedirect();
-        _userService.handleUserLogout();
-        return;
-      }
-      _userService.handleCallBack();
+      // Add delay to prevent navigation conflicts during app startup
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (user == null) {
+          _userService.handleUserLogout();
+          // Don't redirect immediately during app startup
+          return;
+        }
+        _userService.handleCallBack();
+      });
     });
   }
 
   void _handleDisconnectedRedirect() {
-    NavigationController.to(routes.app.auth.login.path);
+    try {
+      NavigationController.to(routes.app.auth.login.path);
+    } catch (e) {
+      // Fallback navigation if auth route fails
+      try {
+        NavigationController.to(routes.app.home.path);
+      } catch (fallbackError) {
+        // Log error but don't crash the app
+        debugPrint('Navigation error: $e, Fallback error: $fallbackError');
+      }
+    }
+  }
+
+  // Method to manually trigger auth redirect when needed
+  void redirectToAuth() {
+    _handleDisconnectedRedirect();
   }
 
   Future<void> deleteAccount() async {

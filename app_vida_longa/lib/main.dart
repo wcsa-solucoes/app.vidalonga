@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:app_vida_longa/core/helpers/print_colored_helper.dart';
 import 'package:app_vida_longa/core/repositories/questions_and_answers_repository.dart';
@@ -35,7 +36,7 @@ void main() async {
   String mode = const String.fromEnvironment("MODE", defaultValue: "prod");
 
   if (Platform.isIOS) {
-    AppTrackingTransparency.requestTrackingAuthorization();
+    await AppTrackingTransparency.requestTrackingAuthorization();
   }
 
   await Firebase.initializeApp(
@@ -66,6 +67,7 @@ void startControllers() {
 }
 
 Future<void> startServices() async {
+  debugPrint('🚀 [SERVICES] Starting service initialization');
   late final IInAppPurchaseService paymentService;
 
   if (Platform.isAndroid) {
@@ -73,23 +75,42 @@ Future<void> startServices() async {
   } else {
     paymentService = InAppPurchaseImplServicesAppleImpl.instance;
   }
-  await ArticleService.init().then((value) {
-    CategoriesService.init(ArticleService.instance);
-  });
+  
+  debugPrint('🚀 [SERVICES] Initializing ArticleService');
+  await ArticleService.init();
+  debugPrint('🚀 [SERVICES] Initializing CategoriesService');
+  await CategoriesService.init(ArticleService.instance);
+  debugPrint('🚀 [SERVICES] Starting parallel services');
 
-  Future.wait([
-    AuthService.init(),
-    QAServiceImpl.instance.init(QARepositoryImpl(FirebaseFirestore.instance)),
-    PlansServiceImpl.instance.getPlans().then((value) {
-      paymentService.init(InAppPurchase.instance);
-      CouponsServiceImpl.instance.init();
-    }),
-    BranchsServiceImpl.instance.init(),
-    PartnerServiceImpl.instance.init(),
-  ]);
+  try {
+    await Future.wait([
+      AuthService.init().then((_) => debugPrint('🚀 [SERVICES] AuthService initialized')),
+      QAServiceImpl.instance.init(QARepositoryImpl(FirebaseFirestore.instance)).then((_) => debugPrint('🚀 [SERVICES] QAService initialized')),
+      PlansServiceImpl.instance.getPlans().then((value) async {
+        debugPrint('🚀 [SERVICES] Plans loaded, initializing payment service');
+        await paymentService.init(InAppPurchase.instance);
+        debugPrint('🚀 [SERVICES] Payment service initialized');
+        await CouponsServiceImpl.instance.init();
+        debugPrint('🚀 [SERVICES] Coupons service initialized');
+      }),
+      BranchsServiceImpl.instance.init().then((_) => debugPrint('🚀 [SERVICES] Branchs service initialized')),
+      PartnerServiceImpl.instance.init().then((_) => debugPrint('🚀 [SERVICES] Partner service initialized')),
+    ]).timeout(
+      const Duration(seconds: 30),
+      onTimeout: () {
+        debugPrint('🚀 [SERVICES] Service initialization timed out after 30 seconds');
+        throw TimeoutException('Service initialization timeout', const Duration(seconds: 30));
+      },
+    );
+  } catch (e) {
+    debugPrint('🚀 [SERVICES] Error during service initialization: $e');
+    // Continue with app startup even if some services fail
+  }
+  debugPrint('🚀 [SERVICES] All services initialized successfully');
 
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  debugPrint('🚀 [SERVICES] Service initialization completed');
 }
 
 class MainApp extends StatefulWidget {
