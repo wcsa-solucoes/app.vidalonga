@@ -48,11 +48,9 @@ dependencies:
   cloud_firestore: ^6.0.3
   tuple: ^2.0.2
   google_fonts: ^6.3.2
-  bloc_concurrency: ^0.3.0
   font_awesome_flutter: ^10.12.0
   flutter_html: ^3.0.0
   flutter_html_iframe: ^3.0.0
-  webview_flutter_platform_interface: ^2.14.0
   meta: ^1.16.0
   uuid: ^4.5.1
   qr_flutter: ^4.1.0
@@ -67,7 +65,6 @@ dependencies:
   in_app_purchase_platform_interface: ^1.4.0
   url_launcher: ^6.3.2
   share_plus: ^12.0.1
-  toggle_switch: ^2.3.0
   flutter_switch: ^0.3.2
   flutter_launcher_icons: ^0.14.4
   equatable: ^2.0.7
