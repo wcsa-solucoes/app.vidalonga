@@ -38,7 +38,7 @@ class _ArticleCardState extends State<ArticleCard> {
           boxShadow: [
             BoxShadow(
               blurRadius: 1.0,
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.grey.withValues(alpha: 0.5),
               offset: const Offset(2.0, 3.0),
             )
           ],

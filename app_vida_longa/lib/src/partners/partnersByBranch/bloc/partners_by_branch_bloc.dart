@@ -1,9 +1,7 @@
-import 'dart:async';
 import 'package:app_vida_longa/core/services/partners_and_benefits/branchs_service.dart';
 import 'package:app_vida_longa/core/services/partners_and_benefits/partners_service.dart';
 import 'package:app_vida_longa/core/utils/string_util.dart';
 import 'package:app_vida_longa/domain/models/branch_model.dart';
-import 'package:app_vida_longa/domain/models/categorie_chip_model.dart';
 import 'package:app_vida_longa/domain/models/partner_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
@@ -35,10 +33,6 @@ class PartnersByBranchBloc
     }
   }
 
-  @override
-  Future<void> close() {
-    return super.close();
-  }
 
   List<List<PartnerCompanyModel>> get _partners =>
       _partnerService.partnersByBranch.fold<List<List<PartnerCompanyModel>>>(

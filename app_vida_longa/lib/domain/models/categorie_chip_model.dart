@@ -29,7 +29,7 @@ class ChipCategorieModel extends Equatable {
       label: label ?? this.label,
       selected: selected ?? this.selected,
       uuid: uuid ?? this.uuid,
-      createdAt: createdAt ?? this.createdAt
+      createdAt: createdAt ?? createdAt
     );
   }
 }

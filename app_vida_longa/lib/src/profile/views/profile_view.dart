@@ -115,11 +115,18 @@ class _ProfileViewState extends State<ProfileView> {
         ),
         OpenPageButtonWiget("Recomendar o app", onPressed: () {
           if (Platform.isAndroid) {
-            Share.share(
-                'https://play.google.com/store/apps/details?id=com.vidalongaapp.app&pcampaignid=web_share');
+            SharePlus.instance.share(
+              ShareParams(
+                text:
+                    'https://play.google.com/store/apps/details?id=com.vidalongaapp.app&pcampaignid=web_share',
+              ),
+            );
           } else {
-            Share.share(
-                'https://apps.apple.com/br/app/vida-longa/id6446136437?l');
+            SharePlus.instance.share(
+              ShareParams(
+                text: 'https://apps.apple.com/br/app/vida-longa/id6446136437?l',
+              ),
+            );
           }
         }),
         const SizedBox(

@@ -305,7 +305,7 @@ class _PartnerCardWidget extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               blurRadius: 5,
-              color: Colors.grey.withOpacity(0.9),
+              color: Colors.grey.withValues(alpha: 0.9),
               offset: const Offset(2.0, 3.0),
             )
           ],

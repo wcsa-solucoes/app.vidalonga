@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:app_vida_longa/core/repositories/partners_and_benefits/partner_companies_repository.dart';
 import 'package:app_vida_longa/domain/models/branch_model.dart';
-import 'package:app_vida_longa/domain/models/categorie_chip_model.dart';
 import 'package:app_vida_longa/domain/models/partner_model.dart';
 import 'package:app_vida_longa/domain/models/response_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

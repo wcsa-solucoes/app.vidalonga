@@ -92,7 +92,7 @@ class PartnersBloc extends Bloc<PartnersEvent, PartnersState> {
     return _branchsService.branchs
         .toList()
       ..sort((a, b) =>
-          DateTime.parse(b.createdAt!).compareTo(DateTime.parse(a.createdAt!)));
+          DateTime.parse(b.createdAt).compareTo(DateTime.parse(a.createdAt)));
   }
 
   String getBranchName(String branchId) {

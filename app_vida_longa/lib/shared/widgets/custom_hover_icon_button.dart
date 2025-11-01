@@ -53,7 +53,7 @@ class _CustomHoverIconButtonState extends State<CustomHoverIconButton> {
                     FocusScope.of(context).requestFocus(FocusNode());
                   }
                 : null,
-            hoverColor: Colors.white.withOpacity(0.1),
+            hoverColor: Colors.white.withValues(alpha: 0.1),
             onHover: (value) {
               setState(() {
                 onHover = value;

@@ -90,7 +90,7 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
                                   boxShadow: [
                                     BoxShadow(
                                       blurRadius: 5,
-                                      color: Colors.grey.withOpacity(0.9),
+                                      color: Colors.grey.withValues(alpha: 0.9),
                                       offset: const Offset(2.0, 3.0),
                                     )
                                   ],
@@ -143,7 +143,7 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
                                             horizontal: 10.0),
                                         decoration: BoxDecoration(
                                           color: AppColors.selectedColor
-                                              .withOpacity(0.1),
+                                              .withValues(alpha: 0.1),
                                           shape: BoxShape.circle,
                                         ),
                                         child: Center(
@@ -183,7 +183,7 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
                                                         horizontal: 10.0),
                                                 decoration: BoxDecoration(
                                                   color: AppColors.selectedColor
-                                                      .withOpacity(0.1),
+                                                      .withValues(alpha: 0.1),
                                                   shape: BoxShape.circle,
                                                 ),
                                                 child: Center(
@@ -377,7 +377,7 @@ class _BenefitsDetailsViewState extends State<BenefitsDetailsView> {
           boxShadow: [
             BoxShadow(
               blurRadius: 5,
-              color: Colors.grey.withOpacity(0.9),
+              color: Colors.grey.withValues(alpha: 0.9),
               offset: const Offset(2.0, 3.0),
             )
           ],
@@ -646,8 +646,8 @@ class ImageZoomScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-      appBar: const DefaultAppBar(
-          title: "Zoom na Imagem", isWithBackButton: true),
+      appBar:
+          const DefaultAppBar(title: "Zoom na Imagem", isWithBackButton: true),
       body: Center(
         child: InteractiveViewer(
           child: Image.network(

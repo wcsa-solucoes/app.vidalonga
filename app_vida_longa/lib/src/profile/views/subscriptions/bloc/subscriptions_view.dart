@@ -411,13 +411,13 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                   SizedBox(
                     child: Material(
                       child: InkWell(
-                        splashColor: AppColors.secondary.withOpacity(0.2),
-                        // hoverColor: AppColors.secondary.withOpacity(0.2),
-                        overlayColor: MaterialStateProperty.all(
-                          AppColors.secondary.withOpacity(0.2),
+                        splashColor: AppColors.secondary.withValues(alpha: 0.2),
+                        // hoverColor: AppColors.secondary.withValues(alpha: 0.2),
+                        overlayColor: WidgetStateProperty.all(
+                          AppColors.secondary.withValues(alpha: 0.2),
                         ),
                         // focusColor: Colors.blue,
-                        // highlightColor: AppColors.secondary.withOpacity(0.2),
+                        // highlightColor: AppColors.secondary.withValues(alpha: 0.2),
                         onTap: () {
                           _subscriptionsBloc.add(RestartEvent());
                         },
@@ -427,7 +427,7 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: AppColors.gray600.withOpacity(0.8),
+                              color: AppColors.gray600.withValues(alpha: 0.8),
                               width: 0.5,
                             ),
                             borderRadius: BorderRadius.circular(30),

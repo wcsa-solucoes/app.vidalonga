@@ -52,7 +52,7 @@ class CouponsRepositoryImpl implements ICouponsRepository {
   Future<({ResponseStatusModel response, List<CouponModel> coupons})>
       getCoupons() async {
     ResponseStatusModel response = ResponseStatusModel();
-    IPlansService _plansService = PlansServiceImpl.instance;
+    IPlansService plansService = PlansServiceImpl.instance;
 
     await firestore.collection('coupons').get().then((querySnapshot) async {
       final List<CouponModel> tempCoupons = [];
@@ -60,12 +60,12 @@ class CouponsRepositoryImpl implements ICouponsRepository {
       for (var doc in querySnapshot.docs) {
         var coupon = CouponModel.fromMap(doc.data());
 
-        _plansService.plans.forEach((element) {
+        for (var element in plansService.plans) {
           if (element.uuid == coupon.planUuid) {
             coupon.applePlanId = element.applePlanId;
             coupon.googlePlanId = element.googlePlanId;
           }
-        });
+        }
         tempCoupons.add(coupon);
       }
       _setCoupons(tempCoupons);
@@ -127,17 +127,17 @@ class CouponsRepositoryImpl implements ICouponsRepository {
           .snapshots()
           .listen((QuerySnapshot<Map<String, dynamic>> event) {
         final List<CouponModel> tempCoupons = [];
-        IPlansService _plansService = PlansServiceImpl.instance;
+        IPlansService plansService = PlansServiceImpl.instance;
 
         for (var doc in event.docs) {
           var coupon = CouponModel.fromMap(doc.data());
 
-          _plansService.plans.forEach((element) {
+          for (var element in plansService.plans) {
             if (element.uuid == coupon.planUuid) {
               coupon.applePlanId = element.applePlanId;
               coupon.googlePlanId = element.googlePlanId;
             }
-          });
+          }
           tempCoupons.add(coupon);
         }
         _setCoupons(tempCoupons);

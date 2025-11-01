@@ -127,7 +127,7 @@ class AuthRepository {
         }
 
         final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
+            googleUser.authentication;
 
         // credentials for firebase
         final AuthCredential credential = GoogleAuthProvider.credential(

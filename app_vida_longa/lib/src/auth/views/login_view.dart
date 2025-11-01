@@ -169,7 +169,7 @@ class _LoginViewState extends State<LoginView>
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.7), // Cor da sombra
+                    color: Colors.grey.withValues(alpha: 0.7), // Cor da sombra
                     spreadRadius: 3, // Raio de expansão da sombra
                     blurRadius: 4, // Raio de desfoque da sombra
                   ),
@@ -180,8 +180,9 @@ class _LoginViewState extends State<LoginView>
                 ToggleButtons(
                   borderWidth: 2,
                   borderRadius: BorderRadius.circular(10),
-                  fillColor: AppColors.selectedColor.withOpacity(0.2),
-                  selectedBorderColor: AppColors.selectedColor.withOpacity(0.2),
+                  fillColor: AppColors.selectedColor.withValues(alpha: 0.2),
+                  selectedBorderColor:
+                      AppColors.selectedColor.withValues(alpha: 0.2),
                   onPressed: (index) {
                     setState(() {
                       isLoginSelected = index == 0;

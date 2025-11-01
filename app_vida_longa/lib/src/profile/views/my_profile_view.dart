@@ -213,7 +213,9 @@ class _HandleWarningTodelete extends StatelessWidget {
             textLabel: "Sim",
             onPressed: () async {
               AuthService.instance.deleteAccount().then((value) {
-                Navigator.pop(context);
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
               });
             },
             isDangerButton: true,

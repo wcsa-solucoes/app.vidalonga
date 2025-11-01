@@ -122,7 +122,8 @@ class _QuestionsAndAnswersViewState extends State<QuestionsAndAnswersView>
                   borderRadius: BorderRadius.circular(30),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.selectedTextStyleColor.withOpacity(0.9),
+                      color: AppColors.selectedTextStyleColor
+                          .withValues(alpha: 0.9),
                       blurRadius: 6,
                       offset: const Offset(0, 7),
                     ),

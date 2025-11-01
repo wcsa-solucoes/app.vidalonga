@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:app_vida_longa/core/services/articles_service.dart';
 import 'package:app_vida_longa/core/utils/string_util.dart';
-import 'package:app_vida_longa/domain/models/article_model.dart';
 import 'package:app_vida_longa/domain/models/brief_article_model.dart';
 import 'package:app_vida_longa/domain/models/categorie_chip_model.dart';
 import 'package:app_vida_longa/domain/models/category_model.dart';
@@ -57,7 +56,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ));
   }
 
-  _handleRestartHome(RestartHomeEvent event, Emitter<HomeState> emit) {
+  void _handleRestartHome(RestartHomeEvent event, Emitter<HomeState> emit) {
     emit(HomeLoadedState(
         articlesByCategory: _articles, chipsCategorie: _allCategoriesChips));
   }
