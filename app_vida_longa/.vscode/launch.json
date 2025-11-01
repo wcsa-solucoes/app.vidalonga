@@ -1,0 +1,65 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "dev",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "dev",
+                "--dart-define=MODE=dev",
+                "--dart-define=flavor=develop"
+            ],
+            "program": "./lib/main.dart"
+        },
+        {
+            "name": "prod",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "prod",
+                "--dart-define=MODE=prod",
+            ],
+            "program": "./lib/main.dart"
+        },
+        {
+            "name": "Gprod",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "prod",
+                "--dart-define=MODE=prod",
+            ],
+            "program": "./lib/main.dart",
+            "deviceId": "emulator-5554" //"4e30a6a2"
+        },
+        {
+            "name": "Aprod",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "prod",
+                "--dart-define=MODE=prod",
+            ],
+            "program": "./lib/main.dart",
+            "deviceId": "6DC52216-A38A-467D-9AB4-4BAB02F7882F"
+        },
+    ],
+    "compounds": [
+        {
+            "name": "All",
+            "configurations": [
+                "Gprod",
+                "Aprod",
+                // "dev"
+            ]
+        }
+    ]
+}
