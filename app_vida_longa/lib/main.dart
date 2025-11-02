@@ -67,7 +67,8 @@ void startControllers() {
 }
 
 Future<void> startServices() async {
-  debugPrint('🚀 [SERVICES] Starting service initialization');
+  final stopwatch = Stopwatch()..start();
+  debugPrint('🚀 [SERVICES] Starting service initialization at ${DateTime.now()}');
   late final IInAppPurchaseService paymentService;
 
   if (Platform.isAndroid) {
@@ -76,41 +77,77 @@ Future<void> startServices() async {
     paymentService = InAppPurchaseImplServicesAppleImpl.instance;
   }
   
-  debugPrint('🚀 [SERVICES] Initializing ArticleService');
+  debugPrint('🚀 [SERVICES] Initializing ArticleService at ${stopwatch.elapsedMilliseconds}ms');
   await ArticleService.init();
-  debugPrint('🚀 [SERVICES] Initializing CategoriesService');
+  debugPrint('🚀 [SERVICES] ArticleService completed at ${stopwatch.elapsedMilliseconds}ms');
+  debugPrint('🚀 [SERVICES] Initializing CategoriesService at ${stopwatch.elapsedMilliseconds}ms');
   await CategoriesService.init(ArticleService.instance);
-  debugPrint('🚀 [SERVICES] Starting parallel services');
+  debugPrint('🚀 [SERVICES] CategoriesService completed at ${stopwatch.elapsedMilliseconds}ms');
+  debugPrint('🚀 [SERVICES] Starting parallel services at ${stopwatch.elapsedMilliseconds}ms');
 
   try {
-    await Future.wait([
-      AuthService.init().then((_) => debugPrint('🚀 [SERVICES] AuthService initialized')),
-      QAServiceImpl.instance.init(QARepositoryImpl(FirebaseFirestore.instance)).then((_) => debugPrint('🚀 [SERVICES] QAService initialized')),
-      PlansServiceImpl.instance.getPlans().then((value) async {
-        debugPrint('🚀 [SERVICES] Plans loaded, initializing payment service');
-        await paymentService.init(InAppPurchase.instance);
-        debugPrint('🚀 [SERVICES] Payment service initialized');
+    debugPrint('🚀 [SERVICES] Starting Future.wait with ${stopwatch.elapsedMilliseconds}ms elapsed');
+    final futures = [
+      () async {
+        debugPrint('🚀 [SERVICES] AuthService starting at ${stopwatch.elapsedMilliseconds}ms');
+        await AuthService.init();
+        debugPrint('🚀 [SERVICES] AuthService completed at ${stopwatch.elapsedMilliseconds}ms');
+      }(),
+      () async {
+        debugPrint('🚀 [SERVICES] QAService starting at ${stopwatch.elapsedMilliseconds}ms');
+        await QAServiceImpl.instance.init(QARepositoryImpl(FirebaseFirestore.instance));
+        debugPrint('🚀 [SERVICES] QAService completed at ${stopwatch.elapsedMilliseconds}ms');
+      }(),
+      () async {
+        debugPrint('🚀 [SERVICES] PlansService starting at ${stopwatch.elapsedMilliseconds}ms');
+        await PlansServiceImpl.instance.getPlans();
+        debugPrint('🚀 [SERVICES] Plans loaded at ${stopwatch.elapsedMilliseconds}ms, initializing payment service');
+        try {
+          await paymentService.init(InAppPurchase.instance).timeout(
+            const Duration(seconds: 15),
+            onTimeout: () {
+              debugPrint('🚀 [SERVICES] Payment service initialization timed out after 15 seconds at ${stopwatch.elapsedMilliseconds}ms');
+              throw TimeoutException('Payment service timeout', const Duration(seconds: 15));
+            },
+          );
+          debugPrint('🚀 [SERVICES] Payment service initialized at ${stopwatch.elapsedMilliseconds}ms');
+        } catch (e) {
+          debugPrint('🚀 [SERVICES] Payment service failed at ${stopwatch.elapsedMilliseconds}ms: $e');
+          // Continue without payment service for now
+        }
         await CouponsServiceImpl.instance.init();
-        debugPrint('🚀 [SERVICES] Coupons service initialized');
-      }),
-      BranchsServiceImpl.instance.init().then((_) => debugPrint('🚀 [SERVICES] Branchs service initialized')),
-      PartnerServiceImpl.instance.init().then((_) => debugPrint('🚀 [SERVICES] Partner service initialized')),
-    ]).timeout(
+        debugPrint('🚀 [SERVICES] Coupons service initialized at ${stopwatch.elapsedMilliseconds}ms');
+      }(),
+      () async {
+        debugPrint('🚀 [SERVICES] BranchsService starting at ${stopwatch.elapsedMilliseconds}ms');
+        await BranchsServiceImpl.instance.init();
+        debugPrint('🚀 [SERVICES] BranchsService completed at ${stopwatch.elapsedMilliseconds}ms');
+      }(),
+      () async {
+        debugPrint('🚀 [SERVICES] PartnerService starting at ${stopwatch.elapsedMilliseconds}ms');
+        await PartnerServiceImpl.instance.init();
+        debugPrint('🚀 [SERVICES] PartnerService completed at ${stopwatch.elapsedMilliseconds}ms');
+      }(),
+    ];
+    
+    await Future.wait(futures).timeout(
       const Duration(seconds: 30),
       onTimeout: () {
-        debugPrint('🚀 [SERVICES] Service initialization timed out after 30 seconds');
+        debugPrint('🚀 [SERVICES] Service initialization timed out after 30 seconds at ${stopwatch.elapsedMilliseconds}ms');
         throw TimeoutException('Service initialization timeout', const Duration(seconds: 30));
       },
     );
+    debugPrint('🚀 [SERVICES] All parallel services completed successfully at ${stopwatch.elapsedMilliseconds}ms');
   } catch (e) {
-    debugPrint('🚀 [SERVICES] Error during service initialization: $e');
+    debugPrint('🚀 [SERVICES] Error during service initialization at ${stopwatch.elapsedMilliseconds}ms: $e');
+    debugPrint('🚀 [SERVICES] Some services failed to initialize within timeout period');
     // Continue with app startup even if some services fail
   }
-  debugPrint('🚀 [SERVICES] All services initialized successfully');
 
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  debugPrint('🚀 [SERVICES] Service initialization completed');
+  debugPrint('🚀 [SERVICES] Service initialization completed at ${stopwatch.elapsedMilliseconds}ms');
+  stopwatch.stop();
 }
 
 class MainApp extends StatefulWidget {
