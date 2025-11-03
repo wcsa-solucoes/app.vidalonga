@@ -222,7 +222,79 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
                 const Duration(seconds: 30),
               );
             },
-          );
+          )
+          .catchError((error) {
+            debugPrint('🚀 [IAP] queryProductDetails failed with error: $error');
+            if (error is PlatformException) {
+              debugPrint('🚀 [IAP] Platform error code: ${error.code}');
+              debugPrint('🚀 [IAP] Platform error message: ${error.message}');
+              debugPrint('🚀 [IAP] Platform error details: ${error.details}');
+            }
+            throw error;
+          })
+          .onError<TimeoutException>((error, stackTrace) {
+            debugPrint('🚀 [IAP] Timeout error caught: $error');
+            debugPrint('🚀 [IAP] Stack trace: $stackTrace');
+            throw error;
+          })
+          .onError<PlatformException>((error, stackTrace) {
+            debugPrint('🚀 [IAP] Platform exception caught: $error');
+            debugPrint('🚀 [IAP] Platform error code: ${error.code}');
+            debugPrint('🚀 [IAP] Platform error message: ${error.message}');
+            debugPrint('🚀 [IAP] Platform error details: ${error.details}');
+            debugPrint('🚀 [IAP] Platform stack trace: $stackTrace');
+            throw error;
+          })
+          .onError<StateError>((error, stackTrace) {
+            debugPrint('🚀 [IAP] State error caught: $error');
+            debugPrint('🚀 [IAP] State error message: ${error.message}');
+            debugPrint('🚀 [IAP] State error stack trace: $stackTrace');
+            throw error;
+          })
+          .onError<ArgumentError>((error, stackTrace) {
+            debugPrint('🚀 [IAP] Argument error caught: $error');
+            debugPrint('🚀 [IAP] Argument error message: ${error.message}');
+            debugPrint('🚀 [IAP] Argument error invalid value: ${error.invalidValue}');
+            debugPrint('🚀 [IAP] Argument error name: ${error.name}');
+            debugPrint('🚀 [IAP] Argument error stack trace: $stackTrace');
+            throw error;
+          })
+          .onError<FormatException>((error, stackTrace) {
+            debugPrint('🚀 [IAP] Format exception caught: $error');
+            debugPrint('🚀 [IAP] Format error message: ${error.message}');
+            debugPrint('🚀 [IAP] Format error source: ${error.source}');
+            debugPrint('🚀 [IAP] Format error offset: ${error.offset}');
+            debugPrint('🚀 [IAP] Format error stack trace: $stackTrace');
+            throw error;
+          })
+          .onError<Exception>((error, stackTrace) {
+            debugPrint('🚀 [IAP] Generic exception caught: $error');
+            debugPrint('🚀 [IAP] Exception type: ${error.runtimeType}');
+            debugPrint('🚀 [IAP] Exception stack trace: $stackTrace');
+            throw error;
+          })
+          .onError<Error>((error, stackTrace) {
+            debugPrint('🚀 [IAP] Error caught: $error');
+            debugPrint('🚀 [IAP] Error type: ${error.runtimeType}');
+            debugPrint('🚀 [IAP] Error stack trace: $stackTrace');
+            throw error;
+          })
+          .onError<Object>((error, stackTrace) {
+            debugPrint('🚀 [IAP] Unknown error type caught: $error');
+            debugPrint('🚀 [IAP] Unknown error type: ${error.runtimeType}');
+            debugPrint('🚀 [IAP] Unknown error stack trace: $stackTrace');
+            throw error;
+          })
+          .then((response) {
+            debugPrint('🚀 [IAP] queryProductDetails then() handler - Success!');
+            debugPrint('🚀 [IAP] Response type: ${response.runtimeType}');
+            debugPrint('🚀 [IAP] Response received at: ${DateTime.now()}');
+            return response;
+          })
+          .whenComplete(() {
+            debugPrint('🚀 [IAP] queryProductDetails request completed (success or failure)');
+            debugPrint('🚀 [IAP] Completion timestamp: ${DateTime.now()}');
+          });
       debugPrint('🚀 [IAP] queryProductDetails completed! Response received');
 
       debugPrint(
