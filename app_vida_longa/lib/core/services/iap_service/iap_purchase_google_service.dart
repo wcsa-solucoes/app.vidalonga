@@ -178,7 +178,7 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
       return [];
     }
 
-    debugPrint('🚀 [IAP] About to query product details for: $kIds');
+    debugPrint('🚀 [IAP] About to query product details for: $productIds');
     debugPrint(
       '🚀 [IAP] This is the critical point - if it hangs, the issue is here',
     );
@@ -201,7 +201,7 @@ class InAppPurchaseImplServiceGoogleImpl extends IInAppPurchaseService {
       );
 
       final response = await _inAppPurchase
-          .queryProductDetails(kIds)
+          .queryProductDetails(productIds)
           .timeout(
             const Duration(seconds: 30),
             onTimeout: () {
