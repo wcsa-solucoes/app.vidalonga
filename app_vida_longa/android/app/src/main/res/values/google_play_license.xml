@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Google Play Licensing Key -->
+    <string name="google_play_license_key">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApXNHwm5PmA4Rb1GDCOa1jQXeh7oLVpTCKjx0RRlM9QswrFWxnUl3n+2vVskMx1Yx5AI4uCHINfokQMEhFtAmmw7S5/Vm7ot/M1wxu1qLRXJo3ZJpy3kRqxyOyAL9B5fCiVNpxTQBhf9MwnHfyZhG9qpfP13KbkHFDvznxM3WC2+CmgINNyMxOO9d8CMDsPz5F2AkdbcWhwWEGlNVBrWxBExPmyTQ0EDHobXYUZHTUOst5vhgSoDg29K488c5YdBF3FkBzuJ57v9WWQBdemKgtCavwqhIlwUzQhZHoeNfC5K7pibazpMOCRjrZkJ0z/ZRZjX8jjYLkhfp9PXL0ixRewIDAQAB</string>
+</resources>
