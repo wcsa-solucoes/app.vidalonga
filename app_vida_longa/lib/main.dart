@@ -160,14 +160,14 @@ Future<void> startServices() async {
           await paymentService
               .init(InAppPurchase.instance)
               .timeout(
-                const Duration(seconds: 15),
+                const Duration(seconds: 30),
                 onTimeout: () {
                   debugPrint(
-                    '🚀 [SERVICES] Payment service initialization timed out after 15 seconds at ${stopwatch.elapsedMilliseconds}ms',
+                    '🚀 [SERVICES] Payment service initialization timed out after 30 seconds at ${stopwatch.elapsedMilliseconds}ms',
                   );
                   throw TimeoutException(
                     'Payment service timeout',
-                    const Duration(seconds: 15),
+                    const Duration(seconds: 30),
                   );
                 },
               );
