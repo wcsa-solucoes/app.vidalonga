@@ -42,6 +42,8 @@
 		<true/>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>It's necessary your permission before you can add photos to your profile.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>Precisamos da sua permissão para salvar as imagens de orientações na sua galeria.</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 		<key>UILaunchStoryboardName</key>
