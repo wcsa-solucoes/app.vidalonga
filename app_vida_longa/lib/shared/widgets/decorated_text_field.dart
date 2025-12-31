@@ -4,17 +4,18 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DecoratedTextFieldWidget extends StatefulWidget {
-  const DecoratedTextFieldWidget(
-      {super.key,
-      required this.controller,
-      required this.labelText,
-      required this.hintText,
-      this.textInputAction = TextInputAction.next,
-      this.inputFormatters,
-      this.keyboardType,
-      this.isPassword = false,
-      this.onSubmitted,
-      this.suffixIcon});
+  const DecoratedTextFieldWidget({
+    super.key,
+    required this.controller,
+    required this.labelText,
+    required this.hintText,
+    this.textInputAction = TextInputAction.next,
+    this.inputFormatters,
+    this.keyboardType,
+    this.isPassword = false,
+    this.onSubmitted,
+    this.suffixIcon,
+  });
 
   final TextEditingController controller;
   final String labelText;
@@ -35,17 +36,11 @@ class _DecoratedTextFieldWidgetState extends State<DecoratedTextFieldWidget> {
   late bool isPasswordInvisible = widget.isPassword;
   Widget? obscureWidget;
   @override
-  initState() {
+  void initState() {
     super.initState();
     obscureWidget = widget.isPassword
-        ? const Icon(
-            Icons.visibility_off,
-            color: AppColors.dimGray,
-          )
-        : const Icon(
-            Icons.visibility,
-            color: AppColors.dimGray,
-          );
+        ? const Icon(Icons.visibility_off, color: AppColors.dimGray)
+        : const Icon(Icons.visibility, color: AppColors.dimGray);
   }
 
   @override
@@ -121,14 +116,8 @@ class _DecoratedTextFieldWidgetState extends State<DecoratedTextFieldWidget> {
           // widget.isPassword = !widget.isPassword;
           isPasswordInvisible = !isPasswordInvisible;
           obscureWidget = isPasswordInvisible
-              ? const Icon(
-                  Icons.visibility_off,
-                  color: AppColors.dimGray,
-                )
-              : const Icon(
-                  Icons.visibility,
-                  color: AppColors.dimGray,
-                );
+              ? const Icon(Icons.visibility_off, color: AppColors.dimGray)
+              : const Icon(Icons.visibility, color: AppColors.dimGray);
         });
       },
       icon: obscureWidget!,

@@ -2,10 +2,7 @@
 const routes = (
   app: (
     path: "/app",
-    auth: (
-      path: "/app/auth",
-      login: (path: "/app/auth"),
-    ),
+    auth: (path: "/app/auth", login: (path: "/app/auth")),
     home: (
       path: "/app/home/",
       article: (
@@ -16,7 +13,7 @@ const routes = (
     profile: (
       path: "/app/profile/",
       edit: (path: "/app/profile/edit"),
-      subscriptions: (path: "/app/profile/subscriptions",),
+      subscriptions: (path: "/app/profile/subscriptions"),
       qrcode: (path: "/app/profile/qrcode"),
       favorites: (path: "/app/profile/favorites"),
     ),
@@ -31,11 +28,13 @@ const routes = (
       path: "/app/questionsAndAnswers/",
       question: (path: "/app/questionsAndAnswers/question"),
       newQuestion: (path: "/app/questionsAndAnswers/newQuestion"),
+      helthInfo: (path: "/app/questionsAndAnswers/helthInfo"),
+      helthResult: (path: "/app/questionsAndAnswers/helthResult"),
     ),
     partners: (
       path: "/app/partners/",
       partnersByBranch: (path: "/app/partners/partnersByBranch"),
       benefitDetails: (path: "/app/partners/benefitDetails"),
-    )
-  )
+    ),
+  ),
 );

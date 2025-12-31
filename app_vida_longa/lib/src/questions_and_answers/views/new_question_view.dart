@@ -1,9 +1,11 @@
 import 'package:app_vida_longa/core/helpers/app_helper.dart';
 import 'package:app_vida_longa/domain/contants/app_colors.dart';
+import 'package:app_vida_longa/domain/contants/routes.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
 import 'package:app_vida_longa/shared/widgets/decorated_text_field.dart';
 import 'package:app_vida_longa/shared/widgets/default_app_bar.dart';
 import 'package:app_vida_longa/shared/widgets/default_text.dart';
+import 'package:app_vida_longa/src/core/navigation_controller.dart';
 import 'package:app_vida_longa/src/questions_and_answers/bloc/qa_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +22,7 @@ class NewQuestionView extends StatefulWidget {
 class _NewQuestionViewState extends State<NewQuestionView> {
   final TextEditingController _newQuestionTxtEdtCtrl = TextEditingController();
   late final QABloc _qaBloc;
+  bool switchValue = false;
 
   @override
   void initState() {
@@ -36,13 +39,13 @@ class _NewQuestionViewState extends State<NewQuestionView> {
   @override
   Widget build(BuildContext context) {
     return CustomAppScaffold(
-      appBar:
-          const DefaultAppBar(title: "Nova pergunta", isWithBackButton: true),
+      appBar: const DefaultAppBar(
+        title: "Nova pergunta",
+        isWithBackButton: true,
+      ),
       body: body(),
     );
   }
-
-  bool switchValue = false;
 
   Widget body() {
     return BlocConsumer<QABloc, QAState>(
@@ -105,13 +108,14 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                     ],
                   ),
                   Container(
-                      width: 145,
-                      height: 45.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: AppColors.selectedColor,
-                      ),
-                      child: Builder(builder: (context) {
+                    width: 145,
+                    height: 45.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: AppColors.selectedColor,
+                    ),
+                    child: Builder(
+                      builder: (context) {
                         if (state is QALoading) {
                           return const Padding(
                             padding: EdgeInsets.all(5),
@@ -124,7 +128,7 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                         }
 
                         return TextButton(
-                          onPressed: () async {
+                          onPressed: () {
                             if (_newQuestionTxtEdtCtrl.text.isEmpty) {
                               AppHelper.displayAlertInfo("Preencha a pergunta");
                               return;
@@ -136,7 +140,7 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                               ),
                             );
                           },
-                          child: Text(
+                          child: const Text(
                             "Enviar pergunta",
                             style: TextStyle(
                               color: AppColors.white,
@@ -145,7 +149,9 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                             ),
                           ),
                         );
-                      }))
+                      },
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 30),
@@ -158,7 +164,7 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                   border: Border.all(color: AppColors.selectedColor, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withValues(alpha: 0.1),
+                      color: Colors.grey,
                       spreadRadius: 1,
                       blurRadius: 3,
                       offset: const Offset(0, 2),
@@ -215,6 +221,35 @@ class _NewQuestionViewState extends State<NewQuestionView> {
                       fontWeight: FontWeight.w500,
                     ),
                   ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  NavigationController.push(
+                    routes.app.qa.helthInfo.path,
+                    arguments: null,
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 25, left: 10, right: 10),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 14,
+                    horizontal: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.selectedColor,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Center(
+                    child: DefaultText(
+                      "Clique aqui para receber informações de saúde de acordo com seu perfil.",
+                      fontSize: 16,
+                      maxLines: 3,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ),
               ),
             ],
