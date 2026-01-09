@@ -21,9 +21,6 @@ class _HealthInfoResultViewState extends State<HealthInfoResultView> {
   final ScreenshotController _screenshotController = ScreenshotController();
   bool _isLoading = false;
 
-  // TODO verificart corretamente o json, porque a seleção não diz respeito a somar as informações de ambos é diferente
-  // TODO analise cuidadosamente o PDF, pois está faltando informações
-
   String _getProtocoloKey(List<String> selected) {
     // Normaliza texto: remove acentos, palavras "de", espaços e caracteres especiais
     String _norm(String s) {
@@ -1814,7 +1811,6 @@ class _HealthInfoResultViewState extends State<HealthInfoResultView> {
     );
   }
 
-  // TODO mudar aqui para o que era antes de dowloas na cetinha em laranja e baixar a imagem pra galeria
   @override
   Widget build(BuildContext context) {
     final List<String> selected =
