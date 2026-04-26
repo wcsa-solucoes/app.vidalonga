@@ -24,41 +24,31 @@ class AppWrapView extends StatefulWidget {
 
 class _AppWrapViewState extends State<AppWrapView> {
   final AppWrapBloc appWrapBloc = AppWrapBloc.instance;
-
   final double labelSize = 16.0;
-  double bottomPadding = 0;
-
-  @override
-  void initState() {
-    if (Platform.isIOS) {
-      bottomPadding = 10;
-    }
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: StreamBuilder<String>(
-          stream: NavigationController.routeStream,
-          initialData: Modular.to.path,
-          builder: (context, snapshot) {
-            int count =
-                NavigationController.countWordsBetweenSlashes(Modular.to.path);
+        stream: NavigationController.routeStream,
+        initialData: Modular.to.path,
+        builder: (context, snapshot) {
+          int count = NavigationController.countWordsBetweenSlashes(
+            Modular.to.path,
+          );
 
-            if (count > 2) {
-              return const SizedBox.shrink();
-            }
+          if (count > 2) {
+            return const SizedBox.shrink();
+          }
 
-            return CircleNavBar(
+          return SafeArea(
+            bottom: true,
+            child: CircleNavBar(
               activeIndex: handleIndex(snapshot.data!),
               circleColor: AppColors.primary,
               activeIcons: const [
                 Center(
-                  child: Icon(
-                    Icons.home,
-                    color: AppColors.bottomSelectedColor,
-                  ),
+                  child: Icon(Icons.home, color: AppColors.bottomSelectedColor),
                 ),
                 Center(
                   child: FaIcon(
@@ -86,48 +76,48 @@ class _AppWrapViewState extends State<AppWrapView> {
                 ),
               ],
               inactiveIcons: [
-                Padding(
-                  padding: EdgeInsets.only(bottom: bottomPadding),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 0),
                   child: DefaultText(
                     "Início",
                     color: AppColors.white,
-                    fontSize: labelSize,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: bottomPadding),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 0),
                   child: DefaultText(
                     "Categorias",
                     color: AppColors.white,
-                    fontSize: labelSize,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: bottomPadding),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 0),
                   child: DefaultText(
                     "Conta",
                     color: AppColors.white,
-                    fontSize: labelSize,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: bottomPadding),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 0),
                   child: DefaultText(
                     "Perguntas",
                     color: AppColors.white,
-                    fontSize: labelSize,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: bottomPadding),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 0),
                   child: DefaultText(
                     "Benefícios",
                     color: AppColors.white,
-                    fontSize: labelSize,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -160,14 +150,11 @@ class _AppWrapViewState extends State<AppWrapView> {
                 }
                 handleIndex(snapshot.data!);
               },
-            );
-          }),
-      body: Stack(
-        children: [
-          _handleAlerts(),
-          const RouterOutlet(),
-        ],
+            ),
+          );
+        },
       ),
+      body: Stack(children: [_handleAlerts(), const RouterOutlet()]),
     );
   }
 
