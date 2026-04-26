@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_iframe/flutter_html_iframe.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class ArticleView extends StatefulWidget {
   final ArticleModel? article;
@@ -39,6 +40,23 @@ class _ArticleViewState extends State<ArticleView> {
     super.dispose();
   }
 
+  String _extractYoutubeId(String html) {
+    final patterns = [
+      RegExp(r'youtube\.com\/embed\/([a-zA-Z0-9_-]+)'),
+      RegExp(r'youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)'),
+      RegExp(r'youtu\.be\/([a-zA-Z0-9_-]+)'),
+    ];
+
+    for (final pattern in patterns) {
+      final match = pattern.firstMatch(html);
+      if (match != null && match.groupCount >= 1) {
+        return match.group(1)!;
+      }
+    }
+
+    return '';
+  }
+
   bool isFavorited = false;
 
   @override
@@ -48,8 +66,9 @@ class _ArticleViewState extends State<ArticleView> {
     } else {
       _currentlyArticle = ArticleService.currentlyArticle;
     }
-    isFavorited =
-        _favoritesService.favoritesIds.contains(_currentlyArticle.uuid);
+    isFavorited = _favoritesService.favoritesIds.contains(
+      _currentlyArticle.uuid,
+    );
 
     for (var item in _currentlyArticle.contents) {
       if (item.type == "text") {
@@ -59,16 +78,38 @@ class _ArticleViewState extends State<ArticleView> {
             stream: _streamControllerFontSize.stream,
             builder: ((context, snapshot) {
               return Html(
-                  style: {"body": Style(fontSize: FontSize(snapshot.data!))},
-                  data: item.content);
+                style: {"body": Style(fontSize: FontSize(snapshot.data!))},
+                data: item.content,
+              );
             }),
           ),
         );
+      } else if (item.type == "video") {
+        final videoId = _extractYoutubeId(item.content);
+
+        if (videoId.isNotEmpty) {
+          widgets.add(
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: SizedBox(
+                height: 200,
+                child: YoutubePlayer(
+                  controller: YoutubePlayerController(
+                    initialVideoId: videoId,
+                    flags: const YoutubePlayerFlags(
+                      autoPlay: false,
+                      mute: false,
+                    ),
+                  ),
+                  showVideoProgressIndicator: true,
+                ),
+              ),
+            ),
+          );
+        }
       } else {
         widgets.add(
-          Html(extensions: const [
-            IframeHtmlExtension(),
-          ], data: item.content),
+          Html(extensions: const [IframeHtmlExtension()], data: item.content),
         );
       }
     }
@@ -104,7 +145,7 @@ class _ArticleViewState extends State<ArticleView> {
             maxLines: 4,
             textAlign: TextAlign.center,
           ),
-          ...widgets
+          ...widgets,
         ],
       ),
       bottomNavigationBar: optionsBottomBar(),
@@ -121,45 +162,35 @@ class _ArticleViewState extends State<ArticleView> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           IconButton(
-              onPressed: () {
-                NavigationController.push("/app/home/comments");
-              },
-              icon: const Icon(
-                Icons.comment_rounded,
-                size: 30,
-              )),
+            onPressed: () {
+              NavigationController.push("/app/home/comments");
+            },
+            icon: const Icon(Icons.comment_rounded, size: 30),
+          ),
           IconButton(
-            icon: const Icon(
-              Icons.zoom_out,
-              size: 30,
-            ),
+            icon: const Icon(Icons.zoom_out, size: 30),
             onPressed: () => _handleFontSize(-2),
           ),
           IconButton(
-            icon: const Icon(
-              Icons.zoom_in,
-              size: 30,
-            ),
+            icon: const Icon(Icons.zoom_in, size: 30),
             onPressed: () => _handleFontSize(2),
           ),
           UserService.instance.status == UserServiceStatusEnum.loggedOut
               ? IconButton(
                   onPressed: () {
                     AppHelper.displayAlertInfo(
-                        "Você precisa estar logado para favoritar um artigo!");
+                      "Você precisa estar logado para favoritar um artigo!",
+                    );
                   },
-                  icon: const FaIcon(
-                    FontAwesomeIcons.heartCircleXmark,
-                  ))
+                  icon: const FaIcon(FontAwesomeIcons.heartCircleXmark),
+                )
               : IconButton(
                   icon: isFavorited
                       ? const FaIcon(
                           FontAwesomeIcons.solidHeart,
                           color: AppColors.secondary,
                         )
-                      : const FaIcon(
-                          FontAwesomeIcons.heart,
-                        ),
+                      : const FaIcon(FontAwesomeIcons.heart),
                   onPressed: () {
                     if (isFavorited) {
                       _favoritesService.remove(_currentlyArticle.uuid);
