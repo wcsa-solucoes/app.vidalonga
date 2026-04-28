@@ -51,7 +51,7 @@ class _HomeViewState extends State<HomeView> {
       listener: (context, state) {},
       builder: (BuildContext context, HomeState state) {
         return CustomAppScaffold(
-          appBar: const DefaultAppBar(title: "Ínicio"),
+          appBar: const DefaultAppBar(title: "Início"),
           body: SizedBox(
             width: MediaQuery.sizeOf(context).width,
             height: MediaQuery.sizeOf(context).height,

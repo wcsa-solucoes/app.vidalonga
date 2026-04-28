@@ -13,8 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ArticleCard extends StatefulWidget {
-  const ArticleCard(
-      {super.key, required this.article, required this.containerHeight});
+  const ArticleCard({
+    super.key,
+    required this.article,
+    required this.containerHeight,
+  });
 
   final BriefArticleModel article;
   final double containerHeight;
@@ -40,7 +43,7 @@ class _ArticleCardState extends State<ArticleCard> {
               blurRadius: 1.0,
               color: Colors.grey.withValues(alpha: 0.5),
               offset: const Offset(2.0, 3.0),
-            )
+            ),
           ],
         ),
         child: Column(
@@ -69,7 +72,11 @@ class _ArticleCardState extends State<ArticleCard> {
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.only(
-                            left: 6.0, right: 6.0, top: 6.0, bottom: 6.0),
+                          left: 6.0,
+                          right: 6.0,
+                          top: 6.0,
+                          bottom: 6.0,
+                        ),
                         child: Text(
                           widget.article.title,
                           maxLines: 1,
@@ -88,67 +95,86 @@ class _ArticleCardState extends State<ArticleCard> {
               ],
             ),
             StreamBuilder<UserModel>(
-                initialData: UserService.instance.user,
-                stream: UserService.instance.userStream,
-                builder: (context, AsyncSnapshot<UserModel> snapshot) {
-                  return InkWell(
-                    onTap: () async {
-                      var user = AuthService.instance.getCurrentUser;
+              initialData: UserService.instance.user,
+              stream: UserService.instance.userStream,
+              builder: (context, AsyncSnapshot<UserModel> snapshot) {
+                return InkWell(
+                  onTap: () async {
+                    var user = AuthService.instance.getCurrentUser;
 
-                      await _articleService
-                          .setCurrentlyArticleId(widget.article.uuid);
-                      //verify if the article is paid if not go to the article
-                      if (widget.article.subscriptionType ==
-                          SubscriptionTypeArticleEnum.free) {
-                        var path = routes.app.home.article.path;
-                        NavigationController.push(path, arguments: {
-                          "articleId": widget.article.uuid,
-                          "article": widget.article
-                        });
-                        return;
-                      }
+                    await _articleService.setCurrentlyArticleId(
+                      widget.article.uuid,
+                    );
 
-                      if (user == null) {
-                        NavigationController.to(routes.app.auth.login.path);
-                        return;
-                      }
-                      if (widget.article.subscriptionType ==
-                              SubscriptionTypeArticleEnum.paid &&
-                          snapshot.data?.subscriptionLevel !=
-                              SubscriptionEnum.paying) {
-                        NavigationController.push(
-                            routes.app.profile.subscriptions.path);
-                        return;
-                      }
-
+                    //verify if the article is paid if not go to the article
+                    if (widget.article.subscriptionType ==
+                        SubscriptionTypeArticleEnum.free) {
                       var path = routes.app.home.article.path;
-                      NavigationController.push(path, arguments: {
+                      NavigationController.push(
+                        path,
+                        arguments: {
+                          "articleId": widget.article.uuid,
+                          "article": widget.article,
+                        },
+                      );
+                      return;
+                    }
+
+                    if (user == null) {
+                      NavigationController.to(routes.app.auth.login.path);
+                      return;
+                    }
+
+                    UserModel? currentUser = snapshot.data;
+                    currentUser ??= await UserService.instance.userStream.first;
+
+                    if (widget.article.subscriptionType ==
+                            SubscriptionTypeArticleEnum.paid &&
+                        snapshot.data?.subscriptionLevel !=
+                            SubscriptionEnum.paying) {
+                      NavigationController.push(
+                        routes.app.profile.subscriptions.path,
+                      );
+                      return;
+                    }
+
+                    var path = routes.app.home.article.path;
+                    NavigationController.push(
+                      path,
+                      arguments: {
                         "articleId": widget.article.uuid,
-                        "article": widget.article
-                      });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
-                      child: Container(
-                        height: widget.containerHeight,
-                        decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                              topRight: Radius.circular(10),
-                              bottomLeft: Radius.circular(10),
-                              bottomRight: Radius.circular(10),
-                            ),
-                            color: AppColors.white,
-                            image: DecorationImage(
-                                image: CachedNetworkImageProvider(
-                                    widget.article.image),
-                                fit: BoxFit.fill)),
-                        width: MediaQuery.of(context).size.width,
-                      ),
+                        "article": widget.article,
+                      },
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
                     ),
-                  );
-                }),
+                    child: Container(
+                      height: widget.containerHeight,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        ),
+                        color: AppColors.white,
+                        image: DecorationImage(
+                          image: CachedNetworkImageProvider(
+                            widget.article.image,
+                          ),
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                    ),
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),

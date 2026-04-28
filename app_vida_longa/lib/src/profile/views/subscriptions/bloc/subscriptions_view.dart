@@ -78,7 +78,7 @@ class _SubscriptionsViewState extends State<SubscriptionsView> {
                   children: [
                     const Center(
                       child: DefaultText(
-                        'Parábens, você é um assinante!',
+                        'Parabéns, você é um assinante!',
                         fontSize: 20,
                         fontWeight: FontWeight.w300,
                       ),

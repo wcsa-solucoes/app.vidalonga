@@ -37,11 +37,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
     _isEnabled = false;
 
-    final ResponseStatusModel response =
-        await _authService.signInUsingEmailPassword(
-      email: event.email,
-      password: event.password,
-    );
+    final ResponseStatusModel response = await _authService
+        .signInUsingEmailPassword(email: event.email, password: event.password);
 
     if (response.status == ResponseStatusEnum.failed) {
       _displaySnackBar(response);
@@ -53,7 +50,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   FutureOr<void> _googleSignIn(
-      AuthGoogleSocialLoginEvent event, Emitter<AuthState> emit) async {
+    AuthGoogleSocialLoginEvent event,
+    Emitter<AuthState> emit,
+  ) async {
     add(AuthLoadingEvent());
 
     final ResponseStatusModel response = await _authService.googleSignIn();
@@ -68,7 +67,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   FutureOr<void> _appleSignIn(
-      AuthAppleSocialLoginEvent event, Emitter<AuthState> emit) async {
+    AuthAppleSocialLoginEvent event,
+    Emitter<AuthState> emit,
+  ) async {
     add(AuthLoadingEvent());
 
     final ResponseStatusModel response = await _authService.appleSignIn();
@@ -83,7 +84,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   FutureOr<void> _register(
-      AuthSignUpEvent event, Emitter<AuthState> emit) async {
+    AuthSignUpEvent event,
+    Emitter<AuthState> emit,
+  ) async {
     add(AuthLoadingEvent()); // _setLoading();
 
     _user = _userService.user;
@@ -100,8 +103,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // _user.document = FieldFormatHelper.register(register: event.cpf);
     // _user.email = event.email;
 
-    final ResponseStatusModel response =
-        await _authService.register(_user, event.password, _user.name);
+    final ResponseStatusModel response = await _authService.register(
+      _user,
+      event.password,
+      _user.name,
+    );
 
     if (response.status == ResponseStatusEnum.success) {
       _userService.initUser();
@@ -115,7 +121,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   FutureOr<void> _setLoading(
-      AuthLoadingEvent event, Emitter<AuthState> emit) async {
+    AuthLoadingEvent event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(AuthLoading());
   }
 
@@ -129,11 +137,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _signOut(AuthSignOutEvent event, Emitter<AuthState> emit) {
     AuthService.logout();
-    emit(AuthInitial(newUser: UserModel.empty()));
+    UserService.instance.handleUserLogout();
+    emit(AuthSignedOut());
   }
 
   void _recoveryPassword(
-      AuthRecoveryPasswordEvent event, Emitter<AuthState> emit) {
+    AuthRecoveryPasswordEvent event,
+    Emitter<AuthState> emit,
+  ) {
     _authService.sendPasswordResetEmail(email: event.email);
   }
 }

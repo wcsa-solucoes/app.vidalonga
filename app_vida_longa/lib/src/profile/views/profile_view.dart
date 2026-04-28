@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -36,14 +37,20 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomAppScaffold(
-      appBar: const DefaultAppBar(title: "Perfil"),
-      hasSafeArea: true,
-      body: Builder(builder: (context) {
-        return _body();
-      }),
-      bottomNavigationBar: const CustomBottomNavigationBar(),
-      hasScrollView: true,
+    return BlocListener<AuthBloc, AuthState>(
+      bloc: _authBloc,
+      listener: (context, state) {
+        if (state is AuthSignedOut) {
+          NavigationController.to(routes.app.auth.login.path);
+        }
+      },
+      child: CustomAppScaffold(
+        appBar: const DefaultAppBar(title: "Perfil"),
+        hasSafeArea: true,
+        body: Builder(builder: (context) => _body()),
+        bottomNavigationBar: const CustomBottomNavigationBar(),
+        hasScrollView: true,
+      ),
     );
   }
 
@@ -51,9 +58,7 @@ class _ProfileViewState extends State<ProfileView> {
     return Column(
       children: [
         _userCard(),
-        const SizedBox(
-          height: 10,
-        ),
+        const SizedBox(height: 10),
 
         OpenPageButtonWiget(
           "Meu perfil",
@@ -66,16 +71,20 @@ class _ProfileViewState extends State<ProfileView> {
             NavigationController.push(routes.app.profile.subscriptions.path);
           },
         ),
-        OpenPageButtonWiget("Meus favoritos", onPressed: () {
-          NavigationController.push(routes.app.profile.favorites.path);
-        }),
-        OpenPageButtonWiget("Contatos", onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const ContactsView(),
-            ),
-          );
-        }),
+        OpenPageButtonWiget(
+          "Meus favoritos",
+          onPressed: () {
+            NavigationController.push(routes.app.profile.favorites.path);
+          },
+        ),
+        OpenPageButtonWiget(
+          "Contatos",
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const ContactsView()),
+            );
+          },
+        ),
         StreamBuilder<UserModel>(
           initialData: _userService.user,
           stream: _userService.userStream,
@@ -100,7 +109,8 @@ class _ProfileViewState extends State<ProfileView> {
           "Dúvidas e sugestões",
           onPressed: () {
             final Uri url = Uri.parse(
-                'mailto:contato@vidalongaapp.com?subject=Dúvidas e Sugestões');
+              'mailto:contato@vidalongaapp.com?subject=Dúvidas e Sugestões',
+            );
             _launchUrl(url);
           },
         ),
@@ -109,33 +119,34 @@ class _ProfileViewState extends State<ProfileView> {
           "Contate o suporte",
           onPressed: () {
             final Uri url = Uri.parse(
-                'mailto:contato@vidalongaapp.com?subject=Support Vida Longa&body=Preencha abaixo os detalhes da sua solicitação:%0D%0A%0D%0A');
+              'mailto:contato@vidalongaapp.com?subject=Support Vida Longa&body=Preencha abaixo os detalhes da sua solicitação:%0D%0A%0D%0A',
+            );
             _launchUrl(url);
           },
         ),
-        OpenPageButtonWiget("Recomendar o app", onPressed: () {
-          if (Platform.isAndroid) {
-            SharePlus.instance.share(
-              ShareParams(
-                text:
-                    'https://play.google.com/store/apps/details?id=com.vidalongaapp.app&pcampaignid=web_share',
-              ),
-            );
-          } else {
-            SharePlus.instance.share(
-              ShareParams(
-                text: 'https://apps.apple.com/br/app/vida-longa/id6446136437?l',
-              ),
-            );
-          }
-        }),
-        const SizedBox(
-          height: 10,
+        OpenPageButtonWiget(
+          "Recomendar o app",
+          onPressed: () {
+            if (Platform.isAndroid) {
+              SharePlus.instance.share(
+                ShareParams(
+                  text:
+                      'https://play.google.com/store/apps/details?id=com.vidalongaapp.app&pcampaignid=web_share',
+                ),
+              );
+            } else {
+              SharePlus.instance.share(
+                ShareParams(
+                  text:
+                      'https://apps.apple.com/br/app/vida-longa/id6446136437?l',
+                ),
+              );
+            }
+          },
         ),
+        const SizedBox(height: 10),
         logout(),
-        const SizedBox(
-          height: 50,
-        ),
+        const SizedBox(height: 50),
       ],
     );
   }
@@ -189,20 +200,21 @@ class _ProfileViewState extends State<ProfileView> {
             child: Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(2.0, 2.0, 2.0, 2.0),
               child: ClipRRect(
-                  borderRadius: BorderRadius.circular(60.0),
-                  child: UserService.instance.user.photoUrl.isEmpty
-                      ? Image.asset(
-                          'assets/images/longavida.png',
-                          width: 70.0,
-                          height: 70.0,
-                          fit: BoxFit.fill,
-                        )
-                      : Image.network(
-                          UserService.instance.user.photoUrl,
-                          width: 70.0,
-                          height: 70.0,
-                          fit: BoxFit.cover,
-                        )),
+                borderRadius: BorderRadius.circular(60.0),
+                child: UserService.instance.user.photoUrl.isEmpty
+                    ? Image.asset(
+                        'assets/images/longavida.png',
+                        width: 70.0,
+                        height: 70.0,
+                        fit: BoxFit.fill,
+                      )
+                    : Image.network(
+                        UserService.instance.user.photoUrl,
+                        width: 70.0,
+                        height: 70.0,
+                        fit: BoxFit.cover,
+                      ),
+              ),
             ),
           ),
           Expanded(
@@ -224,7 +236,11 @@ class _ProfileViewState extends State<ProfileView> {
                   ),
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(
-                        0.0, 4.0, 0.0, 0.0),
+                      0.0,
+                      4.0,
+                      0.0,
+                      0.0,
+                    ),
                     child: Text(
                       email,
                       style: GoogleFonts.getFont(
@@ -246,58 +262,70 @@ class _ProfileViewState extends State<ProfileView> {
 
   Widget _userCard() {
     return StreamBuilder<UserModel>(
-        initialData: UserService.instance.user,
-        stream: UserService.instance.userStream,
-        builder: (context, snapshot) {
-          return Column(
-            children: [
-              _userInfos(snapshot.data?.name ?? "Nome",
-                  snapshot.data?.email ?? "email"),
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  children: [
-                    // Exibe o hint apenas fora do modo tela cheia
-                    Text(
-                      "Clique no cartão para ver em tela cheia!",
-                      style: TextStyle(
-                        fontSize: 11.0,
-                        color: Colors.grey[600],
-                        fontStyle: FontStyle.italic,
-                      ),
+      initialData: UserService.instance.user,
+      stream: UserService.instance.userStream,
+      builder: (context, snapshot) {
+        return Column(
+          children: [
+            _userInfos(
+              snapshot.data?.name ?? "Nome",
+              snapshot.data?.email ?? "email",
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  // Exibe o hint apenas fora do modo tela cheia
+                  Text(
+                    "Clique no cartão para ver em tela cheia!",
+                    style: TextStyle(
+                      fontSize: 11.0,
+                      color: Colors.grey[600],
+                      fontStyle: FontStyle.italic,
                     ),
-                    const SizedBox(height: 4),
-                    GestureDetector(
-                      onTap: () {
-                        // show the card in full screen
-                        showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                            insetPadding: EdgeInsets.zero,
-                            backgroundColor: Colors.transparent,
-                            child: Center(
-                              child: RotatedBox(
-                                quarterTurns: 1,
-                                child: _buildCard(context,
-                                    snapshot: snapshot, isFullScreen: true),
+                  ),
+                  const SizedBox(height: 4),
+                  GestureDetector(
+                    onTap: () {
+                      // show the card in full screen
+                      showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                          insetPadding: EdgeInsets.zero,
+                          backgroundColor: Colors.transparent,
+                          child: Center(
+                            child: RotatedBox(
+                              quarterTurns: 1,
+                              child: _buildCard(
+                                context,
+                                snapshot: snapshot,
+                                isFullScreen: true,
                               ),
                             ),
                           ),
-                        );
-                      },
-                      child: _buildCard(context,
-                          snapshot: snapshot, isFullScreen: false),
+                        ),
+                      );
+                    },
+                    child: _buildCard(
+                      context,
+                      snapshot: snapshot,
+                      isFullScreen: false,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          );
-        });
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  Widget _buildCard(BuildContext context,
-      {required snapshot, required bool isFullScreen}) {
+  Widget _buildCard(
+    BuildContext context, {
+    required snapshot,
+    required bool isFullScreen,
+  }) {
     final cardWidth = isFullScreen
         ? MediaQuery.sizeOf(context).height
         : MediaQuery.sizeOf(context).width * 0.88;
@@ -313,7 +341,7 @@ class _ProfileViewState extends State<ProfileView> {
             blurRadius: 6.0,
             color: Color(0x4B1A1F24),
             offset: Offset(0.0, 2.0),
-          )
+          ),
         ],
         gradient: LinearGradient(
           colors: [
@@ -351,8 +379,12 @@ class _ProfileViewState extends State<ProfileView> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding:
-                      const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                    0.0,
+                    30.0,
+                    0.0,
+                    0.0,
+                  ),
                   child: SizedBox(
                     width: isFullScreen
                         ? MediaQuery.sizeOf(context).width * 1.7
@@ -375,8 +407,12 @@ class _ProfileViewState extends State<ProfileView> {
             ),
           ),
           Padding(
-            padding:
-                const EdgeInsetsDirectional.fromSTEB(20.0, 12.0, 20.0, 16.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(
+              20.0,
+              12.0,
+              20.0,
+              16.0,
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -385,7 +421,8 @@ class _ProfileViewState extends State<ProfileView> {
                   snapshot.data!.subscriptionLevel.value,
                   style: GoogleFonts.getFont(
                     'Roboto Mono',
-                    color: snapshot.data!.subscriptionLevel ==
+                    color:
+                        snapshot.data!.subscriptionLevel ==
                             SubscriptionEnum.paying
                         ? AppColors.blackCard
                         : Colors.red,

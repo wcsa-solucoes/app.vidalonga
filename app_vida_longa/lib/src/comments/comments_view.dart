@@ -1,3 +1,4 @@
+import 'dart:ui' show FlutterView;
 import 'package:app_vida_longa/core/services/user_service.dart';
 import 'package:app_vida_longa/domain/enums/user_service_status_enum.dart';
 import 'package:app_vida_longa/shared/widgets/custom_scaffold.dart';
@@ -28,15 +29,16 @@ class _CommentsViewState extends State<CommentsView> {
   Widget build(BuildContext context) {
     final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
+    final FlutterView view = View.of(context);
+    final double bottomInset = view.padding.bottom / view.devicePixelRatio;
+
     return CustomAppScaffold(
       appBar: const DefaultAppBar(title: "Comentários", isWithBackButton: true),
       body: BlocBuilder<CommentsBloc, CommentsState>(
         bloc: _commentsBloc,
         builder: (context, state) {
           if (state is CommentsLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
           if (state is CommentsLoadedState) {
             return SingleChildScrollView(
@@ -50,7 +52,8 @@ class _CommentsViewState extends State<CommentsView> {
                           itemCount: state.comments.length,
                           itemBuilder: (context, index) {
                             final comment = state.comments[index];
-                            var isCommentFromAuthor = comment.authorId ==
+                            var isCommentFromAuthor =
+                                comment.authorId ==
                                 UserService.instance.user.id;
                             return ListTile(
                               title: Text(comment.author),
@@ -60,8 +63,9 @@ class _CommentsViewState extends State<CommentsView> {
                                   : IconButton(
                                       icon: const Icon(Icons.delete),
                                       onPressed: () {
-                                        _commentsBloc
-                                            .add(DeleteCommentEvent(comment));
+                                        _commentsBloc.add(
+                                          DeleteCommentEvent(comment),
+                                        );
                                       },
                                     ),
                             );
@@ -72,18 +76,26 @@ class _CommentsViewState extends State<CommentsView> {
             );
           }
 
-          return const Center(
-            child: Text("Erro ao carregar os dados."),
-          );
+          return const Center(child: Text("Erro ao carregar os dados."));
         },
       ),
-      bottomNavigationBar: _bottomNavigationBar(keyboardHeight, context),
+      bottomNavigationBar: _bottomNavigationBar(
+        keyboardHeight,
+        bottomInset,
+        context,
+      ),
     );
   }
 
-  Widget _bottomNavigationBar(double keyboardHeight, BuildContext context) {
+  Widget _bottomNavigationBar(
+    double keyboardHeight,
+    double bottomInset,
+    BuildContext context,
+  ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: keyboardHeight),
+      padding: EdgeInsets.only(
+        bottom: keyboardHeight > 0 ? keyboardHeight : bottomInset,
+      ),
       child: BottomAppBar(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -94,15 +106,16 @@ class _CommentsViewState extends State<CommentsView> {
                   reverse: true,
                   scrollDirection: Axis.vertical,
                   child: TextField(
-                    //disabled
-                    enabled: !(UserService.instance.status ==
-                        UserServiceStatusEnum.loggedOut),
+                    enabled:
+                        !(UserService.instance.status ==
+                            UserServiceStatusEnum.loggedOut),
                     controller: _commentController,
                     keyboardType: TextInputType.multiline,
-                    maxLines: null, // Permite um número ilimitado de linhas
-                    minLines: 1, // Mínimo de uma linha
+                    maxLines: null,
+                    minLines: 1,
                     decoration: InputDecoration(
-                      hintText: UserService.instance.status ==
+                      hintText:
+                          UserService.instance.status ==
                               UserServiceStatusEnum.loggedOut
                           ? "Logue para poder comentar."
                           : "Adicione um comentário.",
@@ -112,18 +125,21 @@ class _CommentsViewState extends State<CommentsView> {
                 ),
               ),
               Opacity(
-                opacity: UserService.instance.status ==
+                opacity:
+                    UserService.instance.status ==
                         UserServiceStatusEnum.loggedOut
                     ? 0.5
                     : 1,
                 child: AbsorbPointer(
-                  absorbing: UserService.instance.status ==
+                  absorbing:
+                      UserService.instance.status ==
                       UserServiceStatusEnum.loggedOut,
                   child: IconButton(
                     icon: const Icon(Icons.send),
                     onPressed: () {
-                      _commentsBloc
-                          .add(CreateCommentEvent(_commentController.text));
+                      _commentsBloc.add(
+                        CreateCommentEvent(_commentController.text),
+                      );
                       _commentController.clear();
                       FocusScope.of(context).unfocus();
                     },
