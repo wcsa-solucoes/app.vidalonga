@@ -3,10 +3,7 @@ part of 'auth_bloc.dart';
 sealed class AuthState {
   late UserModel? user;
   late ResponseStatusModel? response;
-  AuthState(
-    this.user,
-    this.response,
-  );
+  AuthState(this.user, this.response);
 }
 
 final class AuthInitial extends AuthState {
@@ -19,11 +16,8 @@ final class AuthSuccess extends AuthState {
   final ResponseStatusModel? newResponse;
   final bool? canPop;
 
-  AuthSuccess({
-    this.newUser,
-    this.newResponse,
-    this.canPop = false,
-  }) : super(newUser ?? UserModel.empty(), newResponse);
+  AuthSuccess({this.newUser, this.newResponse, this.canPop = false})
+    : super(newUser ?? UserModel.empty(), newResponse);
 }
 
 final class AuthLoading extends AuthState {
@@ -31,5 +25,9 @@ final class AuthLoading extends AuthState {
   final ResponseStatusModel? newResponse;
 
   AuthLoading({this.newUser, this.newResponse})
-      : super(newUser ?? UserModel.empty(), newResponse);
+    : super(newUser ?? UserModel.empty(), newResponse);
+}
+
+final class AuthSignedOut extends AuthState {
+  AuthSignedOut() : super(UserModel.empty(), null);
 }
